@@ -1,6 +1,5 @@
-// src/styles.scss
+// src/_variables.scss
 
-// 🎨 Paleta de colores
 $color-bg: #f4f6f8;
 $color-navbar: #1e3a8a;
 $color-text: #1f2937;
@@ -9,11 +8,3 @@ $color-primary-light: #3b82f6;
 $color-success: #16a34a;
 $color-warning: #facc15;
 $color-error: #dc2626;
-
-// 🌐 Estilos base
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Roboto, sans-serif;
-  background-color: $color-bg;
-  color: $color-text;
-}

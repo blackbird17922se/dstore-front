@@ -1,0 +1,38 @@
+<div class="roles-container">
+  <h2>Roles</h2>
+  <button (click)="openModal()">➕ Crear rol</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rol of roles">
+        <td>{{ rol.id }}</td>
+        <td>{{ rol.nombre }}</td>
+        <td>
+          <button (click)="editRol(rol)">✏️ Editar</button>
+          <button (click)="deleteRol(rol.id)">🗑️ Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h3>{{ editing ? 'Editar Rol' : 'Crear Rol' }}</h3>
+      <input type="text" placeholder="Nombre del rol" [(ngModel)]="rolActual.nombre" />
+      <div class="buttons">
+        <button (click)="saveRol()">
+          {{ editing ? 'Guardar cambios' : 'Crear' }}
+        </button>
+        <button (click)="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

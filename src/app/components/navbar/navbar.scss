@@ -1,0 +1,22 @@
+@use '../../../variables' as *;
+
+.navbar {
+  background-color: $color-navbar;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  a {
+    color: white;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-weight: 500;
+
+    &:hover {
+      color: $color-primary-light;
+    }
+  }
+}

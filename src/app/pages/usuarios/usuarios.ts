@@ -21,6 +21,19 @@ usuarios: any[] = [];
     this.getusuarios();
   }
 
+  /* Aquí se usa el servicio HttpClient de Angular (inyectado como this.http) 
+      para hacer una petición GET a la URL del backend. O sea:
+    📡 “Oye servidor, mándame todos los usuarios”.
+    * get<any[]> le indica a TypeScript que la respuesta será un arreglo ([]) de 
+      objetos genéricos (any).
+      
+    *.subscribe() es lo que hace que la petición realmente se ejecute 
+      (los observables no se ejecutan hasta que alguien se suscribe).
+      * data contiene la respuesta que viene del backend (o sea, el List<Usuario> 
+        que devolviste desde tu API).
+      * Luego, this.usuarios = data; guarda esa lista dentro de una propiedad del 
+        componente llamada usuarios, que probablemente se muestra en tu tabla o vista.
+  */
   getusuarios() {
     this.http.get<any[]>('http://localhost:8080/api/usuarios').subscribe(data => {
       this.usuarios = data;

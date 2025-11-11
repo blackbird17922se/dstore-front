@@ -1,0 +1,56 @@
+<div class="presentacion-container">
+  <h2>Presentación</h2>
+  <button (click)="abrirModal()">➕ Crear presentación</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (presentacion of presentaciones; track presentacion.id) {
+        <tr>
+          <td>{{ presentacion.id }}</td>
+          <td>{{ presentacion.nombre }}</td>
+          <td>
+            <button (click)="editarPresentacion(presentacion)">✏️ Editar</button>
+            <button (click)="borrarPresentacion(presentacion.id)">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="modalAbierto">
+    <div class="modal-content">
+      <h3>{{ editando ? 'Editar Presentación' : 'Crear Presentación' }}</h3>
+
+      <!-- FORMULARIO -->
+      <form #formPresentacion="ngForm" (ngSubmit)="guardarPresentacion()">
+
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Nombre de la presentación"
+          [(ngModel)]="presentacionActual.nombre"
+          required
+          #nombre="ngModel"
+        />
+        <div *ngIf="nombre.invalid && nombre.touched" class="error">
+          ⚠️ El nombre es obligatorio.
+        </div>
+
+        <div class="buttons">
+          <button type="submit" [disabled]="formPresentacion.invalid">
+            {{ editando ? 'Guardar cambios' : 'Crear' }}
+          </button>
+          <button type="button" (click)="cerrarModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

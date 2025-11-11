@@ -49,6 +49,9 @@ export class Proveedores {
     this.modalAbierto = true;
   }
 
+  /** .subscribe() ejecuta la petición y recibe la respuesta.
+   * No hace falta unsubscribe porque el Observable de HttpClient 
+   * completa automáticamente. */
   guardarProveedor() {
     const accion = this.editando
       ? this.proveedorService.update(this.proveedorActual)

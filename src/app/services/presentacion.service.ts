@@ -1,0 +1,28 @@
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { PresentacionModel } from "../models/presentacion.model";
+import { Observable } from "rxjs/internal/Observable";
+
+@Injectable({ providedIn: 'root' })
+export class PresentacionService {
+    private apiUrl = `${environment.apiUrl}/presentaciones`;
+
+    constructor(private http: HttpClient) {}
+
+    getAll(): Observable<PresentacionModel[]> {
+        return this.http.get<PresentacionModel[]>(this.apiUrl);
+    }
+
+    create(presentacion: PresentacionModel): Observable<PresentacionModel> {
+        return this.http.post<PresentacionModel>(this.apiUrl, presentacion);
+    }
+
+    update(presentacion: PresentacionModel): Observable<PresentacionModel> {
+        return this.http.put<PresentacionModel>(`${this.apiUrl}/${presentacion.id}`, presentacion);
+    }
+
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+}

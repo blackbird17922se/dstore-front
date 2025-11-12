@@ -1,0 +1,81 @@
+<div class="lote-container">
+    <h2>Lote</h2>
+    <button (click)="abrirModal()">➕ Crear Lote</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Stock</th>
+                <th>Vencimiento</th>
+                <th>ID Producto</th>
+                <th>ID Proveedor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (lote of lotes; track lote.id) {
+            <tr>
+                <td>{{ lote.id }}</td>
+                <td>{{ lote.stock }}</td>
+                <td>{{ lote.vencimiento }}</td>
+                <td>{{ lote.idProducto }}</td>
+                <td>{{ lote.idProveedor }}</td>
+                <td>
+                    <button (click)="editarLote(lote)">✏️ Editar</button>
+                    <button (click)="borrarLote(lote.id)">🗑️ Eliminar</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Modal -->
+    @if (modalAbierto) {
+    <div class="modal">
+        <div class="modal-content">
+            <h3>{{ editando ? 'Editar Lote' : 'Crear Lote' }}</h3>
+
+            <!-- FORMULARIO -->
+            <form #formLote="ngForm" (ngSubmit)="guardarLote()">
+
+                <input type="number" name="stock" placeholder="Stock" [(ngModel)]="loteActual.stock"
+                    required #stock="ngModel" />
+                @if (stock.invalid && stock.touched) {
+                <div class="error">
+                    ⚠️ El stock es obligatorio.
+                </div>
+                }
+
+                <input type="date" name="vencimiento" placeholder="Vencimiento" [(ngModel)]="loteActual.vencimiento"
+                    required #vencimiento="ngModel" />
+                @if (vencimiento.invalid && vencimiento.touched) {
+                <div class="error">
+                    ⚠️ La fecha de vencimiento es obligatoria.
+                </div>
+                }
+                <input type="number" name="idProducto" placeholder="ID Producto" [(ngModel)]="loteActual.idProducto"
+                    required #idProducto="ngModel" />
+                @if (idProducto.invalid && idProducto.touched) {
+                <div class="error">
+                    ⚠️ El ID del producto es obligatorio.   
+                </div>
+                }
+                <input type="number" name="idProveedor" placeholder="ID Proveedor" [(ngModel)]="loteActual.idProveedor"
+                    required #idProveedor="ngModel" />
+                @if (idProveedor.invalid && idProveedor.touched) {
+                <div class="error">
+                    ⚠️ El ID del proveedor es obligatorio.
+                </div>
+                }
+
+                <div class="buttons">
+                    <button type="submit" [disabled]="formLote.invalid">
+                        {{ editando ? 'Guardar cambios' : 'Crear' }}
+                    </button>
+                    <button type="button" (click)="cerrarModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    }

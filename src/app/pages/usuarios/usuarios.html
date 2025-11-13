@@ -8,23 +8,25 @@
         <th>ID</th>
         <th>Nombre</th>
         <th>Apellido</th>
-        <th>Id Rol</th>
+        <th>Rol</th>
         <th>Nombre Usuario</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let usuario of usuarios">
+      @for (usuario of usuarios; track usuario.id) {
+      <tr>
         <td>{{ usuario.id }}</td>
         <td>{{ usuario.nombre }}</td>
         <td>{{ usuario.apellido }}</td>
-        <td>{{ usuario.rol }}</td>
+        <td>{{ usuario.rol.nombre }}</td>
         <td>{{ usuario.nombreUsuario }}</td>
         <td>
           <button (click)="editUsuario(usuario)">✏️ Editar</button>
           <button (click)="deleteUsuario(usuario.id)">🗑️ Eliminar</button>
         </td>
       </tr>
+    }
     </tbody>
   </table>
 

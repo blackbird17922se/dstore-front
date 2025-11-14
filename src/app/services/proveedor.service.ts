@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Proveedor } from '../models/Proveedor.model';
+import { ProveedorModel } from '../models/Proveedor.model';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -21,8 +21,8 @@ export class ProveedorService {
       * Lo que hace es pedirle al backend la lista de proveedores (GET /api/proveedores)
         y devolver un Observable que, al suscribirte, te entregará el resultado.
    */
-  getAll(): Observable<Proveedor[]> { //Observable es un flujo de datos que puede emitir múltiples valores a lo largo del tiempo
-    return this.http.get<Proveedor[]>(this.apiUrl);
+  getAll(): Observable<ProveedorModel[]> { //Observable es un flujo de datos que puede emitir múltiples valores a lo largo del tiempo
+    return this.http.get<ProveedorModel[]>(this.apiUrl);
   }
 
   /** función del service que crea (POST) un proveedor en el backend y devuelve un 
@@ -36,17 +36,17 @@ export class ProveedorService {
    *  No devuelve el objeto directamente, devuelve un flujo asíncrono que lo entregará 
    *  cuando la petición responda.
    * */
-  create(proveedor: Proveedor): Observable<Proveedor> {
+  create(proveedor: ProveedorModel): Observable<ProveedorModel> {
 
     /** return this.http.post<Proveedor>(this.apiUrl, proveedor);
         → Usa HttpClient.post para enviar una petición POST a this.apiUrl con el cuerpo proveedor.
         → <Proveedor> le dice a TypeScript que esperamos que la respuesta tenga la forma de un 
           Proveedor (por ejemplo, con el id ya asignado por el backend). */
-    return this.http.post<Proveedor>(this.apiUrl, proveedor);
+    return this.http.post<ProveedorModel>(this.apiUrl, proveedor);
   }
 
-  update(proveedor: Proveedor): Observable<Proveedor> {
-    return this.http.put<Proveedor>(`${this.apiUrl}/${proveedor.id}`, proveedor);
+  update(proveedor: ProveedorModel): Observable<ProveedorModel> {
+    return this.http.put<ProveedorModel>(`${this.apiUrl}/${proveedor.id}`, proveedor);
   }
 
   delete(id: number): Observable<void> {

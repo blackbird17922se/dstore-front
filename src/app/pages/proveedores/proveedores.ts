@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Proveedor } from '../../models/Proveedor.model';
+import { ProveedorModel } from '../../models/Proveedor.model';
 import { ProveedorService } from '../../services/proveedor.service';
 
 /** Mostrar la información (vista)
@@ -13,10 +13,10 @@ Manejar eventos de usuario (clics, formularios, botones) */
   styleUrls: ['./proveedores.scss'],
 })
 export class Proveedores {
-  proveedores: Proveedor[] = [];
+  proveedores: ProveedorModel[] = [];
   modalAbierto = false;
   editando = false;
-  proveedorActual: Proveedor = {
+  proveedorActual: ProveedorModel = {
     id: null,
     nombre: '',
     telefono: '',
@@ -43,7 +43,7 @@ export class Proveedores {
     this.modalAbierto = true;
   }
 
-  editarProveedor(proveedor: Proveedor) {
+  editarProveedor(proveedor: ProveedorModel) {
     this.editando = true;
     this.proveedorActual = { ...proveedor };
     this.modalAbierto = true;

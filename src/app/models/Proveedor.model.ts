@@ -1,4 +1,4 @@
-export interface Proveedor {
+export interface ProveedorModel {
     id: number | null;
     nombre: string;
     telefono: string;

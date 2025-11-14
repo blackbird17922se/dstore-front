@@ -13,6 +13,7 @@
                 <th>Marca</th>
                 <th>Tipo de Producto</th>
                 <th>Presentación</th>
+                <th>Codigo de Barras</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                 <td>{{ producto.marca.nombre }}</td>
                 <td>{{ producto.tipoProducto.nombre }}</td>
                 <td>{{ producto.presentacion.nombre }}</td>
+                <td>{{ producto.codigoBarras }}</td>
                 <td>
                     <button (click)="editarProducto(producto)">✏️ Editar</button>
                     <button (click)="borrarProducto(producto.id)">🗑️ Eliminar</button>
@@ -45,7 +47,7 @@
             <!-- FORMULARIO -->
             <form #formProducto="ngForm" (ngSubmit)="guardarProducto()">
 
-                <input type="text" name="nombre" placeholder="Nombre de la producto" [(ngModel)]="productoActual.nombre"
+                <input type="text" name="nombre" placeholder="Nombre del producto" [(ngModel)]="productoActual.nombre"
                     required #nombre="ngModel" />
                 @if (nombre.invalid && nombre.touched) {
                 <div class="error">
@@ -53,7 +55,7 @@
                 </div>
                 }
                 <input type="text" name="descripcion" placeholder="Descripción" [(ngModel)]="productoActual.descripcion"
-                    required #descripcion="ngModel" />
+                    #descripcion="ngModel" />
 
                 <br>
                 <label for="precio">Precio:</label><br>
@@ -104,6 +106,10 @@
                         {{ tipo.nombre }}
                     </option>
                 </select>
+                <br>
+                <input type="text" name="codigoBarras" placeholder="Código de Barras"
+                    [(ngModel)]="productoActual.codigoBarras" #codigoBarras="ngModel" />
+                <br>
 
                 <button type="submit" [disabled]="formProducto.invalid">
                     {{ editando ? 'Guardar cambios' : 'Crear' }}

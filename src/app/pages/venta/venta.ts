@@ -20,29 +20,9 @@ import { ProductoConStockModel } from '../../models/ProductoConStock.model';
 export class Venta {
 
   productos: ProductoConStockModel[] = [];
-  marcas: MarcaModel[] = [];
-  tipoProductos: TipoProductoModel[] = [];
-  presentaciones: PresentacionModel[] = [];
-
-  modalAbierto = false;
-  editando = false;
-  productoActual: ProductoModel = {
-    id: null,
-    codigoBarras: '',
-    nombre: '',
-    descripcion: '',
-    iva: 0,
-    precio: 0,
-    tipoProducto: { id: 0 },
-    presentacion: { id: 0 },
-    marca: { id: 0 }
-  };
 
   constructor(
     private productoService: ProductoService,
-    private marcaService: MarcaService,
-    private tipoProductoService: TipoProductoService,
-    private presentacionService: PresentacionService
   ) { }
 
   ngOnInit() {
@@ -56,10 +36,5 @@ export class Venta {
         error: (e) => console.error(e)
     });
   }
-
-
-
-
-
 
 }

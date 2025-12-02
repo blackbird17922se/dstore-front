@@ -6,9 +6,8 @@
             <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Precio</th>
+                <th>Precio Unidad</th>
                 <th>Marca</th>
-                <th>Tipo de Producto</th>
                 <th>Presentación</th>
                 <th>Codigo de Barras</th>
                 <th>Stock</th>
@@ -19,10 +18,9 @@
             @for (producto of productos; track producto.id) {
             <tr>
                 <td>{{ producto.nombre }}</td>
-                <!-- <td>{{ producto.descripcion }}</td> -->
+                <td>{{ producto.descripcion }}</td>
                 <td>{{ producto.precio }}</td>
                 <td>{{ producto.marca }}</td>
-                <!-- <td>{{ producto.tipoProducto.nombre }}</td> -->
                 <td>{{ producto.presentacion }}</td>
                 <td>{{ producto.codigoBarras }}</td>
                 <td>{{ producto.stock }}</td>

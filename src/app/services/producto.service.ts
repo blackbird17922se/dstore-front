@@ -3,6 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { ProductoModel } from "../models/producto.model";
 import { Observable } from "rxjs";
+import { ProductoConStockModel } from "../models/ProductoConStock.model";
 
 @Injectable({ providedIn: 'root' })
 export class ProductoService {
@@ -25,4 +26,9 @@ export class ProductoService {
     delete(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+    getAllConStock(): Observable<ProductoConStockModel[]> {
+        return this.http.get<ProductoConStockModel[]>(`${this.apiUrl}/con-stock`);
+    }
+
 }

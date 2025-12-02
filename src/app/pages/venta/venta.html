@@ -1,0 +1,37 @@
+<div class="venta-container">
+    <h2>Venta</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Marca</th>
+                <th>Tipo de Producto</th>
+                <th>Presentación</th>
+                <th>Codigo de Barras</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (producto of productos; track producto.id) {
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <!-- <td>{{ producto.descripcion }}</td> -->
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.marca }}</td>
+                <!-- <td>{{ producto.tipoProducto.nombre }}</td> -->
+                <td>{{ producto.presentacion }}</td>
+                <td>{{ producto.codigoBarras }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>
+                    <button >Agregar</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

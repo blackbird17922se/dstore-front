@@ -5,25 +5,31 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductoConStockModel } from '../../models/ProductoConStock.model';
 import { ItemCarrito } from '../../models/ItemCarrito.model';
+import { CajaService } from '../../services/caja.service';
+import { CajaModel } from '../../models/caja.model';
 
 
 @Component({
-  selector: 'app-venta',
+  selector: 'app-caja',
   imports: [CommonModule, FormsModule],
-  templateUrl: './venta.html',
-  styleUrl: './venta.scss',
+  templateUrl: './caja.html',
+  styleUrl: './caja.scss',
 })
-export class Venta {
+export class Caja {
 
   productosStock: ProductoConStockModel[] = [];
   carrito: ItemCarrito[] = [];
   productos: ProductoModel[] = [];
   codigoBuscado: string = '';
   ingresoCliente: number = 0;
+  cajaModel: CajaModel[] = [];
+
+  cliente: string = '';
 
 
   constructor(
     private productoService: ProductoService,
+    private cajaService: CajaService,
   ) { }
 
   ngOnInit() {
@@ -119,6 +125,35 @@ export class Venta {
   get cambio() {
     if (this.ingresoCliente <= 0) return 0;
     return this.ingresoCliente - this.totalGeneral;
+  }
+
+  procesarVenta() {
+    if (this.carrito.length === 0) {
+      alert("El carrito está vacío.");
+      return;
+    }
+
+    const venta: CajaModel = {
+      cliente: this.cliente || null,
+      productos: this.carrito.map(item => ({
+        idProducto: item.producto.id,
+        cantidad: item.cantidad
+      }))
+    };
+
+    this.cajaService.create(venta).subscribe({
+      next: () => {
+        alert("Venta procesada con éxito.");
+        this.carrito = [];
+        this.ingresoCliente = 0;
+        this.getProductos(); // actualizar stock
+      },
+      error: (error) => {
+        console.error('Error al procesar la venta:', error);
+        alert("Error al procesar la venta.");
+      }
+    });
+
   }
 
 }

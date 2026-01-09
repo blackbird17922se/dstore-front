@@ -1,8 +1,8 @@
-<div class="venta-container">
+<div class="caja-container">
     <h2>Venta</h2>
 
 
-    <div class="venta-container">
+    <div class="caja-container">
         <h2>Venta</h2>
 
         <h3>Total: {{ totalGeneral }}</h3>
@@ -12,7 +12,11 @@
 
         <input type="number" placeholder="Ingreso" [(ngModel)]="ingresoCliente" min="0" />
 
+        <input type="text" placeholder="Cliente" [(ngModel)]="cliente" />
+
         <h4>Vuelto: {{ cambio }}</h4>
+
+        <button (click)="procesarVenta()">Procesar Venta</button>
 
         <table class="table-prod-seleccionados">
             <thead>

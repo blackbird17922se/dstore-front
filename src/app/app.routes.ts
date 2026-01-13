@@ -6,7 +6,6 @@ import { Proveedores } from './pages/proveedores/proveedores';
 import { TipoProducto } from './pages/tipo-producto/tipo-producto';
 import { Presentacion } from './pages/presentacion/presentacion';
 import { Marca } from './pages/marca/marca';
-import { Lote } from './pages/lote/lote';
 import { Producto } from './pages/producto/producto';
 import { Caja } from './pages/caja/caja';
 
@@ -20,7 +19,6 @@ export const routes: Routes = [
   { path: 'tipo-producto', component: TipoProducto },
   { path: 'presentacion', component: Presentacion },
   { path: 'marca', component: Marca },
-  { path: 'lote', component: Lote },
   { path: 'producto', component: Producto },
   { path: 'caja', component: Caja },
   { path: '**', redirectTo: '/inicio' }

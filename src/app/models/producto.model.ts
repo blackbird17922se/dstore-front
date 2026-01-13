@@ -20,6 +20,7 @@ export interface ProductoModel {
   descripcion: string;
   iva: number;
   precio: number;
+  stock: number;
   tipoProducto: TipoProductoModel;
   presentacion: PresentacionModel;
   marca: MarcaModel;

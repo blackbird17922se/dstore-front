@@ -10,7 +10,9 @@ export class CajaService {
 
     constructor(private http: HttpClient) {}
 
-    create(Caja: CajaModel): Observable<CajaModel> {
-        return this.http.post<CajaModel>(this.apiUrl, Caja);
+    create(venta: CajaModel): Observable<{ mensaje: string }> {
+        return this.http.post<{ mensaje: string }>(this.apiUrl, venta);
     }
+
+
 }

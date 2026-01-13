@@ -14,6 +14,7 @@
                 <th>Tipo de Producto</th>
                 <th>Presentación</th>
                 <th>Codigo de Barras</th>
+                <th>Stock</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -29,6 +30,7 @@
                 <td>{{ producto.tipoProducto.nombre }}</td>
                 <td>{{ producto.presentacion.nombre }}</td>
                 <td>{{ producto.codigoBarras }}</td>
+                <td>{{ producto.stock }}</td>
                 <td>
                     <button (click)="editarProducto(producto)">✏️ Editar</button>
                     <button (click)="borrarProducto(producto.id)">🗑️ Eliminar</button>
@@ -109,6 +111,17 @@
                 <br>
                 <input type="text" name="codigoBarras" placeholder="Código de Barras"
                     [(ngModel)]="productoActual.codigoBarras" #codigoBarras="ngModel" />
+                <br>
+
+                <br>
+                <label for="stock">Stock:</label><br>
+                <input type="number" name="stock" placeholder="Stock" [(ngModel)]="productoActual.stock" required
+                    #stock="ngModel" />
+                @if (stock.invalid && stock.touched) {
+                <div class="error">
+                    ⚠️ El stock es obligatorio.
+                </div>
+                }
                 <br>
 
                 <button type="submit" [disabled]="formProducto.invalid">

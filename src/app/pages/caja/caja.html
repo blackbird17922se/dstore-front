@@ -36,8 +36,8 @@
                 <tr>
                     <td>{{ item.producto.nombre }}</td>
                     <td>{{ item.producto.precio }}</td>
-                    <td>{{ item.producto.marca }}</td>
-                    <td>{{ item.producto.presentacion }}</td>
+                    <td>{{ item.producto.marca.nombre }}</td>
+                    <td>{{ item.producto.presentacion.nombre }}</td>
                     <td>
                         <input type="number" [(ngModel)]="item.cantidad" name="cantidad-{{ i }}" required min="1"
                             #cant="ngModel" (ngModelChange)="actualizarCantidad(item, $event)" />
@@ -78,8 +78,8 @@
                     <td>{{ productoStock.nombre }}</td>
                     <td>{{ productoStock.descripcion }}</td>
                     <td>{{ productoStock.precio }}</td>
-                    <td>{{ productoStock.marca }}</td>
-                    <td>{{ productoStock.presentacion }}</td>
+                    <td>{{ productoStock.marca.nombre }}</td>
+                    <td>{{ productoStock.presentacion.nombre }}</td>
                     <td>{{ productoStock.codigoBarras }}</td>
                     <td>{{ productoStock.stock }}</td>
                     <td>

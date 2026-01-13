@@ -141,15 +141,16 @@ export class Caja {
       }))
     };
 
+
     this.cajaService.create(venta).subscribe({
-      next: () => {
-        alert("Venta procesada con éxito.");
+      next: (res) => {
+        alert(res.mensaje);
         this.carrito = [];
         this.ingresoCliente = 0;
-        this.getProductos(); // actualizar stock
+        this.getProductos();
       },
       error: (error) => {
-        console.error('Error al procesar la venta:', error);
+        console.error(error);
         alert("Error al procesar la venta.");
       }
     });

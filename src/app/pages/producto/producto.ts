@@ -32,6 +32,7 @@ export class Producto {
     descripcion: '',
     iva: 0,
     precio: 0,
+    stock: 0,
     tipoProducto: {id:0},
     presentacion: {id:0},
     marca: {id:0}
@@ -136,6 +137,7 @@ export class Producto {
       descripcion: '',
       iva: 0,
       precio: 0,
+      stock: 0,
       tipoProducto: {id:0},
       presentacion: {id:0},
       marca: {id:0}

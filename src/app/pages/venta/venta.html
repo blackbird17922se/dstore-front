@@ -1,0 +1,27 @@
+<div class="venta-container">
+    <h2>Venta</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Vendedor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (venta of ventas; track venta.id) {
+            <tr>
+                <td>{{ venta.id }}</td>
+                <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy":'':'es-CO' }}</td>
+                <td>{{ venta.cliente }}</td>
+                <td>{{ venta.total }}</td>
+                <td>{{ venta.vendedor }}</td>
+                <td>detalle</td>
+            </tr>
+            }
+        </tbody>
+    </table>

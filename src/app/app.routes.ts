@@ -7,6 +7,7 @@ import { Presentacion } from './pages/presentacion/presentacion';
 import { Marca } from './pages/marca/marca';
 import { Producto } from './pages/producto/producto';
 import { Caja } from './pages/caja/caja';
+import { Venta } from './pages/venta/venta';
 
 
 export const routes: Routes = [
@@ -19,5 +20,6 @@ export const routes: Routes = [
   { path: 'marca', component: Marca },
   { path: 'producto', component: Producto },
   { path: 'caja', component: Caja },
+  { path: 'venta', component: Venta },
   { path: '**', redirectTo: '/inicio' }
 ];

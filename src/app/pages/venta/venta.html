@@ -16,11 +16,11 @@
             @for (venta of ventas; track venta.id) {
             <tr>
                 <td>{{ venta.id }}</td>
-                <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy":'':'es-CO' }}</td>
+                <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy  hh:mm a":'':'es-CO' }}</td>
                 <td>{{ venta.cliente }}</td>
                 <td>{{ venta.total }}</td>
                 <td>{{ venta.vendedor }}</td>
-                <td>detalle</td>
+                <td><button (click)="verDetalle(venta.id)">Detalle</button></td>
             </tr>
             }
         </tbody>

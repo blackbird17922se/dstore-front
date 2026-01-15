@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { VentaModel } from '../../models/venta.model';
 import { VentaService } from '../../services/venta.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-venta',
@@ -11,9 +12,13 @@ import { VentaService } from '../../services/venta.service';
   styleUrl: './venta.scss',
 })
 export class Venta {
+
   ventas: VentaModel[] = [];
 
-  constructor(private ventaService: VentaService) {}
+  constructor(
+    private ventaService: VentaService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.getVentas();
@@ -28,5 +33,9 @@ export class Venta {
         console.error('Error fetching ventas:', error);
       }
     });
+  }
+
+  verDetalle(id: number | null){
+    this.router.navigate(['/detalle-venta', id]);
   }
 }

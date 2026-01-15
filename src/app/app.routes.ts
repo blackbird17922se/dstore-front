@@ -8,6 +8,7 @@ import { Marca } from './pages/marca/marca';
 import { Producto } from './pages/producto/producto';
 import { Caja } from './pages/caja/caja';
 import { Venta } from './pages/venta/venta';
+import { DetalleVenta } from './pages/detalle-venta/detalle-venta';
 
 
 export const routes: Routes = [
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'producto', component: Producto },
   { path: 'caja', component: Caja },
   { path: 'venta', component: Venta },
+  { path: 'detalle-venta/:id', component: DetalleVenta },
   { path: '**', redirectTo: '/inicio' }
 ];

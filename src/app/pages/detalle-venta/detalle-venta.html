@@ -1,10 +1,19 @@
 <div class="detalle-venta-container">
-    <h2>Detalle Venta</h2>
+    <h2>Detalle Venta #{{ venta.id }}</h2>
+
+    <p><b>Estado:</b> {{ venta.estado }}</p>
+
+    @if (venta.estado === 'ANULADA') {
+    <div>
+        <p><b>Fecha anulación:</b>
+            {{ venta.fechaAnulacion | date:'short' }}</p>
+        <p><b>Motivo:</b> {{ venta.motivoAnulacion }}</p>
+    </div>
+    }
 
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Producto</th>
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
@@ -12,13 +21,12 @@
             </tr>
         </thead>
         <tbody>
-            @for (venta of detalleVentas; track venta.id) {
+            @for (item of items; track item.id) {
             <tr>
-                <td>{{ venta.id }}</td>
-                <td>{{ venta.producto}}</td>
-                <td>{{ venta.cantidad}}</td>
-                <td>{{ venta.precioUnitario}}</td>
-                <td>{{ venta.subtotal}}</td>
+                <td>{{ item.producto}}</td>
+                <td>{{ item.cantidad}}</td>
+                <td>{{ item.precioUnitario}}</td>
+                <td>{{ item.subtotal}}</td>
             </tr>
             }
         </tbody>

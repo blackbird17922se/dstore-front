@@ -4,4 +4,6 @@ export interface VentaModel{
     cliente: string;
     total: number;
     vendedor: string;
+    estado: string;
+    motivoAnulacion?: string;
 }

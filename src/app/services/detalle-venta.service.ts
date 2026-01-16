@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs/internal/Observable";
-import { DetalleVentaModel } from "../models/detalle-venta.model";
+import { VentaDetalleModel } from "../models/ventaDetalle.model";
 
 @Injectable({ providedIn: 'root' })
 export class DetalleVentaService {
@@ -10,7 +9,9 @@ export class DetalleVentaService {
 
     constructor(private http: HttpClient) {}
 
-    getByVentaId(idVenta: number): Observable<DetalleVentaModel[]> {
-        return this.http.get<DetalleVentaModel[]>(`${this.apiUrl}/${idVenta}`);
+    obtenerDetalleVenta(id: number) {
+        return this.http.get<VentaDetalleModel>(
+            `${this.apiUrl}/${id}`
+        );
     }
 }

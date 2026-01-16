@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
-import { DetalleVentaModel } from '../../models/detalle-venta.model';
+import { CommonModule } from '@angular/common';
 import { DetalleVentaService } from '../../services/detalle-venta.service';
 import { ActivatedRoute } from '@angular/router';
+import { VentaDetalleModel } from '../../models/ventaDetalle.model';
+import { DetalleVentaItemModel } from '../../models/DetalleVentaItem.model';
 
 @Component({
   selector: 'app-detalle-venta',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './detalle-venta.html',
   styleUrl: './detalle-venta.scss',
 })
 export class DetalleVenta {
 
-  detalleVentas: DetalleVentaModel[] = [];
+  venta!: VentaDetalleModel;
+  items: DetalleVentaItemModel[] = [];
 
   constructor(
     private detalleVentaService: DetalleVentaService,
@@ -19,15 +22,12 @@ export class DetalleVenta {
   ) { }
 
   ngOnInit() {
-    const ventaId = this.route.snapshot.paramMap.get('id');
-    if (ventaId) {
-      this.cargarDetalle(Number(ventaId));
-    }
-  }
+    const id = this.route.snapshot.params['id'];
 
-  cargarDetalle(id: number) {
-    this.detalleVentaService.getByVentaId(id).subscribe(res => {
-      this.detalleVentas = res;
+    this.detalleVentaService.obtenerDetalleVenta(id).subscribe(res => {
+      this.venta = res;
+      this.items = res.items;
     });
   }
+
 }

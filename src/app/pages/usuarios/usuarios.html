@@ -1,1 +1,46 @@
-<p>usuarios works!</p>
+<div class="usuarios-container">
+  <h2>Usuarios</h2>
+  <button (click)="openModal()">➕ Crear usuario</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Rol</th>
+        <th>Nombre Usuario</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (usuario of usuarios; track usuario.id) {
+      <tr>
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.apellido }}</td>
+        <td>{{ usuario.rol.nombre }}</td>
+        <td>{{ usuario.nombreUsuario }}</td>
+        <td>
+          <button (click)="editUsuario(usuario)">✏️ Editar</button>
+          <button (click)="deleteUsuario(usuario.id)">🗑️ Eliminar</button>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h3>{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+      <input type="text" placeholder="Nombre del usuario" [(ngModel)]="usuarioActual.nombre" />
+      <div class="buttons">
+        <button (click)="saveUsuario()">
+          {{ editing ? 'Guardar cambios' : 'Crear' }}
+        </button>
+        <button (click)="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

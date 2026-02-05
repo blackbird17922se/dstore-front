@@ -1,0 +1,53 @@
+<div class="marca-container">
+    <h2>Marca</h2>
+    <button (click)="abrirModal()">➕ Crear Marca</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (marca of marcas; track marca.id) {
+            <tr>
+                <td>{{ marca.id }}</td>
+                <td>{{ marca.nombre }}</td>
+                <td>
+                    <button (click)="editarMarca(marca)">✏️ Editar</button>
+                    <button (click)="borrarMarca(marca.id)">🗑️ Eliminar</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Modal -->
+    @if (modalAbierto) {
+    <div class="modal">
+        <div class="modal-content">
+            <h3>{{ editando ? 'Editar Marca' : 'Crear Marca' }}</h3>
+
+            <!-- FORMULARIO -->
+            <form #formMarca="ngForm" (ngSubmit)="guardarMarca()">
+
+                <input type="text" name="nombre" placeholder="Nombre de la marca" [(ngModel)]="marcaActual.nombre"
+                    required #nombre="ngModel" />
+                @if (nombre.invalid && nombre.touched) {
+                <div class="error">
+                    ⚠️ El nombre es obligatorio.
+                </div>
+                }
+
+                <div class="buttons">
+                    <button type="submit" [disabled]="formMarca.invalid">
+                        {{ editando ? 'Guardar cambios' : 'Crear' }}
+                    </button>
+                    <button type="button" (click)="cerrarModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    }

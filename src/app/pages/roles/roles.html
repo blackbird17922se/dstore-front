@@ -11,7 +11,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let rol of roles">
+      @for (rol of roles; track rol.id) {
+      <tr>
         <td>{{ rol.id }}</td>
         <td>{{ rol.nombre }}</td>
         <td>
@@ -19,6 +20,7 @@
           <button (click)="deleteRol(rol.id)">🗑️ Eliminar</button>
         </td>
       </tr>
+    }
     </tbody>
   </table>
 

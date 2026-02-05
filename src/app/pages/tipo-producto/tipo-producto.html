@@ -1,0 +1,56 @@
+<div class="tipo-producto-container">
+  <h2>Tipo de Producto</h2>
+  <button (click)="abrirModal()">➕ Crear tipo de producto</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tipoProducto of tipoProductos; track tipoProducto.id) {
+        <tr>
+          <td>{{ tipoProducto.id }}</td>
+          <td>{{ tipoProducto.nombre }}</td>
+          <td>
+            <button (click)="editarTipoProducto(tipoProducto)">✏️ Editar</button>
+            <button (click)="borrarTipoProducto(tipoProducto.id)">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="modalAbierto">
+    <div class="modal-content">
+      <h3>{{ editando ? 'Editar Tipo Producto' : 'Crear Tipo Producto' }}</h3>
+
+      <!-- FORMULARIO -->
+      <form #formTipoProducto="ngForm" (ngSubmit)="guardarTipoProducto()">
+
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Nombre del tipo de producto"
+          [(ngModel)]="tipoProductoActual.nombre"
+          required
+          #nombre="ngModel"
+        />
+        <div *ngIf="nombre.invalid && nombre.touched" class="error">
+          ⚠️ El nombre es obligatorio.
+        </div>
+
+        <div class="buttons">
+          <button type="submit" [disabled]="formTipoProducto.invalid">
+            {{ editando ? 'Guardar cambios' : 'Crear' }}
+          </button>
+          <button type="button" (click)="cerrarModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

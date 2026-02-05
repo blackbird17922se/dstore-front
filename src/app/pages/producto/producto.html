@@ -1,0 +1,136 @@
+<div class="producto-container">
+    <h2>Producto</h2>
+    <button (click)="abrirModal()">➕ Crear Producto</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>IVA</th>
+                <th>Marca</th>
+                <th>Tipo de Producto</th>
+                <th>Presentación</th>
+                <th>Codigo de Barras</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (producto of productos; track producto.id) {
+            <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.iva }}</td>
+                <td>{{ producto.marca.nombre }}</td>
+                <td>{{ producto.tipoProducto.nombre }}</td>
+                <td>{{ producto.presentacion.nombre }}</td>
+                <td>{{ producto.codigoBarras }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>
+                    <button (click)="editarProducto(producto)">✏️ Editar</button>
+                    <button (click)="borrarProducto(producto.id)">🗑️ Eliminar</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Modal -->
+    @if (modalAbierto) {
+    <div class="modal">
+        <div class="modal-content">
+            <h3>{{ editando ? 'Editar Producto' : 'Crear Producto' }}</h3>
+
+            <!-- FORMULARIO -->
+            <form #formProducto="ngForm" (ngSubmit)="guardarProducto()">
+
+                <input type="text" name="nombre" placeholder="Nombre del producto" [(ngModel)]="productoActual.nombre"
+                    required #nombre="ngModel" />
+                @if (nombre.invalid && nombre.touched) {
+                <div class="error">
+                    ⚠️ El nombre es obligatorio.
+                </div>
+                }
+                <input type="text" name="descripcion" placeholder="Descripción" [(ngModel)]="productoActual.descripcion"
+                    #descripcion="ngModel" />
+
+                <br>
+                <label for="precio">Precio:</label><br>
+                <input type="number" name="precio" placeholder="Precio" [(ngModel)]="productoActual.precio" required
+                    #precio="ngModel" />
+                @if (precio.invalid && precio.touched) {
+                <div class="error">
+                    ⚠️ El precio es obligatorio.
+                </div>
+                }
+                <br>
+                <label>
+                    <input type="checkbox" name="iva" [(ngModel)]="productoActual.iva"
+                        [ngModel]="productoActual.iva === 1" (ngModelChange)="productoActual.iva = $event ? 1 : 0" />
+                    ¿Aplicar IVA?
+                </label>
+
+                <br>
+                <label for="idMarca">Marca:</label>
+                <br />
+                <select id="idMarca" name="idMarca" 
+                [(ngModel)]="productoActual.marca.id" 
+                #idMarca="ngModel">
+                    <option value="">-- Selecciona una marca --</option>
+                    <option *ngFor="let marca of marcas" [value]="marca.id">
+                        {{ marca.nombre }}
+                    </option>
+                </select>
+
+                <br>
+                <label for="idTipoProducto">Tipo de Producto:</label>
+                <br />
+                <select id="idTipoProducto" name="idTipoProducto" [(ngModel)]="productoActual.tipoProducto.id"
+                    #idTipoProducto="ngModel">
+                    <option value="">-- Selecciona un tipo de producto --</option>
+                    <option *ngFor="let tipo of tipoProductos" [value]="tipo.id">
+                        {{ tipo.nombre }}
+                    </option>
+                </select>
+
+                <br>
+                <label for="idPresentacion">Tipo de Presentación:</label>
+                <br />
+                <select id="idPresentacion" name="idPresentacion" [(ngModel)]="productoActual.presentacion.id"
+                    #idPresentacion="ngModel">
+                    <option value="">-- Selecciona un tipo de presentacion --</option>
+                    <option *ngFor="let tipo of presentaciones" [value]="tipo.id">
+                        {{ tipo.nombre }}
+                    </option>
+                </select>
+                <br>
+                <input type="text" name="codigoBarras" placeholder="Código de Barras"
+                    [(ngModel)]="productoActual.codigoBarras" #codigoBarras="ngModel" />
+                <br>
+
+                <br>
+                <label for="stock">Stock:</label><br>
+                <input type="number" name="stock" placeholder="Stock" [(ngModel)]="productoActual.stock" required
+                    #stock="ngModel" />
+                @if (stock.invalid && stock.touched) {
+                <div class="error">
+                    ⚠️ El stock es obligatorio.
+                </div>
+                }
+                <br>
+
+                <button type="submit" [disabled]="formProducto.invalid">
+                    {{ editando ? 'Guardar cambios' : 'Crear' }}
+                </button>
+                <button type="button" (click)="cerrarModal()">Cancelar</button>
+
+
+            </form>
+        </div>
+    </div>
+    }

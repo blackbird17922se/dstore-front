@@ -1,59 +1,72 @@
-# DstoreFront
+# DStore Frontend 🧾
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.3.
+Frontend del sistema **DStore**, una aplicación web para la gestión
+de ventas e inventario en pequeños comercios.
 
-## Development server
+La interfaz está diseñada para consumir la API del backend y
+presentar la información de forma clara y operativa para el usuario.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🎯 Objetivo del proyecto
+Brindar una interfaz sencilla y funcional que permita:
+- Visualizar ventas
+- Consultar el detalle de una venta
+- Anular ventas de forma controlada
+- Visualizar estados y resultados de las operaciones
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🚀 Funcionalidades implementadas
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Ventas
+- Listado de ventas
+- Visualización del estado de cada venta
+- Acceso al detalle de una venta
 
-```bash
-ng generate component component-name
-```
+### Detalle de venta
+- Información general de la venta
+- Listado de productos vendidos
+- Visualización de:
+  - Estado
+  - Fecha de anulación (si aplica)
+  - Motivo de anulación (si aplica)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Anulación
+- Modal de confirmación
+- Ingreso de motivo de anulación
+- Feedback al usuario (éxito / error)
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 🧱 Diseño
+- Separación de vistas:
+  - Listado
+  - Detalle
+- Consumo de DTOs definidos por el backend
+- Flujo alineado con reglas de negocio
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🛠️ Stack tecnológico
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Angular
+- TypeScript
+- HTML
+- CSS
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🔐 Próximas mejoras
+- Sistema de autenticación (login)
+- Manejo de roles
+- Mejora visual de la interfaz (UI/UX)
+- Componentes reutilizables
+- Diseño responsive
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+## 📌 Estado del proyecto
+UI funcional básica conectada a un backend operativo.
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Proyecto en desarrollo 🚧

@@ -26,21 +26,68 @@
           <button (click)="deleteUsuario(usuario.id)">🗑️ Eliminar</button>
         </td>
       </tr>
-    }
+      }
     </tbody>
   </table>
 
-  <!-- Modal -->
-  <div class="modal" *ngIf="isModalOpen">
+  @if (modalAbierto) {
+  <div class="modal">
     <div class="modal-content">
-      <h3>{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
-      <input type="text" placeholder="Nombre del usuario" [(ngModel)]="usuarioActual.nombre" />
-      <div class="buttons">
-        <button (click)="saveUsuario()">
-          {{ editing ? 'Guardar cambios' : 'Crear' }}
+      <h3>{{ editando ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+
+      <!-- FORMULARIO -->
+      <form #usuarioForm="ngForm" (ngSubmit)="saveUsuario()">
+
+        <input type="text" name="nombre" placeholder="Nombre del usuario" [(ngModel)]="usuarioActual.nombre" required
+          #nombre="ngModel" />
+        @if (nombre.invalid && nombre.touched) {
+        <div class="error">
+          ⚠️ El nombre es obligatorio.
+        </div>
+        }
+        <br>
+        <input type="text" name="apellido" placeholder="Apellido del usuario" [(ngModel)]="usuarioActual.apellido"
+          required #apellido="ngModel" />
+        <br>
+        <input type="text" name="nombreUsuario" placeholder="Nombre de la cuenta de Usuario"
+          [(ngModel)]="usuarioActual.nombreUsuario" required #nombreUsuario="ngModel" />
+        @if (nombreUsuario.invalid && nombreUsuario.touched) {
+        <div class="error">
+          ⚠️ El nombre de la cuenta de Usuario es obligatorio.
+        </div>
+        }
+        <br>
+        <input type="text" name="contrasena" placeholder="Contraseña del usuario" [(ngModel)]="usuarioActual.contrasena"
+          required #contrasena="ngModel" />
+        @if (contrasena.invalid && contrasena.touched) {
+        <div class="error">
+          ⚠️ La contraseña es obligatoria.
+        </div>
+        }
+        <br>
+
+        <br>
+        <label for="idRol">Rol:</label>
+        <br />
+        <select id="idRol" name="idRol" [(ngModel)]="usuarioActual.rol.id" required>
+          <option [ngValue]="null">-- Selecciona un rol --</option>
+          <option *ngFor="let rol of roles" [ngValue]="rol.id">
+            {{ rol.nombre }}
+          </option>
+        </select>
+
+
+        <br>
+
+        <button type="submit" [disabled]="usuarioForm.invalid">
+          {{ editando ? 'Guardar cambios' : 'Crear' }}
         </button>
-        <button (click)="closeModal()">Cancelar</button>
-      </div>
+        <button type="button" (click)="closeModal()">Cancelar</button>
+
+      </form>
+
     </div>
   </div>
+
+  }
 </div>

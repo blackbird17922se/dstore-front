@@ -16,10 +16,16 @@ export class Usuarios {
   usuarios: UsuarioModel[] = [];
   roles: RolModel[] = [];
 
-  isModalOpen = false;
-  editing = false;
-  usuarioActual: UsuarioModel = { id: null, nombre: '', apellido: '', nombreUsuario: '', 
-    contrasena: '', rol: { id:0 } };
+  modalAbierto = false;
+  editando = false;
+  usuarioActual: UsuarioModel = { 
+    id: null, 
+    nombre: '', 
+    apellido: '', 
+    nombreUsuario: '', 
+    contrasena: '', 
+    rol: { id:0 } 
+  };
 
   constructor(
     private rolService: RolService, 
@@ -50,14 +56,19 @@ export class Usuarios {
   }
 
 
-  editUsuario(Usuario: UsuarioModel) {
-    this.editing = true;
-    this.usuarioActual = { ...Usuario };
-    this.isModalOpen = true;
+  editUsuario(usuario: UsuarioModel) {
+    this.editando = true;
+    this.usuarioActual = {
+      ...usuario,
+      rol: {
+        id: usuario.rol.id
+      }
+    };
+    this.modalAbierto = true;
   }
 
   saveUsuario() {
-    const action = this.editing
+    const action = this.editando
       ? this.usuarioService.update(this.usuarioActual)
       : this.usuarioService.create(this.usuarioActual);
     action.subscribe({
@@ -90,13 +101,13 @@ export class Usuarios {
   }
 
   openModal() {
-    this.editing = false;
+    this.editando = false;
     this.resetUsuarioActual();
-    this.isModalOpen = true;
+    this.modalAbierto = true;
   }
 
   closeModal() {
-    this.isModalOpen = false;
+    this.modalAbierto = false;
   }
 
 }

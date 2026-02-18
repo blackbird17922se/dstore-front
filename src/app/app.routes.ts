@@ -9,6 +9,7 @@ import { Producto } from './pages/producto/producto';
 import { Caja } from './pages/caja/caja';
 import { Venta } from './pages/venta/venta';
 import { DetalleVenta } from './pages/detalle-venta/detalle-venta';
+import { Login } from './pages/login/login';
 
 
 export const routes: Routes = [
@@ -23,5 +24,6 @@ export const routes: Routes = [
   { path: 'caja', component: Caja },
   { path: 'venta', component: Venta },
   { path: 'detalle-venta/:id', component: DetalleVenta },
+  { path: 'login', component: Login },
   { path: '**', redirectTo: '/inicio' }
 ];

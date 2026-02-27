@@ -13,7 +13,8 @@ import { Login } from './pages/login/login';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/inicio', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: Login },
   { path: 'inicio', component: Inicio },
   { path: 'usuarios', component: Usuarios },
   { path: 'roles', component: Roles },
@@ -24,6 +25,5 @@ export const routes: Routes = [
   { path: 'caja', component: Caja },
   { path: 'venta', component: Venta },
   { path: 'detalle-venta/:id', component: DetalleVenta },
-  { path: 'login', component: Login },
   { path: '**', redirectTo: '/inicio' }
 ];

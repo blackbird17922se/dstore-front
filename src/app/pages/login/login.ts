@@ -21,8 +21,6 @@ export class Login {
   ) { }
 
   login() {
-    console.log('Enviando:', this.nombreUsuario, this.contrasena); // debug
-
     this.authService.login(this.nombreUsuario, this.contrasena).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);

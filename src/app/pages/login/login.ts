@@ -25,12 +25,9 @@ export class Login {
 
     this.authService.login(this.nombreUsuario, this.contrasena).subscribe({
       next: (res) => {
-        alert(res.mensaje); // ahora muestra "Autenticación exitosa"
-        console.log(res);
-        console.log('ANTES DE GUARDAR', this.authService.isLoggedIn());
-        // aquí podrías guardar el token / info usuario en localStorage
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('rol', res.rol);
         this.authService.guardarUsuario(this.nombreUsuario);
-        console.log('DESPUÉS DE GUARDAR', this.authService.isLoggedIn());
         this.router.navigate(['/inicio']);
       },
       error: (err) => {

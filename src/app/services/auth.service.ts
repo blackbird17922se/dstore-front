@@ -46,4 +46,8 @@ export class AuthService {
   getUsuario(): string | null {
     return localStorage.getItem('usuario');
   }
+
+    getRol(): string | null {
+    return localStorage.getItem('rol');
+  }
 }

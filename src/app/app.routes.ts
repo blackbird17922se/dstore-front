@@ -9,19 +9,30 @@ import { Producto } from './pages/producto/producto';
 import { Caja } from './pages/caja/caja';
 import { Venta } from './pages/venta/venta';
 import { DetalleVenta } from './pages/detalle-venta/detalle-venta';
+import { Login } from './pages/login/login';
+import { authGuard } from './guards/auth-guard';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/inicio', pathMatch: 'full' },
-  { path: 'inicio', component: Inicio },
-  { path: 'usuarios', component: Usuarios },
-  { path: 'roles', component: Roles },
-  { path: 'tipo-producto', component: TipoProducto },
-  { path: 'presentacion', component: Presentacion },
-  { path: 'marca', component: Marca },
-  { path: 'producto', component: Producto },
-  { path: 'caja', component: Caja },
-  { path: 'venta', component: Venta },
-  { path: 'detalle-venta/:id', component: DetalleVenta },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: Login },
+
+  {
+    path: '',
+    canActivate: [authGuard],
+    children: [
+      { path: 'inicio', component: Inicio },
+      { path: 'usuarios', component: Usuarios },
+      { path: 'roles', component: Roles },
+      { path: 'tipo-producto', component: TipoProducto },
+      { path: 'presentacion', component: Presentacion },
+      { path: 'marca', component: Marca },
+      { path: 'producto', component: Producto },
+      { path: 'caja', component: Caja },
+      { path: 'venta', component: Venta },
+      { path: 'detalle-venta/:id', component: DetalleVenta }
+    ]
+  },
+
   { path: '**', redirectTo: '/inicio' }
 ];

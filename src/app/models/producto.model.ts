@@ -18,10 +18,10 @@ export interface ProductoModel {
   codigoBarras: string;
   nombre: string;
   descripcion: string;
-  iva: number;
+  idTarifaIva: number;
   precio: number;
   stock: number;
-  tipoProducto: TipoProductoModel;
-  presentacion: PresentacionModel;
-  marca: MarcaModel;
+  nombreCategoria: string;
+  nombrePresentacion: string;
+  nombreMarca: string;
 }

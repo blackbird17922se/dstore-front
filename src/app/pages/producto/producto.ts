@@ -30,12 +30,12 @@ export class Producto {
     codigoBarras: '',
     nombre: '',
     descripcion: '',
-    iva: 0,
+    idTarifaIva: 0,
     precio: 0,
     stock: 0,
-    tipoProducto: {id:0},
-    presentacion: {id:0},
-    marca: {id:0}
+    nombreCategoria: '',
+    nombrePresentacion: '',
+    nombreMarca: ''
   };
 
   constructor(
@@ -135,12 +135,12 @@ export class Producto {
       codigoBarras: '',
       nombre: '',
       descripcion: '',
-      iva: 0,
+      idTarifaIva: 0,
       precio: 0,
       stock: 0,
-      tipoProducto: {id:0},
-      presentacion: {id:0},
-      marca: {id:0}
+      nombreCategoria: '',
+      nombrePresentacion: '',
+      nombreMarca: ''
     };
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "../../environments/environment";
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoginResponse } from '../models/login-response';
 
 @Injectable({
   providedIn: 'root'
@@ -19,15 +20,24 @@ export class AuthService {
 
   // 🔹 Método privado para revisar localStorage al iniciar
   private checkInitialLogin(): boolean {
-    return !!localStorage.getItem('usuario');
+    return !!localStorage.getItem('token');
   }
 
-  login(nombreUsuario: string, contrasena: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, {
-      nombreUsuario,
-      contrasena
-    });
+
+  login(
+    nombreUsuario: string,
+    contrasena: string
+  ): Observable<LoginResponse> {
+
+    return this.http.post<LoginResponse>(
+      `${this.apiUrl}/login`,
+      {
+        nombreUsuario,
+        contrasena
+      }
+    );
   }
+
 
   guardarUsuario(usuario: string) {
     localStorage.setItem('usuario', usuario);
@@ -35,7 +45,10 @@ export class AuthService {
   }
 
   logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('rol');
     localStorage.removeItem('usuario');
+
     this.loggedInSubject.next(false);
   }
 

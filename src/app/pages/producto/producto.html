@@ -25,10 +25,10 @@
                 <td>{{ producto.nombre }}</td>
                 <td>{{ producto.descripcion }}</td>
                 <td>{{ producto.precio }}</td>
-                <td>{{ producto.iva }}</td>
-                <td>{{ producto.marca.nombre }}</td>
-                <td>{{ producto.tipoProducto.nombre }}</td>
-                <td>{{ producto.presentacion.nombre }}</td>
+                <td>{{ producto.idTarifaIva }}</td>
+                <td>{{ producto.nombreMarca }}</td>
+                <td>{{ producto.nombreCategoria }}</td>
+                <td>{{ producto.nombrePresentacion }}</td>
                 <td>{{ producto.codigoBarras }}</td>
                 <td>{{ producto.stock }}</td>
                 <td>
@@ -70,8 +70,8 @@
                 }
                 <br>
                 <label>
-                    <input type="checkbox" name="iva" [(ngModel)]="productoActual.iva"
-                        [ngModel]="productoActual.iva === 1" (ngModelChange)="productoActual.iva = $event ? 1 : 0" />
+                    <!-- <input type="checkbox" name="iva" [(ngModel)]="productoActual.iva"
+                        [ngModel]="productoActual.iva === 1" (ngModelChange)="productoActual.iva = $event ? 1 : 0" /> -->
                     ¿Aplicar IVA?
                 </label>
 
@@ -79,7 +79,7 @@
                 <label for="idMarca">Marca:</label>
                 <br />
                 <select id="idMarca" name="idMarca" 
-                [(ngModel)]="productoActual.marca.id" 
+                [(ngModel)]="productoActual.nombreMarca" 
                 #idMarca="ngModel">
                     <option value="">-- Selecciona una marca --</option>
                     <option *ngFor="let marca of marcas" [value]="marca.id">
@@ -88,11 +88,11 @@
                 </select>
 
                 <br>
-                <label for="idTipoProducto">Tipo de Producto:</label>
+                <label for="idTipoProducto">Categoría de Producto:</label>
                 <br />
-                <select id="idTipoProducto" name="idTipoProducto" [(ngModel)]="productoActual.tipoProducto.id"
+                <select id="idTipoProducto" name="idTipoProducto" [(ngModel)]="productoActual.nombreCategoria"
                     #idTipoProducto="ngModel">
-                    <option value="">-- Selecciona un tipo de producto --</option>
+                    <option value="">-- Selecciona una categoría de producto --</option>
                     <option *ngFor="let tipo of tipoProductos" [value]="tipo.id">
                         {{ tipo.nombre }}
                     </option>
@@ -101,7 +101,7 @@
                 <br>
                 <label for="idPresentacion">Tipo de Presentación:</label>
                 <br />
-                <select id="idPresentacion" name="idPresentacion" [(ngModel)]="productoActual.presentacion.id"
+                <select id="idPresentacion" name="idPresentacion" [(ngModel)]="productoActual.nombrePresentacion"
                     #idPresentacion="ngModel">
                     <option value="">-- Selecciona un tipo de presentacion --</option>
                     <option *ngFor="let tipo of presentaciones" [value]="tipo.id">

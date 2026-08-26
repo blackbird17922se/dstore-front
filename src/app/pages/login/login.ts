@@ -21,11 +21,14 @@ export class Login {
   ) { }
 
   login() {
+
     this.authService.login(this.nombreUsuario, this.contrasena).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('rol', res.rol);
-        this.authService.guardarUsuario(this.nombreUsuario);
+        this.authService.guardarUsuario(
+          res.nombreUsuario
+        );
         this.router.navigate(['/inicio']);
       },
       error: (err) => {

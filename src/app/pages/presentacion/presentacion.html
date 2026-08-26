@@ -7,17 +7,44 @@
       <tr>
         <th>ID</th>
         <th>Nombre</th>
+        <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </thead>
+    
     <tbody>
+
       @for (presentacion of presentaciones; track presentacion.id) {
         <tr>
           <td>{{ presentacion.id }}</td>
           <td>{{ presentacion.nombre }}</td>
+
           <td>
+            @if (presentacion.activo) {
+              <span class="estado-activo">
+                🟢 Activo
+              </span>
+            } @else {
+              <span class="estado-inactivo">
+                🔴 Inactivo
+              </span>
+            }
+          </td>
+
+          <td>
+            
             <button (click)="editarPresentacion(presentacion)">✏️ Editar</button>
-            <button (click)="borrarPresentacion(presentacion.id)">🗑️ Eliminar</button>
+
+            <button
+              (click)="cambiarEstadoPresentacion(presentacion)">
+
+              {{ presentacion.activo
+                  ? '🔴 Desactivar'
+                  : '🟢 Activar'
+              }}
+
+            </button>
+
           </td>
         </tr>
       }

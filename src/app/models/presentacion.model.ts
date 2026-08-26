@@ -1,4 +1,5 @@
 export interface PresentacionModel {
-    id: number | null;
-    nombre: string;
+  id: number | null;
+  nombre: string;
+  activo: boolean;
 }

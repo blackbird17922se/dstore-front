@@ -1,6 +1,6 @@
 <div class="tipo-producto-container">
-  <h2>Tipo de Producto</h2>
-  <button (click)="abrirModal()">➕ Crear tipo de producto</button>
+  <h2>Categoría de Producto</h2>
+  <button (click)="abrirModal()">➕ Crear nueva categoría</button>
 
   <table>
     <thead>
@@ -17,7 +17,7 @@
           <td>{{ tipoProducto.nombre }}</td>
           <td>
             <button (click)="editarTipoProducto(tipoProducto)">✏️ Editar</button>
-            <button (click)="borrarTipoProducto(tipoProducto.id)">🗑️ Eliminar</button>
+            <!-- <button (click)="borrarTipoProducto(tipoProducto.id)">🗑️ Desactivar</button> -->
           </td>
         </tr>
       }
@@ -27,7 +27,7 @@
   <!-- Modal -->
   <div class="modal" *ngIf="modalAbierto">
     <div class="modal-content">
-      <h3>{{ editando ? 'Editar Tipo Producto' : 'Crear Tipo Producto' }}</h3>
+      <h3>{{ editando ? 'Editar Categoría' : 'Crear Categoría' }}</h3>
 
       <!-- FORMULARIO -->
       <form #formTipoProducto="ngForm" (ngSubmit)="guardarTipoProducto()">
@@ -35,7 +35,7 @@
         <input
           type="text"
           name="nombre"
-          placeholder="Nombre del tipo de producto"
+          placeholder="Nombre de la categoría"
           [(ngModel)]="tipoProductoActual.nombre"
           required
           #nombre="ngModel"

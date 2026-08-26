@@ -88,11 +88,11 @@
                 </select>
 
                 <br>
-                <label for="idTipoProducto">Tipo de Producto:</label>
+                <label for="idTipoProducto">Categoría de Producto:</label>
                 <br />
                 <select id="idTipoProducto" name="idTipoProducto" [(ngModel)]="productoActual.nombreCategoria"
                     #idTipoProducto="ngModel">
-                    <option value="">-- Selecciona un tipo de producto --</option>
+                    <option value="">-- Selecciona una categoría de producto --</option>
                     <option *ngFor="let tipo of tipoProductos" [value]="tipo.id">
                         {{ tipo.nombre }}
                     </option>

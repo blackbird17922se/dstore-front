@@ -16,7 +16,8 @@ export class Presentacion {
   editando = false;
   presentacionActual: PresentacionModel = {
     id: null,
-    nombre: ''
+    nombre: '',
+    activo: true
   };
 
   constructor(private presentacionService: PresentacionService) {}
@@ -67,24 +68,53 @@ export class Presentacion {
     });
   }
 
-  borrarPresentacion(id: number | null) {
-    if (id === null) return;
-    if (confirm('¿Estás seguro de que deseas eliminar esta presentación?')) {
-      this.presentacionService.delete(id).subscribe({
-        next: () => {
-          this.getPresentaciones();
-        },
-        error: (error) => {
-          console.error('Error al eliminar presentación:', error);
-        }
-      });
+
+  cambiarEstadoPresentacion(presentacion: PresentacionModel) {
+
+    if (presentacion.id === null) {
+      return;
+    }
+
+    const nuevoEstado = !presentacion.activo;
+
+    const accion = nuevoEstado
+      ? 'activar'
+      : 'desactivar';
+
+    if (
+      confirm(
+        `¿Estás seguro de que deseas ${accion} esta presentación?`
+      )
+    ) {
+
+      this.presentacionService
+        .cambiarEstado(
+          presentacion.id,
+          nuevoEstado
+        )
+        .subscribe({
+
+          next: () => {
+            this.getPresentaciones();
+          },
+
+          error: (error) => {
+            console.error(
+              'Error al cambiar el estado de la presentación:',
+              error
+            );
+          }
+
+        });
     }
   }
+
 
   resetPresentacionActual() {
     this.presentacionActual = {
       id: null,
-      nombre: ''
+      nombre: '',
+      activo: true
     };
   }
 

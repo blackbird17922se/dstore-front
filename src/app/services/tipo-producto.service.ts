@@ -7,7 +7,7 @@ import { TipoProductoModel } from "../models/tipo-producto.model";
 
 @Injectable({ providedIn: 'root' })
 export class TipoProductoService {
-    private apiUrl = `${environment.apiUrl}/tipos-producto`;
+    private apiUrl = `${environment.apiUrl}/categorias`;
 
     constructor(private http: HttpClient) { };
 

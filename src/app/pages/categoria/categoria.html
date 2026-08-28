@@ -1,23 +1,43 @@
-<div class="tipo-producto-container">
+<div class="categoria-container">
   <h2>Categoría de Producto</h2>
   <button (click)="abrirModal()">➕ Crear nueva categoría</button>
 
   <table>
     <thead>
       <tr>
-        <th>ID</th>
         <th>Nombre</th>
+        <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      @for (tipoProducto of tipoProductos; track tipoProducto.id) {
+      @for (Categoria of Categorias; track Categoria.id) {
         <tr>
-          <td>{{ tipoProducto.id }}</td>
-          <td>{{ tipoProducto.nombre }}</td>
+          <td>{{ Categoria.nombre }}</td>
+
           <td>
-            <button (click)="editarTipoProducto(tipoProducto)">✏️ Editar</button>
-            <!-- <button (click)="borrarTipoProducto(tipoProducto.id)">🗑️ Desactivar</button> -->
+            @if (Categoria.activo) {
+              <span class="estado-activo">
+                🟢 Activo
+              </span>
+            } @else {
+              <span class="estado-inactivo">
+                🔴 Inactivo
+              </span>
+            }
+          </td>
+
+          <td>
+            <button (click)="editarCategoria(Categoria)">✏️ Editar</button>
+            
+            <button
+              (click)="cambiarEstadoCategoria(Categoria)">
+              {{ Categoria.activo
+                  ? '🔴 Desactivar'
+                  : '🟢 Activar'
+              }}
+            </button>
+
           </td>
         </tr>
       }
@@ -30,13 +50,13 @@
       <h3>{{ editando ? 'Editar Categoría' : 'Crear Categoría' }}</h3>
 
       <!-- FORMULARIO -->
-      <form #formTipoProducto="ngForm" (ngSubmit)="guardarTipoProducto()">
+      <form #formCategoria="ngForm" (ngSubmit)="guardarCategoria()">
 
         <input
           type="text"
           name="nombre"
           placeholder="Nombre de la categoría"
-          [(ngModel)]="tipoProductoActual.nombre"
+          [(ngModel)]="CategoriaActual.nombre"
           required
           #nombre="ngModel"
         />
@@ -45,7 +65,7 @@
         </div>
 
         <div class="buttons">
-          <button type="submit" [disabled]="formTipoProducto.invalid">
+          <button type="submit" [disabled]="formCategoria.invalid">
             {{ editando ? 'Guardar cambios' : 'Crear' }}
           </button>
           <button type="button" (click)="cerrarModal()">Cancelar</button>

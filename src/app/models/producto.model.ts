@@ -8,7 +8,7 @@ export interface PresentacionModel {
   nombre?: string;
 }
 
-export interface TipoProductoModel {
+export interface CategoriaModel {
   id: number;
   nombre?: string;
 }

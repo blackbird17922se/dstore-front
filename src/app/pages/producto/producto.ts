@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MarcaModel } from '../../models/marca.model';
 import { MarcaService } from '../../services/marca.service';
-import { TipoProductoModel } from '../../models/tipo-producto.model';
-import { TipoProductoService } from '../../services/tipo-producto.service';
+import { CategoriaModel } from '../../models/categoria.model';
+import { CategoriaService } from '../../services/categoria.service';
 import { PresentacionModel } from '../../models/presentacion.model';
 import { PresentacionService } from '../../services/presentacion.service';
 
@@ -20,7 +20,7 @@ export class Producto {
 
   productos: ProductoModel[] = [];
   marcas: MarcaModel[] = [];
-  tipoProductos: TipoProductoModel[] = [];
+  Categorias: CategoriaModel[] = [];
   presentaciones: PresentacionModel[] = [];
 
   modalAbierto = false;
@@ -41,7 +41,7 @@ export class Producto {
   constructor(
     private productoService: ProductoService,
     private marcaService: MarcaService,
-    private tipoProductoService: TipoProductoService,
+    private CategoriaService: CategoriaService,
     private presentacionService: PresentacionService
   ) {}
 
@@ -60,8 +60,8 @@ export class Producto {
   }
 
   getTiposProductos(){
-    this.tipoProductoService.getAll().subscribe({
-      next: (data) => {this.tipoProductos = data;},
+    this.CategoriaService.getAll().subscribe({
+      next: (data) => {this.Categorias = data;},
       error: (error) => {console.error('Error al obtener Tipos de Productos:', error);}
     });
   }

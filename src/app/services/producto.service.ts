@@ -1,9 +1,11 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { ProductoModel } from "../models/producto.model";
+import { ProductoModel } from "../models/producto/producto.model";
 import { Observable } from "rxjs";
 import { ProductoConStockModel } from "../models/ProductoConStock.model";
+import { ProductoRequest } from "../models/producto/producto-request.model";
+import { ProductoResponse } from "../models/producto/producto-response.model";
 
 @Injectable({ providedIn: 'root' })
 export class ProductoService {
@@ -15,16 +17,20 @@ export class ProductoService {
         return this.http.get<ProductoModel[]>(this.apiUrl);
     }
 
-    create(Producto: ProductoModel): Observable<ProductoModel> {
-        return this.http.post<ProductoModel>(this.apiUrl, Producto);
+    create(request: ProductoRequest): Observable<ProductoModel> {
+        return this.http.post<ProductoModel>(this.apiUrl, request);
     }
 
-    update(Producto: ProductoModel): Observable<ProductoModel> {
-        return this.http.put<ProductoModel>(`${this.apiUrl}/${Producto.id}`, Producto);
+    update(id: number, request: ProductoRequest): Observable<ProductoModel> {
+        return this.http.put<ProductoModel>(`${this.apiUrl}/${id}`, request);
     }
 
-    delete(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    cambiarEstado(id: number, activo: boolean): Observable<ProductoModel>{
+
+        return this.http.patch<ProductoModel>(
+            `${this.apiUrl}/${id}/estado`,
+            { activo }
+        );
     }
 
     getAllConStock(): Observable<ProductoConStockModel[]> {

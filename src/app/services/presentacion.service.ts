@@ -29,6 +29,10 @@ export class PresentacionService {
         );
     }
 
+    listarPresentacionesActivas(): Observable<PresentacionModel[]>{
+        return this.http.get<PresentacionModel[]>(`${this.apiUrl}/activas`)
+    }
+
     cambiarEstado(
         id: number,
         activo: boolean

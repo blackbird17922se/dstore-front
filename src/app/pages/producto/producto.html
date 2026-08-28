@@ -5,35 +5,54 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
                 <th>IVA</th>
                 <th>Marca</th>
-                <th>Tipo de Producto</th>
+                <th>Categoría</th>
                 <th>Presentación</th>
-                <th>Codigo de Barras</th>
+                <th>Código de barras</th>
                 <th>Stock</th>
+                <th>Controla vencimiento</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @for (producto of productos; track producto.id) {
             <tr>
-                <td>{{ producto.id }}</td>
                 <td>{{ producto.nombre }}</td>
                 <td>{{ producto.descripcion }}</td>
-                <td>{{ producto.precio }}</td>
-                <td>{{ producto.idTarifaIva }}</td>
+                <td>
+                    {{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </td>
+                <td>{{ mostrarIva(producto) }}</td>
                 <td>{{ producto.nombreMarca }}</td>
                 <td>{{ producto.nombreCategoria }}</td>
                 <td>{{ producto.nombrePresentacion }}</td>
-                <td>{{ producto.codigoBarras }}</td>
+                <td>{{ producto.codigoBarras || '-' }}</td>
                 <td>{{ producto.stock }}</td>
+
+                <td>@if (producto.controlaVencimiento) {
+                    <span>Si</span>
+                    }@else {
+                        <span>No</span>
+                    }
+                </td>
+                <td>
+                    @if (producto.activo) {
+                        <span class="estado-activo">🟢 Activo</span>
+                    }@else {
+                        <span class="estado-inactivo">🔴 Inactivo</span>
+                    }
+                </td>
+
                 <td>
                     <button (click)="editarProducto(producto)">✏️ Editar</button>
-                    <button (click)="borrarProducto(producto.id)">🗑️ Eliminar</button>
+                    <button (click)="cambiarEstadoProducto(producto)">
+                        {{ producto.activo ? '🔴 Desactivar' : '🟢 Activar'}}
+                    </button>
                 </td>
             </tr>
             }
@@ -49,19 +68,26 @@
             <!-- FORMULARIO -->
             <form #formProducto="ngForm" (ngSubmit)="guardarProducto()">
 
-                <input type="text" name="nombre" placeholder="Nombre del producto" [(ngModel)]="productoActual.nombre"
+                <label for="nombre">Producto:</label>
+                <br>
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" [(ngModel)]="productoActual.nombre"
                     required #nombre="ngModel" />
                 @if (nombre.invalid && nombre.touched) {
-                <div class="error">
-                    ⚠️ El nombre es obligatorio.
-                </div>
+                    <div class="error">
+                        ⚠️ El nombre es obligatorio.
+                    </div>
                 }
-                <input type="text" name="descripcion" placeholder="Descripción" [(ngModel)]="productoActual.descripcion"
-                    #descripcion="ngModel" />
-
                 <br>
-                <label for="precio">Precio:</label><br>
-                <input type="number" name="precio" placeholder="Precio" [(ngModel)]="productoActual.precio" required
+
+                <label for="descripcion">Descripción:</label>
+                <br>
+                <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" 
+                    [(ngModel)]="productoActual.descripcion" #descripcion="ngModel" />
+                <br>
+
+                <label for="precio">Precio:</label>
+                <br>
+                <input type="number" id="precio" name="precio" placeholder="Precio" [(ngModel)]="productoActual.precio" required
                     #precio="ngModel" />
                 @if (precio.invalid && precio.touched) {
                 <div class="error">
@@ -69,59 +95,94 @@
                 </div>
                 }
                 <br>
-                <label>
-                    <!-- <input type="checkbox" name="iva" [(ngModel)]="productoActual.iva"
-                        [ngModel]="productoActual.iva === 1" (ngModelChange)="productoActual.iva = $event ? 1 : 0" /> -->
-                    ¿Aplicar IVA?
-                </label>
+
+                <label for="idTarifaIva">Tarifa IVA:</label>
+                <br>
+                <select 
+                    id="idTarifaIva" name="idTarifaIva" 
+                    [(ngModel)]="productoActual.idTarifaIva"
+                    #idPresentacion="ngModel"
+                    required>
+
+                    <option [ngValue]="null">-- Selecciona una tarifa --</option>
+
+                    <option
+                        *ngFor="let tarifa of tarifasIva"
+                        [ngValue]="tarifa.id">
+                        {{ mostrarTarifa(tarifa) }}
+                    </option>
+                </select>
+
 
                 <br>
                 <label for="idMarca">Marca:</label>
                 <br />
-                <select id="idMarca" name="idMarca" 
-                [(ngModel)]="productoActual.nombreMarca" 
-                #idMarca="ngModel">
-                    <option value="">-- Selecciona una marca --</option>
-                    <option *ngFor="let marca of marcas" [value]="marca.id">
+                <select 
+                    id="idMarca" name="idMarca" 
+                    [(ngModel)]="productoActual.idMarca" 
+                    #idMarca="ngModel"
+                    required>
+                    
+                    <option [ngValue]="null">-- Selecciona una marca --</option>
+
+                    <option 
+                        *ngFor="let marca of marcas" 
+                        [ngValue]="marca.id">
                         {{ marca.nombre }}
                     </option>
                 </select>
 
                 <br>
-                <label for="idTipoProducto">Categoría de Producto:</label>
+                <label for="idCategoria">Categoría de Producto:</label>
                 <br />
-                <select id="idTipoProducto" name="idTipoProducto" [(ngModel)]="productoActual.nombreCategoria"
-                    #idTipoProducto="ngModel">
-                    <option value="">-- Selecciona una categoría de producto --</option>
-                    <option *ngFor="let tipo of tipoProductos" [value]="tipo.id">
-                        {{ tipo.nombre }}
+                <select 
+                    id="idCategoria" name="idCategoria" 
+                    [(ngModel)]="productoActual.idCategoria"
+                    #idCategoria="ngModel"
+                    required>
+
+                    <option [ngValue]="null">-- Selecciona una categoría de producto --</option>
+
+                    <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
+                        {{ categoria.nombre }}
                     </option>
                 </select>
 
                 <br>
-                <label for="idPresentacion">Tipo de Presentación:</label>
+                <label for="idPresentacion">Presentación:</label>
                 <br />
-                <select id="idPresentacion" name="idPresentacion" [(ngModel)]="productoActual.nombrePresentacion"
-                    #idPresentacion="ngModel">
-                    <option value="">-- Selecciona un tipo de presentacion --</option>
-                    <option *ngFor="let tipo of presentaciones" [value]="tipo.id">
-                        {{ tipo.nombre }}
+                <select 
+                    id="idPresentacion" name="idPresentacion" 
+                    [(ngModel)]="productoActual.idPresentacion"
+                    #idPresentacion="ngModel"
+                    required>
+
+                    <option [ngValue]="null">-- Selecciona una Presentación --</option>
+
+                    <option *ngFor="let categoria of presentaciones" [ngValue]="categoria.id">
+                        {{ categoria.nombre }}
                     </option>
                 </select>
+
                 <br>
+                <label for="codigoBarras">Código de barras:</label>
+                <br />
                 <input type="text" name="codigoBarras" placeholder="Código de Barras"
                     [(ngModel)]="productoActual.codigoBarras" #codigoBarras="ngModel" />
                 <br>
 
                 <br>
-                <label for="stock">Stock:</label><br>
-                <input type="number" name="stock" placeholder="Stock" [(ngModel)]="productoActual.stock" required
-                    #stock="ngModel" />
-                @if (stock.invalid && stock.touched) {
-                <div class="error">
-                    ⚠️ El stock es obligatorio.
-                </div>
-                }
+                <label for="controlaVencimiento">
+                <input
+                    type="checkbox"
+                    id="controlaVencimiento"
+                    name="controlaVencimiento"
+                    [(ngModel)]="productoActual.controlaVencimiento"
+                />
+
+                Controla vencimiento
+                </label>
+
                 <br>
 
                 <button type="submit" [disabled]="formProducto.invalid">

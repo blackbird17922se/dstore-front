@@ -22,7 +22,18 @@ export class MarcaService {
         return this.http.put<MarcaModel>(`${this.apiUrl}/${Marca.id}`, Marca);
     }
 
-    delete(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    listarMarcasActivas(): Observable<MarcaModel[]>{
+        return this.http.get<MarcaModel[]>(`${this.apiUrl}/activas`)
+    }
+
+    cambiarEstado(
+        id: number,
+        activo: boolean
+    ): Observable<MarcaModel> {
+
+        return this.http.patch<MarcaModel>(
+            `${this.apiUrl}/${id}/estado`,
+            { activo }
+        );
     }
 }

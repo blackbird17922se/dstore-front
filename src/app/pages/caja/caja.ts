@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProductoModel } from '../../models/producto.model';
+import { ProductoModel } from '../../models/producto/producto.model';
 import { ProductoService } from '../../services/producto.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

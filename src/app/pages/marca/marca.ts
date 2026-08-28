@@ -16,7 +16,8 @@ export class Marca {
   editando = false;
   marcaActual: MarcaModel = {
     id: null,
-    nombre: ''
+    nombre: '',
+    activo: true
   };
 
   constructor(private marcaService: MarcaService) {}
@@ -67,24 +68,51 @@ export class Marca {
     });
   }
 
-  borrarMarca(id: number | null) {
-    if (id === null) return;
-    if (confirm('¿Estás seguro de que deseas eliminar esta marca?')) {
-      this.marcaService.delete(id).subscribe({
-        next: () => {
-          this.getMarcas();
-        },
-        error: (error) => {
-          console.error('Error al eliminar marca:', error);
-        }
-      });
+  cambiarEstadoMarca(marca: MarcaModel) {
+
+    if (marca.id === null) {
+      return;
+    }
+
+    const nuevoEstado = !marca.activo;
+
+    const accion = nuevoEstado
+      ? 'activar'
+      : 'desactivar';
+
+    if (
+      confirm(
+        `¿Estás seguro de que deseas ${accion} esta Marca?`
+      )
+    ) {
+
+      this.marcaService
+        .cambiarEstado(
+          marca.id,
+          nuevoEstado
+        )
+        .subscribe({
+
+          next: () => {
+            this.getMarcas();
+          },
+
+          error: (error) => {
+            console.error(
+              'Error al cambiar el estado de la Marca:',
+              error
+            );
+          }
+        });
     }
   }
+
 
   resetMarcaActual() {
     this.marcaActual = {
       id: null,
-      nombre: ''
+      nombre: '',
+      activo: true
     };
   }
 

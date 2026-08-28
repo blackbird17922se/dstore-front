@@ -5,19 +5,39 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @for (marca of marcas; track marca.id) {
             <tr>
-                <td>{{ marca.id }}</td>
                 <td>{{ marca.nombre }}</td>
+
+                <td>
+                    @if (marca.activo) {
+                    <span class="estado-activo">
+                        🟢 Activo
+                    </span>
+                    } @else {
+                    <span class="estado-inactivo">
+                        🔴 Inactivo
+                    </span>
+                    }
+                </td>
+
                 <td>
                     <button (click)="editarMarca(marca)">✏️ Editar</button>
-                    <!-- <button (click)="borrarMarca(marca.id)">🗑️ Eliminar</button> -->
+                    <button
+                        (click)="cambiarEstadoMarca(marca)">
+
+                        {{ marca.activo
+                            ? '🔴 Desactivar'
+                            : '🟢 Activar'
+                        }}
+
+                    </button>
                 </td>
             </tr>
             }

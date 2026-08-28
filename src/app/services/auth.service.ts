@@ -20,7 +20,22 @@ export class AuthService {
 
   // 🔹 Método privado para revisar localStorage al iniciar
   private checkInitialLogin(): boolean {
-    return !!localStorage.getItem('token');
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return false;
+    }
+
+    if (this.tokenExpirado(token)) {
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('usuario');
+      return false;
+    }
+
+    return true;
   }
 
 
@@ -63,4 +78,22 @@ export class AuthService {
     getRol(): string | null {
     return localStorage.getItem('rol');
   }
+
+
+  private tokenExpirado(token: string): boolean {
+
+  try {
+
+    const payload = JSON.parse(
+      atob(token.split('.')[1])
+    );
+
+    const expiracion = payload.exp * 1000;
+
+    return Date.now() >= expiracion;
+
+  } catch {
+    return true;
+  }
+}
 }

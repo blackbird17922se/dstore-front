@@ -35,7 +35,8 @@ export class Producto {
     stock: 0,
     nombreCategoria: '',
     nombrePresentacion: '',
-    nombreMarca: ''
+    nombreMarca: '',
+    activo: true
   };
 
   constructor(
@@ -115,19 +116,33 @@ export class Producto {
     });
   }
 
-  borrarProducto(id: number | null) {
-    if (id === null) return;
-    if (confirm('¿Estás seguro de que deseas eliminar esta producto?')) {
-      this.productoService.delete(id).subscribe({
-        next: () => {
-          this.getProductos();
-        },
-        error: (error) => {
-          console.error('Error al eliminar producto:', error);
-        }
-      });
+  cambiarEstadoProducto(producto: ProductoModel){
+
+    if (producto.id == null) {
+      return;
+    }
+
+    const nuevoEstado = !producto.activo;
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
+
+    if (confirm(`¿Estás seguro de que deseas ${accion} este Producto?`)) {
+      
+      this.productoService.cambiarEstado(producto.id, nuevoEstado)
+        .subscribe({
+          next: () => {
+            this.getProductos();
+          },
+
+          error: (e) => {
+            console.error(
+              'Error al cambiar el estado del Producto:',
+              e
+            )
+          }
+        })
     }
   }
+
 
   resetProductoActual() {
     this.productoActual = {
@@ -140,7 +155,8 @@ export class Producto {
       stock: 0,
       nombreCategoria: '',
       nombrePresentacion: '',
-      nombreMarca: ''
+      nombreMarca: '',
+      activo: true
     };
   }
 }

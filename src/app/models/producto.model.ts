@@ -24,4 +24,5 @@ export interface ProductoModel {
   nombreCategoria: string;
   nombrePresentacion: string;
   nombreMarca: string;
+  activo: boolean;
 }

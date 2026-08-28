@@ -5,7 +5,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
@@ -15,13 +14,13 @@
                 <th>Presentación</th>
                 <th>Codigo de Barras</th>
                 <th>Stock</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @for (producto of productos; track producto.id) {
             <tr>
-                <td>{{ producto.id }}</td>
                 <td>{{ producto.nombre }}</td>
                 <td>{{ producto.descripcion }}</td>
                 <td>{{ producto.precio }}</td>
@@ -32,8 +31,18 @@
                 <td>{{ producto.codigoBarras }}</td>
                 <td>{{ producto.stock }}</td>
                 <td>
+                    @if (producto.activo) {
+                        <span class="estado-activo">🟢 Activo</span>
+                    }@else {
+                        <span class="estado-inactivo">🔴 Inactivo</span>
+                    }
+                </td>
+
+                <td>
                     <button (click)="editarProducto(producto)">✏️ Editar</button>
-                    <button (click)="borrarProducto(producto.id)">🗑️ Eliminar</button>
+                    <button (click)="cambiarEstadoProducto(producto)">
+                        {{ producto.activo ? '🔴 Desactivar' : '🟢 Activar'}}
+                    </button>
                 </td>
             </tr>
             }

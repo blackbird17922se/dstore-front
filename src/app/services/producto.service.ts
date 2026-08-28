@@ -23,8 +23,12 @@ export class ProductoService {
         return this.http.put<ProductoModel>(`${this.apiUrl}/${Producto.id}`, Producto);
     }
 
-    delete(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    cambiarEstado(id: number, activo: boolean): Observable<ProductoModel>{
+
+        return this.http.patch<ProductoModel>(
+            `${this.apiUrl}/${id}/estado`,
+            { activo }
+        );
     }
 
     getAllConStock(): Observable<ProductoConStockModel[]> {

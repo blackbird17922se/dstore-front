@@ -14,15 +14,25 @@ export interface CategoriaModel {
 }
 
 export interface ProductoModel {
+  controlaVencimiento: boolean;
   id: number | null;
   codigoBarras: string;
   nombre: string;
   descripcion: string;
-  idTarifaIva: number;
+  idTarifaIva: number | null;
   precio: number;
   stock: number;
-  nombreCategoria: string;
+
+  idPresentacion: number | null;
   nombrePresentacion: string;
-  nombreMarca: string;
+
   activo: boolean;
+  porcentajeIva: number;
+  nombreTarifaIva: string;
+
+  idCategoria: number | null;
+  nombreCategoria: string;
+
+  idMarca: number | null;
+  nombreMarca?: string;
 }

@@ -33,4 +33,8 @@ export class CategoriaService {
             { activo }
         );
     }
+
+    listarCategoriasActivas(): Observable<CategoriaModel[]>{
+        return this.http.get<CategoriaModel[]>(`${this.apiUrl}/activas`)
+    }
 }

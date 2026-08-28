@@ -22,6 +22,10 @@ export class MarcaService {
         return this.http.put<MarcaModel>(`${this.apiUrl}/${Marca.id}`, Marca);
     }
 
+    listarMarcasActivas(): Observable<MarcaModel[]>{
+        return this.http.get<MarcaModel[]>(`${this.apiUrl}/activas`)
+    }
+
     cambiarEstado(
         id: number,
         activo: boolean

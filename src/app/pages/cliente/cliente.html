@@ -1,0 +1,256 @@
+<div class="cliente-container">
+
+  <h2>Clientes</h2>
+
+  <button (click)="abrirModal()">
+    ➕ Crear Cliente
+  </button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Documento</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Observaciones</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @for (cliente of clientes; track cliente.id) {
+
+        <tr>
+
+          <td>{{ cliente.nombresApellidos }}</td>
+
+          <td>
+            @if (cliente.numeroDocumento) {
+              {{ cliente.tipoDocumento }} {{ cliente.numeroDocumento }}
+            } @else {-}
+          </td>
+
+          <td>
+            {{ cliente.telefono || '-' }}
+          </td>
+
+          <td>
+            {{ cliente.correo || '-' }}
+          </td>
+
+          <td>
+            {{ cliente.observacion || '-' }}
+          </td>
+
+          <td>
+            @if (cliente.activo) {
+              <span class="estado-activo">🟢 Activo</span>
+            } @else {
+              <span class="estado-inactivo">🔴 Inactivo</span>
+            }
+          </td>
+
+          <td>
+            <button (click)="actualizarCliente(cliente)">✏️ Editar</button>
+
+            <button
+              (click)="cambiarEstadoCliente(cliente)">
+              {{
+                cliente.activo
+                  ? '🔴 Desactivar'
+                  : '🟢 Activar'
+              }}
+            </button>
+          </td>
+
+        </tr>
+     } <!-- fin del @for  -->
+
+    </tbody>
+
+  </table>
+
+
+  <!-- MODAL -->
+  @if (modalAbierto) {
+    <div class="modal">
+
+        <div class="modal-content">
+
+        <h3>{{ editando ? 'Editar Cliente' : 'Crear Cliente' }}</h3>
+
+        <form #formCliente="ngForm" (ngSubmit)="guardarCliente()">
+
+            <!-- NOMBRES Y APELLIDOS -->
+
+            <label for="nombresApellidos">
+            Nombres y apellidos:
+            </label>
+
+            <input
+            type="text"
+            id="nombresApellidos"
+            name="nombresApellidos"
+            placeholder="Nombres y apellidos"
+            [(ngModel)]="clienteActual.nombresApellidos"
+            required
+            maxlength="200"
+            #nombresApellidos="ngModel"
+            />
+
+            @if (nombresApellidos.invalid && nombresApellidos.touched){
+                <div class="error">
+                    ⚠️ Los nombres y apellidos son obligatorios.
+                </div>
+            }
+
+
+            <!-- TIPO DOCUMENTO -->
+
+            <label for="tipoDocumento">
+            Tipo de documento:
+            </label>
+
+            <select id="tipoDocumento"  name="tipoDocumento" 
+            [(ngModel)]="clienteActual.tipoDocumento">
+
+                <option [ngValue]="null">
+                    -- Selecciona un tipo --
+                </option>
+
+                <option value="CC">
+                    Cédula de ciudadanía
+                </option>
+
+                <option value="CE">
+                    Cédula de extranjería
+                </option>
+
+                <option value="NIT">
+                    NIT
+                </option>
+
+                <option value="PASAPORTE">
+                    Pasaporte
+                </option>
+
+                <option value="OTRO">
+                    Otro
+                </option>
+
+            </select>
+
+
+            <!-- NÚMERO DOCUMENTO -->
+
+            <label for="numeroDocumento">
+            Número de documento:
+            </label>
+
+            <input
+            type="text"
+            id="numeroDocumento"
+            name="numeroDocumento"
+            placeholder="Número de documento"
+            [(ngModel)]="clienteActual.numeroDocumento"
+            maxlength="30"
+            />
+
+
+            <!-- TELÉFONO -->
+
+            <label for="telefono">
+            Teléfono:
+            </label>
+
+            <input
+            type="text"
+            id="telefono"
+            name="telefono"
+            placeholder="Teléfono"
+            [(ngModel)]="clienteActual.telefono"
+            maxlength="30"
+            />
+
+
+            <!-- CORREO -->
+
+            <label for="correo">
+            Correo:
+            </label>
+
+            <input
+            type="email"
+            id="correo"
+            name="correo"
+            placeholder="correo@ejemplo.com"
+            [(ngModel)]="clienteActual.correo"
+            email
+            maxlength="150"
+            #correo="ngModel"
+            />
+
+            @if (correo.invalid && correo.touched) {
+                <div class="error">
+                    ⚠️ Ingresa un correo válido.
+                </div>
+            }
+
+
+            <!-- DIRECCIÓN -->
+
+            <label for="direccion">
+            Dirección:
+            </label>
+
+            <input
+            type="text"
+            id="direccion"
+            name="direccion"
+            placeholder="Dirección"
+            [(ngModel)]="clienteActual.direccion"
+            maxlength="250"
+            />
+
+
+            <!-- OBSERVACIÓN -->
+
+            <label for="observacion">
+            Observación:
+            </label>
+
+            <textarea
+            id="observacion"
+            name="observacion"
+            placeholder="Observaciones del cliente"
+            [(ngModel)]="clienteActual.observacion"
+            maxlength="500"
+            rows="3">
+            </textarea>
+
+
+            <!-- BOTONES -->
+
+            <div class="buttons">
+
+            <button type="submit" [disabled]="formCliente.invalid">
+                {{ editando ? 'Guardar cambios' : 'Crear' }}
+            </button>
+
+            <button type="button" (click)="cerrarModal()">
+                Cancelar
+            </button>
+
+            </div>
+
+        </form>
+
+        </div>
+
+    </div>
+  }
+
+</div>

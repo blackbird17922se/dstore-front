@@ -1,0 +1,71 @@
+<div class="movimiento-container">
+
+  <h2>Movimientos de inventario</h2>
+
+    <!-- FILTROS -->
+  <div class="filtros">
+
+    <label for="producto">Producto:</label>
+    <select
+      id="producto" name="producto"
+      [(ngModel)]="idProductoSeleccionado"
+      (ngModelChange)="cambiarProducto()">
+
+      <option [ngValue]="null">-- Seleccione un producto --</option>
+
+      @for (producto of productos; track producto.id) {
+        <option [ngValue]="producto.id">
+          {{ producto.nombre }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Existencia</th>
+        <th>Nombre Producto</th>
+        <th>Tipo</th>
+        <th>Cantidad movimiento</th>
+        <th>Fecha Movimiento</th>
+        <th>Tipo de Origen</th>
+        <th>Observacion</th>
+      </tr>
+    </thead>
+
+    <tbody>
+        @for (movimiento of movimientosResponse; track movimiento.id) {
+            <tr>
+                <td>
+                    #{{ movimiento.idExistencia }}
+                </td>
+
+                <td>
+                    {{ movimiento.nombreProducto }}
+                </td>
+
+                <td>
+                    {{ movimiento.tipo }}
+                </td>
+
+                <td>
+                    {{ movimiento.cantidad }}
+                </td>
+
+                <td>
+                    {{ movimiento.fechaMovimiento | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+
+                <td>
+                    {{ mostrarOrigen(movimiento) }}
+                </td>
+
+                <td>
+                    {{ movimiento.observacion || '-' }}
+                </td>
+            </tr>
+        }
+    </tbody>
+  </table>
+</div>

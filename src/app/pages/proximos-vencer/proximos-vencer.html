@@ -1,0 +1,90 @@
+<div class="proximos-vencer-container">
+
+  <h2>Productos próximos a vencer</h2>
+
+  <div class="filtros">
+
+    <label for="dias">
+      Próximos días:
+    </label>
+
+    <input
+      type="number"
+      id="dias"
+      name="dias"
+      [(ngModel)]="dias"
+      min="1"
+    />
+
+    <button
+      type="button"
+      (click)="buscar()">
+
+      Buscar
+
+    </button>
+
+  </div>
+
+
+  @if (existencias.length === 0) {
+
+    <p>
+      ✅ No hay productos próximos a vencer
+      dentro de los próximos {{ dias }} días.
+    </p>
+
+  } @else {
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Lote</th>
+          <th>Vencimiento</th>
+          <th>Días restantes</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+          existencia of existencias;
+          track existencia.id
+        ) {
+
+          <tr>
+
+            <td>
+              {{ existencia.nombreProducto }}
+            </td>
+
+            <td>
+              {{ existencia.cantidad }}
+            </td>
+
+            <td>
+              {{ existencia.numeroLote || '-' }}
+            </td>
+
+            <td>
+              {{ existencia.fechaVencimiento | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td>
+              {{ diasRestantes(existencia.fechaVencimiento) }}
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>

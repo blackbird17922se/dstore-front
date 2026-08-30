@@ -1,0 +1,358 @@
+<div class="entrada-inventario-container">
+
+  <h2>Entradas de inventario</h2>
+
+  <button (click)="abrirModal()">
+    ➕ Registrar entrada
+  </button>
+
+
+  <!-- LISTADO DE ENTRADAS -->
+
+  <table>
+    <thead>
+      <tr>
+        <th>Entrada</th>
+        <th>Fecha entrada</th>
+        <th>Fecha registro</th>
+        <th>Documento</th>
+        <th>Observación</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @for (entrada of entradaInventarioResponse; track entrada.id) {
+
+        <tr>
+
+          <td>
+            #{{ entrada.id }}
+          </td>
+
+          <td>
+            {{ entrada.fechaEntrada }}
+          </td>
+
+          <td>
+            {{ entrada.fechaRegistro }}
+          </td>
+
+          <td>
+            {{ entrada.numeroDocumento || '-' }}
+          </td>
+
+          <td>
+            {{ entrada.observacion || '-' }}
+          </td>
+
+          <td>
+            <button (click)="verDetalle(entrada)">
+              👁️ Ver detalle
+            </button>
+          </td>
+
+        </tr>
+
+      }
+
+    </tbody>
+  </table>
+
+
+  <!-- MODAL -->
+
+  @if (modalAbierto) {
+
+    <div class="modal">
+
+      <div class="modal-content">
+
+        <h3>Registrar entrada de inventario</h3>
+
+        <form
+          #formEntrada="ngForm"
+          (ngSubmit)="registrarEntrada()">
+
+
+          <!-- FECHA ENTRADA -->
+
+          <label for="fechaEntrada">
+            Fecha de entrada:
+          </label>
+
+          <input
+            type="date"
+            id="fechaEntrada"
+            name="fechaEntrada"
+            [(ngModel)]="entradaInventarioRequest.fechaEntrada"
+            required
+          />
+
+
+          <!-- DOCUMENTO -->
+
+          <label for="numeroDocumento">
+            Número de documento:
+          </label>
+
+          <input
+            type="text"
+            id="numeroDocumento"
+            name="numeroDocumento"
+            placeholder="Factura, remisión, etc."
+            [(ngModel)]="entradaInventarioRequest.numeroDocumento"
+            maxlength="100"
+          />
+
+
+          <!-- OBSERVACIÓN -->
+
+          <label for="observacion">
+            Observación:
+          </label>
+
+          <textarea
+            id="observacion"
+            name="observacion"
+            [(ngModel)]="entradaInventarioRequest.observacion"
+            maxlength="500"
+            rows="3"
+            placeholder="Observaciones de la entrada">
+          </textarea>
+
+
+          <hr>
+
+
+          <h4>Productos recibidos</h4>
+
+
+          <!-- DETALLES DINÁMICOS -->
+
+          @for (
+            detalle of entradaInventarioRequest.detalles;
+            track $index;
+            let i = $index
+          ) {
+
+            <div class="detalle-entrada">
+
+              <h5>
+                Producto {{ i + 1 }}
+              </h5>
+
+
+              <!-- PRODUCTO -->
+
+              <label>
+                Producto:
+              </label>
+
+              <select
+                [name]="'producto-' + i"
+                [(ngModel)]="detalle.idProducto"
+                required>
+
+                <option [ngValue]="0">
+                  -- Selecciona un producto --
+                </option>
+
+                @for (producto of productos; track producto.id) {
+
+                  <option [ngValue]="producto.id">
+                    {{ producto.nombre }}
+                  </option>
+
+                }
+
+              </select>
+
+
+              <!-- CANTIDAD -->
+
+              <label>
+                Cantidad:
+              </label>
+
+              <input
+                type="number"
+                [name]="'cantidad-' + i"
+                [(ngModel)]="detalle.cantidad"
+                min="1"
+                required
+              />
+
+
+              <!-- LOTE -->
+
+              <label>
+                Número de lote:
+              </label>
+
+              <input
+                type="text"
+                [name]="'numeroLote-' + i"
+                [(ngModel)]="detalle.numeroLote"
+                maxlength="100"
+                placeholder="Opcional"
+              />
+
+
+              <!-- VENCIMIENTO -->
+
+              <label>
+                Fecha de vencimiento:
+              </label>
+
+              <input
+                type="date"
+                [name]="'fechaVencimiento-' + i"
+                [(ngModel)]="detalle.fechaVencimiento"
+                [required]="productoControlaVencimiento(detalle.idProducto)"
+              />
+
+
+              @if (productoControlaVencimiento(detalle.idProducto)) {
+
+                <small>
+                  ⚠️ Este producto requiere fecha de vencimiento.
+                </small>
+
+              }
+
+
+              <!-- QUITAR DETALLE -->
+
+              <button
+                type="button"
+                (click)="eliminarDetalle(i)">
+
+                ❌ Quitar
+
+              </button>
+
+            </div>
+
+            <hr>
+
+          }
+
+
+          <!-- AGREGAR OTRO PRODUCTO -->
+
+          <button
+            type="button"
+            (click)="agregarDetalle()">
+
+            ➕ Agregar otro producto
+
+          </button>
+
+
+          <!-- ACCIONES -->
+
+          <div class="buttons">
+
+            <button
+              type="submit"
+              [disabled]="
+                formEntrada.invalid ||
+                entradaInventarioRequest.detalles.length === 0
+              ">
+
+              Registrar entrada
+
+            </button>
+
+            <button
+              type="button"
+              (click)="cerrarModal()">
+
+              Cancelar
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  @if (modalDetalleAbierto && entradaSeleccionada) {
+
+    <div class="modal">
+
+      <div class="modal-content">
+
+        <h3>
+          Entrada #{{ entradaSeleccionada.id }}
+        </h3>
+
+        <p>
+          <strong>Fecha:</strong>
+          {{ entradaSeleccionada.fechaEntrada }}
+        </p>
+
+        <p>
+          <strong>Documento:</strong>
+          {{ entradaSeleccionada.numeroDocumento || '-' }}
+        </p>
+
+        <p>
+          <strong>Observación:</strong>
+          {{ entradaSeleccionada.observacion || '-' }}
+        </p>
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Lote</th>
+              <th>Vencimiento</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (
+              detalle of entradaSeleccionada.detalles;
+              track detalle.id
+            ) {
+
+              <tr>
+                <td>{{ detalle.nombreProducto }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.numeroLote || '-' }}</td>
+                <td>{{ detalle.fechaVencimiento || '-' }}</td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+        <button
+          type="button"
+          (click)="cerrarDetalle()">
+
+          Cerrar
+
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

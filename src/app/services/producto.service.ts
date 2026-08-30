@@ -37,4 +37,8 @@ export class ProductoService {
         return this.http.get<ProductoConStockModel[]>(this.apiUrl);
     }
 
+    listarProductosActivos(): Observable<ProductoModel[]>{
+        return this.http.get<ProductoModel[]>(`${this.apiUrl}/activos`,)
+    }
+
 }

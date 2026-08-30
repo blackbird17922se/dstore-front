@@ -16,6 +16,7 @@ import { EntradaInventario } from './pages/entrada-inventario/entrada-inventario
 import { Existencias } from './pages/existencias/existencias';
 import { ProximosVencer } from './pages/proximos-vencer/proximos-vencer';
 import { MovimientoInventario } from './pages/movimiento-inventario/movimiento-inventario';
+import { AjusteInventario } from './pages/ajuste-inventario/ajuste-inventario';
 
 
 export const routes: Routes = [
@@ -40,7 +41,8 @@ export const routes: Routes = [
       { path: 'entradas-inventario', component: EntradaInventario},
       { path: 'existencias', component: Existencias},
       { path: 'proximos-vencer', component: ProximosVencer},
-      { path: 'movimientos-inventario', component: MovimientoInventario}
+      { path: 'movimientos-inventario', component: MovimientoInventario},
+      { path: 'ajuste-inventario', component: AjusteInventario}
     ]
   },
 

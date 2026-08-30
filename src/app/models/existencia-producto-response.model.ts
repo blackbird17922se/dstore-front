@@ -1,9 +1,9 @@
 export interface ExistenciaProductoResponse {
-    id: number | null,
-    idProducto: number | null,
+    id: number,
+    idProducto: number,
     nombreProducto: string,
     cantidad: number,
-    numeroLote: string,
-    fechaVencimiento: string,
+    numeroLote: string | null,
+    fechaVencimiento: string | null,
     fechaIngreso: string
 }

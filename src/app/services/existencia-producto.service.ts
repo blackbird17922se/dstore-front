@@ -20,6 +20,10 @@ export class ExistenciaProductoService {
         return this.http.get<ExistenciaProductoResponse>(`${this.apiUrl}/${id}`);
     }
 
+    listarPorProducto(idProducto: number): Observable<ExistenciaProductoResponse[]> {
+        return this.http.get<ExistenciaProductoResponse[]>(`${this.apiUrl}/producto/${idProducto}`);
+    }
+
     proximosAVencer(dias: number): Observable<ExistenciaProductoResponse[]> {
 
         return this.http.get<ExistenciaProductoResponse[]>(

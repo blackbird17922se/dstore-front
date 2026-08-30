@@ -4,6 +4,7 @@ import { ClienteService } from '../../services/cliente.service';
 import { FormsModule } from '@angular/forms';
 import { ClienteRequest } from '../../models/cliente/cliente-request.model';
 
+/** @author Mauricio A */
 @Component({
   selector: 'app-cliente',
   imports: [FormsModule],

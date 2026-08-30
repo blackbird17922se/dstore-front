@@ -15,6 +15,7 @@ import { Cliente } from './pages/cliente/cliente';
 import { EntradaInventario } from './pages/entrada-inventario/entrada-inventario';
 import { Existencias } from './pages/existencias/existencias';
 import { ProximosVencer } from './pages/proximos-vencer/proximos-vencer';
+import { MovimientoInventario } from './pages/movimiento-inventario/movimiento-inventario';
 
 
 export const routes: Routes = [
@@ -38,7 +39,8 @@ export const routes: Routes = [
       { path: 'clientes', component: Cliente},
       { path: 'entradas-inventario', component: EntradaInventario},
       { path: 'existencias', component: Existencias},
-      { path: 'proximos-vencer', component: ProximosVencer}
+      { path: 'proximos-vencer', component: ProximosVencer},
+      { path: 'movimientos-inventario', component: MovimientoInventario}
     ]
   },
 

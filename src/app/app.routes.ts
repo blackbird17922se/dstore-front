@@ -18,6 +18,7 @@ import { ProximosVencer } from './pages/proximos-vencer/proximos-vencer';
 import { MovimientoInventario } from './pages/movimiento-inventario/movimiento-inventario';
 import { AjusteInventario } from './pages/ajuste-inventario/ajuste-inventario';
 import { NuevaVenta } from './pages/nueva-venta/nueva-venta';
+import { MiPerfil } from './pages/mi-perfil/mi-perfil';
 
 
 export const routes: Routes = [
@@ -44,7 +45,8 @@ export const routes: Routes = [
       { path: 'proximos-vencer', component: ProximosVencer},
       { path: 'movimientos-inventario', component: MovimientoInventario},
       { path: 'ajuste-inventario', component: AjusteInventario},
-      { path: 'nueva-venta', component: NuevaVenta}
+      { path: 'nueva-venta', component: NuevaVenta},
+      { path: 'mi-perfil', component: MiPerfil }
     ]
   },
 

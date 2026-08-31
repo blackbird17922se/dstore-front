@@ -1,36 +1,27 @@
-<div class="existencias-container">
+<div class="page-container existencias-container">
 
   <h2>Existencias de inventario</h2>
 
-    <!-- FILTROS -->
+  <!-- FILTROS -->
   <div class="filtros">
 
     <label for="producto">Producto:</label>
 
-    <select
-      id="producto"
-      name="producto"
-      [(ngModel)]="idProductoSeleccionado"
-      (ngModelChange)="filtrarPorProducto()">
+    <select id="producto" name="producto" [(ngModel)]="idProductoSeleccionado" (ngModelChange)="filtrarPorProducto()">
 
       <option [ngValue]="null">-- Todos los productos --</option>
 
       @for (producto of productos; track producto.id) {
-        <option [ngValue]="producto.id">
-          {{ producto.nombre }}
-        </option>
+      <option [ngValue]="producto.id">
+        {{ producto.nombre }}
+      </option>
       }
 
     </select>
 
 
     <label>
-      <input
-        type="checkbox"
-        name="soloDisponibles"
-        [(ngModel)]="soloDisponibles"
-        (ngModelChange)="aplicarFiltros()"
-      />
+      <input type="checkbox" name="soloDisponibles" [(ngModel)]="soloDisponibles" (ngModelChange)="aplicarFiltros()" />
       Solo disponibles
     </label>
 
@@ -38,66 +29,74 @@
 
 
   <!-- TABLA -->
+  @if (existenciasMostradas.length === 0) {
 
+  <div class="empty-message">
+    No hay existencias que coincidan con los filtros seleccionados.
+  </div>
+
+  } @else {
 
   <table>
+
     <thead>
       <tr>
         <th>Existencia</th>
-        <th>Nombre Producto</th>
-        <th>Cantidad Existente</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
         <th>Lote</th>
-        <th>Fecha Vencimiento</th>
-        <th>Fecha de Ingreso</th>
+        <th>Vencimiento</th>
+        <th>Fecha de ingreso</th>
       </tr>
     </thead>
 
     <tbody>
 
-      @for (existencia of existenciasMostradas; track existencia.id) {
+      @for (
+      existencia of existenciasMostradas;
+      track existencia.id
+      ) {
 
-        <tr>
+      <tr>
 
-          <td>
-            #{{ existencia.id }}
-          </td>
+        <td>
+          #{{ existencia.id }}
+        </td>
 
-          <td>
-            {{ existencia.nombreProducto }}
-          </td>
+        <td>
+          {{ existencia.nombreProducto }}
+        </td>
 
-          <td>
-            {{ existencia.cantidad }}
-          </td>
+        <td>
+          {{ existencia.cantidad }}
+        </td>
 
-          <td>
-            {{ existencia.numeroLote || '-' }}
-          </td>
+        <td>
+          {{ existencia.numeroLote || '-' }}
+        </td>
 
-          <td>
-            {{ existencia.fechaVencimiento
-                ? (existencia.fechaVencimiento | date:'dd/MM/yyyy')
-                : '-'
-            }}
-          </td>
+        <td>
+          {{
+          existencia.fechaVencimiento
+          ? (existencia.fechaVencimiento | date:'dd/MM/yyyy')
+          : '-'
+          }}
+        </td>
 
-          <td>
-            {{ existencia.fechaIngreso  | date:'dd/MM/yyyy HH:mm' }}
-          </td>
-<!-- 
-          <td>
-            <button (click)="verDetalle(entrada)">
-              👁️ Ver detalle
-            </button>
-          </td> -->
+        <td>
+          {{
+          existencia.fechaIngreso
+          | date:'dd/MM/yyyy HH:mm'
+          }}
+        </td>
 
-        </tr>
+      </tr>
 
       }
 
     </tbody>
   </table>
 
-
+  }
 
 </div>

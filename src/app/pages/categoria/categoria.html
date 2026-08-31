@@ -1,6 +1,10 @@
 <div class="categoria-container">
   <h2>Categoría de Producto</h2>
-  <button (click)="abrirModal()">➕ Crear nueva categoría</button>
+
+
+  <button class="btn-primary" (click)="abrirModal()">
+    ➕ Crear nueva categoría
+  </button>
 
   <table>
     <thead>
@@ -12,34 +16,33 @@
     </thead>
     <tbody>
       @for (Categoria of Categorias; track Categoria.id) {
-        <tr>
-          <td>{{ Categoria.nombre }}</td>
+      <tr>
+        <td>{{ Categoria.nombre }}</td>
 
-          <td>
-            @if (Categoria.activo) {
-              <span class="estado-activo">
-                🟢 Activo
-              </span>
-            } @else {
-              <span class="estado-inactivo">
-                🔴 Inactivo
-              </span>
-            }
-          </td>
+        <td>
+          @if (Categoria.activo) {
+          <span class="estado-activo">
+            🟢 Activo
+          </span>
+          } @else {
+          <span class="estado-inactivo">
+            🔴 Inactivo
+          </span>
+          }
+        </td>
 
-          <td>
-            <button (click)="editarCategoria(Categoria)">✏️ Editar</button>
-            
-            <button
-              (click)="cambiarEstadoCategoria(Categoria)">
-              {{ Categoria.activo
-                  ? '🔴 Desactivar'
-                  : '🟢 Activar'
-              }}
-            </button>
+        <td>
+          <button (click)="editarCategoria(Categoria)">✏️ Editar</button>
 
-          </td>
-        </tr>
+          <button (click)="cambiarEstadoCategoria(Categoria)">
+            {{ Categoria.activo
+            ? '🔴 Desactivar'
+            : '🟢 Activar'
+            }}
+          </button>
+
+        </td>
+      </tr>
       }
     </tbody>
   </table>
@@ -52,14 +55,8 @@
       <!-- FORMULARIO -->
       <form #formCategoria="ngForm" (ngSubmit)="guardarCategoria()">
 
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre de la categoría"
-          [(ngModel)]="CategoriaActual.nombre"
-          required
-          #nombre="ngModel"
-        />
+        <input type="text" name="nombre" placeholder="Nombre de la categoría" [(ngModel)]="CategoriaActual.nombre"
+          required #nombre="ngModel" />
         <div *ngIf="nombre.invalid && nombre.touched" class="error">
           ⚠️ El nombre es obligatorio.
         </div>

@@ -1,5 +1,27 @@
-<app-navbar *ngIf="authService.loggedIn$ | async"></app-navbar>
+@if (authService.loggedIn$ | async) {
 
-<main class="content">
-  <router-outlet></router-outlet>
-</main>
+  <div class="app-layout">
+
+    <app-navbar></app-navbar>
+
+    <div class="app-main">
+
+      <main class="content">
+        <router-outlet></router-outlet>
+      </main>
+
+      <footer class="footer">
+        DStore · Sistema de ventas e inventario
+      </footer>
+
+    </div>
+
+  </div>
+
+} @else {
+
+  <main class="public-content">
+    <router-outlet></router-outlet>
+  </main>
+
+}

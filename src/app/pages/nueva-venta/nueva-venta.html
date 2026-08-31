@@ -1,252 +1,433 @@
-<div class="nueva-venta-container">
+<div class="page-container nueva-venta-container">
 
-    <h2>Nueva venta</h2>
+    <div class="page-header">
 
-    <!-- ========================================= -->
-    <!-- DATOS GENERALES DE LA VENTA -->
-    <!-- ========================================= -->
-
-    <div class="datos-venta">
-
-        <!-- Cliente opcional -->
-        <label for="cliente">Cliente:</label>
-
-        <select
-            id="cliente"
-            name="cliente"
-            [(ngModel)]="idClienteSeleccionado">
-
-            <option [ngValue]="null">
-                -- Consumidor final / Sin cliente --
-            </option>
-
-            @for (cliente of clientes; track cliente.id) {
-                <option [ngValue]="cliente.id">
-                    {{ cliente.nombresApellidos }}
-                </option>
-            }
-
-        </select>
-
-
-        <br>
-        Búsqueda rápida por código de barras <br>
-        <label for="codigoBarras">Código de barras:</label>
-
-        <input
-            type="text"
-            id="codigoBarras"
-            name="codigoBarras"
-            placeholder="Código de barras"
-            [(ngModel)]="codigoBuscado"
-            (keyup.enter)="buscarPorCodigo()"
-        />
-<br>
-
-        <!--
-            Por ahora ingresoCliente NO se envía al backend.
-            Solo sirve para ayudar al cajero a calcular el cambio.
-        -->
-        <label for="ingresoCliente">Dinero recibido:</label>
-
-        <input
-            type="number"
-            id="ingresoCliente"
-            name="ingresoCliente"
-            placeholder="Dinero recibido"
-            [(ngModel)]="ingresoCliente"
-            min="0"
-        />
-
-
-        <p>
-            <strong>Total:</strong>
-            {{ totalGeneral | currency:'COP':'symbol-narrow':'1.0-0' }}
-        </p>
-
-        <p>
-            <strong>Cambio:</strong>
-            {{ cambio | currency:'COP':'symbol-narrow':'1.0-0' }}
-        </p>
-
-
-        <!-- Observación sí hace parte del VentaRequest -->
-        <label for="observacion">Observación:</label>
-
-        <textarea
-            id="observacion"
-            name="observacion"
-            [(ngModel)]="observacion"
-            maxlength="500"
-            rows="2"
-            placeholder="Observación opcional">
-        </textarea>
+        <div>
+            <h2>Nueva venta</h2>
+            <p class="page-subtitle">
+                Registra los productos y datos de la venta.
+            </p>
+        </div>
 
     </div>
 
 
     <!-- ========================================= -->
-    <!-- CARRITO / PRODUCTOS SELECCIONADOS -->
+    <!-- INFORMACIÓN PRINCIPAL -->
     <!-- ========================================= -->
 
-    <h3>Productos de la venta</h3>
+    <section class="venta-panel">
 
-    @if (carrito.length === 0) {
+        <div class="datos-venta">
 
-        <p>No hay productos agregados a la venta.</p>
+            <h3>Datos de la venta</h3>
 
-    } @else {
 
-        <table class="table-prod-seleccionados">
+            <!-- CLIENTE -->
 
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Precio unidad</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+            <div class="form-group">
 
-            <tbody>
+                <label for="cliente">
+                    Cliente
+                </label>
 
-                @for (item of carrito; track item.producto.id; let i = $index) {
+                <select
+                    id="cliente"
+                    name="cliente"
+                    [(ngModel)]="idClienteSeleccionado">
+
+                    <option [ngValue]="null">
+                        Consumidor final / Sin cliente
+                    </option>
+
+                    @for (cliente of clientes; track cliente.id) {
+
+                        <option [ngValue]="cliente.id">
+                            {{ cliente.nombresApellidos }}
+                        </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+
+            <!-- CÓDIGO DE BARRAS -->
+
+            <div class="form-group">
+
+                <label for="codigoBarras">
+                    Código de barras
+                </label>
+
+                <div class="codigo-barras">
+
+                    <input
+                        type="text"
+                        id="codigoBarras"
+                        name="codigoBarras"
+                        placeholder="Escanea o escribe el código"
+                        [(ngModel)]="codigoBuscado"
+                        (keyup.enter)="buscarPorCodigo()"
+                    />
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        (click)="buscarPorCodigo()">
+
+                        Buscar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- DINERO RECIBIDO -->
+
+            <div class="form-group">
+
+                <label for="ingresoCliente">
+                    Dinero recibido
+                </label>
+
+                <input
+                    type="number"
+                    id="ingresoCliente"
+                    name="ingresoCliente"
+                    placeholder="0"
+                    [(ngModel)]="ingresoCliente"
+                    min="0"
+                />
+
+                <small class="form-help">
+                    Este valor solo se utiliza para calcular el cambio.
+                </small>
+
+            </div>
+
+
+            <!-- OBSERVACIÓN -->
+
+            <div class="form-group">
+
+                <label for="observacion">
+                    Observación
+                </label>
+
+                <textarea
+                    id="observacion"
+                    name="observacion"
+                    [(ngModel)]="observacion"
+                    maxlength="500"
+                    rows="3"
+                    placeholder="Observación opcional">
+                </textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- RESUMEN -->
+        <!-- ========================================= -->
+
+        <div class="resumen-venta">
+
+            <span class="resumen-label">
+                Total de la venta
+            </span>
+
+            <strong class="total-venta">
+                {{
+                    totalGeneral
+                    | currency:'COP':'symbol-narrow':'1.0-0'
+                }}
+            </strong>
+
+
+            <div class="resumen-divider"></div>
+
+
+            <div class="resumen-row">
+
+                <span>Recibido</span>
+
+                <strong>
+                    {{
+                        ingresoCliente
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                </strong>
+
+            </div>
+
+
+            <div class="resumen-row cambio-row">
+
+                <span>Cambio</span>
+
+                <strong>
+                    {{
+                        cambio
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                </strong>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-primary btn-procesar"
+                (click)="procesarVenta()"
+                [disabled]="carrito.length === 0">
+
+                Procesar venta
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- CARRITO -->
+    <!-- ========================================= -->
+
+    <section class="venta-section">
+
+        <div class="section-header">
+
+            <h3>Productos de la venta</h3>
+
+            <span class="contador-productos">
+                {{ carrito.length }}
+                {{ carrito.length === 1 ? 'producto' : 'productos' }}
+            </span>
+
+        </div>
+
+
+        @if (carrito.length === 0) {
+
+            <div class="empty-message">
+                Todavía no has agregado productos a la venta.
+            </div>
+
+        } @else {
+
+            <table class="table-prod-seleccionados">
+
+                <thead>
 
                     <tr>
-
-                        <td>
-                            {{ item.producto.nombre }}
-                        </td>
-
-                        <td>
-                            {{ item.producto.precio
-                                | currency:'COP':'symbol-narrow':'1.0-0' }}
-                        </td>
-
-                        <td>
-
-                            <input
-                                type="number"
-                                [(ngModel)]="item.cantidad"
-                                [name]="'cantidad-' + i"
-                                min="1"
-                                required
-                                #cant="ngModel"
-                                (ngModelChange)="actualizarCantidad(item, $event)"
-                            /> 
-
-                             @if (cant.invalid && cant.touched) {
-                                <div class="error">
-                                    La cantidad debe ser mayor a cero.
-                                </div>
-                            }
-
-                        </td>
-
-                        <td>
-                            {{ calcularSubtotal(item)
-                                | currency:'COP':'symbol-narrow':'1.0-0' }}
-                        </td>
-
-                        <td>
-                            <button
-                                type="button"
-                                (click)="eliminarItem(item)">
-                                Eliminar
-                            </button>
-                        </td>
-
+                        <th>Producto</th>
+                        <th>Precio unidad</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
                     </tr>
-                }
 
-            </tbody>
-
-        </table>
-    }
+                </thead>
 
 
-    <div class="acciones-venta">
+                <tbody>
 
-        <button
-            type="button"
-            (click)="procesarVenta()"
-            [disabled]="carrito.length === 0">
+                    @for (
+                        item of carrito;
+                        track item.producto.id;
+                        let i = $index
+                    ) {
 
-            Procesar venta
+                        <tr>
 
-        </button>
+                            <td>
+                                <strong>
+                                    {{ item.producto.nombre }}
+                                </strong>
+                            </td>
 
-    </div>
+
+                            <td>
+                                {{
+                                    item.producto.precio
+                                    | currency:'COP':'symbol-narrow':'1.0-0'
+                                }}
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    class="cantidad-input"
+                                    type="number"
+                                    [(ngModel)]="item.cantidad"
+                                    [name]="'cantidad-' + i"
+                                    min="1"
+                                    required
+                                    #cant="ngModel"
+                                    (ngModelChange)="actualizarCantidad(item, $event)"
+                                />
+
+                                @if (cant.invalid && cant.touched) {
+
+                                    <div class="error">
+                                        La cantidad debe ser mayor a cero.
+                                    </div>
+
+                                }
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{
+                                        calcularSubtotal(item)
+                                        | currency:'COP':'symbol-narrow':'1.0-0'
+                                    }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn-danger"
+                                    (click)="eliminarItem(item)">
+
+                                    Eliminar
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        }
+
+    </section>
 
 
     <!-- ========================================= -->
     <!-- PRODUCTOS DISPONIBLES -->
     <!-- ========================================= -->
 
-    <h3>Productos disponibles</h3>
+    <section class="venta-section">
 
-    <table>
+        <div class="section-header">
 
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
+            <div>
 
-                <!--
-                    Podemos mostrar Marca y Presentación después
-                    según los campos exactos del ProductoModel actual.
-                -->
+                <h3>Productos disponibles</h3>
 
-                <th>Código de barras</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
+                <span class="section-description">
+                    Selecciona los productos que deseas agregar.
+                </span>
 
-        <tbody>
+            </div>
 
-            @for (producto of productos; track producto.id) {
+        </div>
 
-                <tr>
 
-                    <td>
-                        {{ producto.nombre }}
-                    </td>
+        @if (productos.length === 0) {
 
-                    <td>
-                        {{ producto.descripcion || '-' }}
-                    </td>
+            <div class="empty-message">
+                No hay productos disponibles.
+            </div>
 
-                    <td>
-                        {{ producto.precio
-                            | currency:'COP':'symbol-narrow':'1.0-0' }}
-                    </td>
+        } @else {
 
-                    <td>
-                        {{ producto.codigoBarras || '-' }}
-                    </td>
+            <table>
 
-                    <td>
-                        {{ producto.stock }}
-                    </td>
+                <thead>
 
-                    <td>
-                        <button
-                            type="button"
-                            (click)="agregarAlCarrito(producto)">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Código de barras</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
 
-                            Agregar
+                </thead>
 
-                        </button>
-                    </td>
 
-                </tr>
-            }
+                <tbody>
 
-        </tbody>
+                    @for (producto of productos; track producto.id) {
 
-    </table>
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ producto.nombre }}
+                                </strong>
+                            </td>
+
+
+                            <td>
+                                {{ producto.descripcion || '-' }}
+                            </td>
+
+
+                            <td>
+                                {{
+                                    producto.precio
+                                    | currency:'COP':'symbol-narrow':'1.0-0'
+                                }}
+                            </td>
+
+
+                            <td>
+                                {{ producto.codigoBarras || '-' }}
+                            </td>
+
+
+                            <td>
+                                {{ producto.stock }}
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn-primary"
+                                    (click)="agregarAlCarrito(producto)">
+
+                                    Agregar
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        }
+
+    </section>
 
 </div>

@@ -1,93 +1,320 @@
-<div class="usuarios-container">
-  <h2>Usuarios</h2>
-  <button (click)="openModal()">➕ Crear usuario</button>
+<div class="page-container usuarios-container">
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Rol</th>
-        <th>Nombre Usuario</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (usuario of usuarios; track usuario.id) {
-      <tr>
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.nombre }}</td>
-        <td>{{ usuario.apellido }}</td>
-        <td>{{ usuario.rol.nombre }}</td>
-        <td>{{ usuario.nombreUsuario }}</td>
-        <td>
-          <button (click)="editUsuario(usuario)">✏️ Editar</button>
-          <button (click)="deleteUsuario(usuario.id)">🗑️ Eliminar</button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <div class="page-header">
 
-  @if (modalAbierto) {
-  <div class="modal">
-    <div class="modal-content">
-      <h3>{{ editando ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+    <div>
 
-      <!-- FORMULARIO -->
-      <form #usuarioForm="ngForm" (ngSubmit)="saveUsuario()">
+      <h2>Usuarios</h2>
 
-        <input type="text" name="nombre" placeholder="Nombre del usuario" [(ngModel)]="usuarioActual.nombre" required
-          #nombre="ngModel" />
-        @if (nombre.invalid && nombre.touched) {
-        <div class="error">
-          ⚠️ El nombre es obligatorio.
-        </div>
-        }
-        <br>
-        <input type="text" name="apellido" placeholder="Apellido del usuario" [(ngModel)]="usuarioActual.apellido"
-          required #apellido="ngModel" />
-        <br>
-        <input type="text" name="nombreUsuario" placeholder="Nombre de la cuenta de Usuario"
-          [(ngModel)]="usuarioActual.nombreUsuario" required #nombreUsuario="ngModel" />
-        @if (nombreUsuario.invalid && nombreUsuario.touched) {
-        <div class="error">
-          ⚠️ El nombre de la cuenta de Usuario es obligatorio.
-        </div>
-        }
-        <br>
-        <input type="text" name="contrasena" placeholder="Contraseña del usuario" [(ngModel)]="usuarioActual.contrasena"
-          required #contrasena="ngModel" />
-        @if (contrasena.invalid && contrasena.touched) {
-        <div class="error">
-          ⚠️ La contraseña es obligatoria.
-        </div>
-        }
-        <br>
-
-        <br>
-        <label for="idRol">Rol:</label>
-        <br />
-        <select id="idRol" name="idRol" [(ngModel)]="usuarioActual.rol.id" required>
-          <option [ngValue]="null">-- Selecciona un rol --</option>
-          <option *ngFor="let rol of roles" [ngValue]="rol.id">
-            {{ rol.nombre }}
-          </option>
-        </select>
-
-
-        <br>
-
-        <button type="submit" [disabled]="usuarioForm.invalid">
-          {{ editando ? 'Guardar cambios' : 'Crear' }}
-        </button>
-        <button type="button" (click)="closeModal()">Cancelar</button>
-
-      </form>
+      <p class="page-subtitle">
+        Administra los usuarios, roles y acceso al sistema.
+      </p>
 
     </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="openModal()">
+
+      ➕ Crear usuario
+
+    </button>
+
   </div>
 
+
+  @if (usuarioResponse.length === 0) {
+
+    <div class="empty-message">
+      No hay usuarios registrados.
+    </div>
+
+  } @else {
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        @for (
+          usuario of usuarioResponse;
+          track usuario.id
+        ) {
+
+          <tr>
+
+            <td>
+              {{ usuario.nombre }}
+            </td>
+
+            <td>
+              {{ usuario.apellido }}
+            </td>
+
+            <td>
+              <strong>
+                {{ usuario.nombreUsuario }}
+              </strong>
+            </td>
+
+            <td>
+              {{ usuario.nombreRol }}
+            </td>
+
+
+            <td>
+
+              @if (usuario.activo) {
+
+                <span class="estado-activo">
+                  Activo
+                </span>
+
+              } @else {
+
+                <span class="estado-inactivo">
+                  Inactivo
+                </span>
+
+              }
+
+            </td>
+
+
+            <td>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="actualizarUsuario(usuario)">
+
+                ✏️ Editar
+
+              </button>
+
+
+              <button
+                type="button"
+                [class.btn-danger]="usuario.activo"
+                [class.btn-primary]="!usuario.activo"
+                (click)="cambiarEstadoUsuario(usuario)">
+
+                {{
+                  usuario.activo
+                    ? 'Desactivar'
+                    : 'Activar'
+                }}
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
   }
+
+
+  <!-- ===================================== -->
+  <!-- MODAL -->
+  <!-- ===================================== -->
+
+  @if (modalAbierto) {
+
+    <div class="modal">
+
+      <div class="modal-content">
+
+        <h3>
+          {{
+            editando
+              ? 'Editar usuario'
+              : 'Crear usuario'
+          }}
+        </h3>
+
+
+        <form
+          #usuarioForm="ngForm"
+          (ngSubmit)="guardarUsuario()">
+
+
+          <!-- NOMBRE -->
+
+          <div class="form-group">
+
+            <label for="nombre">
+              Nombre
+            </label>
+
+            <input
+              id="nombre"
+              type="text"
+              name="nombre"
+              [(ngModel)]="usuarioActual.nombre"
+              required
+              #nombre="ngModel"
+            />
+
+            @if (
+              nombre.invalid &&
+              nombre.touched
+            ) {
+
+              <div class="error">
+                El nombre es obligatorio.
+              </div>
+
+            }
+
+          </div>
+
+
+          <!-- APELLIDO -->
+
+          <div class="form-group">
+
+            <label for="apellido">
+              Apellido
+            </label>
+
+            <input
+              id="apellido"
+              type="text"
+              name="apellido"
+              [(ngModel)]="usuarioActual.apellido"
+              required
+            />
+
+          </div>
+
+
+          <!-- USUARIO -->
+
+          <div class="form-group">
+
+            <label for="nombreUsuario">
+              Nombre de usuario
+            </label>
+
+            <input
+              id="nombreUsuario"
+              type="text"
+              name="nombreUsuario"
+              [(ngModel)]="usuarioActual.nombreUsuario"
+              required
+            />
+
+          </div>
+
+
+          <!-- CONTRASEÑA SOLAMENTE AL CREAR -->
+
+          @if (!editando) {
+
+            <div class="form-group">
+
+              <label for="contrasena">
+                Contraseña inicial
+              </label>
+
+              <input
+                id="contrasena"
+                type="password"
+                name="contrasena"
+                [(ngModel)]="usuarioActual.contrasena"
+                required
+                minlength="6"
+              />
+
+            </div>
+
+          }
+
+
+          <!-- ROL -->
+
+          <div class="form-group">
+
+            <label for="idRol">
+              Rol
+            </label>
+
+            <select
+              id="idRol"
+              name="idRol"
+              [(ngModel)]="usuarioActual.idRol"
+              required>
+
+              <option [ngValue]="null">
+                -- Selecciona un rol --
+              </option>
+
+              @for (rol of roles; track rol.id) {
+
+                <option [ngValue]="rol.id">
+                  {{ rol.nombre }}
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+
+          <div class="buttons">
+
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="usuarioForm.invalid">
+
+              {{
+                editando
+                  ? 'Guardar cambios'
+                  : 'Crear usuario'
+              }}
+
+            </button>
+
+
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="closeModal()">
+
+              Cancelar
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
 </div>

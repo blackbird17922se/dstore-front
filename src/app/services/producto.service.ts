@@ -3,7 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { ProductoModel } from "../models/producto/producto.model";
 import { Observable } from "rxjs";
-import { ProductoConStockModel } from "../models/ProductoConStock.model";
+
 import { ProductoRequest } from "../models/producto/producto-request.model";
 import { ProductoResponse } from "../models/producto/producto-response.model";
 
@@ -33,9 +33,9 @@ export class ProductoService {
         );
     }
 
-    getAllConStock(): Observable<ProductoConStockModel[]> {
-        return this.http.get<ProductoConStockModel[]>(this.apiUrl);
-    }
+    // getAllConStock(): Observable<ProductoConStockModel[]> {
+    //     return this.http.get<ProductoConStockModel[]>(this.apiUrl);
+    // }
 
     listarProductosActivos(): Observable<ProductoModel[]>{
         return this.http.get<ProductoModel[]>(`${this.apiUrl}/activos`,)

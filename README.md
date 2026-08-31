@@ -1,8 +1,8 @@
 # 🛒 DStore Frontend
 
-Frontend de **DStore**, una aplicación web orientada a la gestión de ventas e inventario para pequeños comercios como papelerías, cacharrerías y tiendas locales.
+Frontend de **DStore**, una aplicación web para la gestión de ventas e inventario orientada a pequeños comercios como papelerías, cacharrerías y tiendas locales.
 
-La aplicación está desarrollada con **Angular** y consume una API REST construida con **Java y Spring Boot**.
+La aplicación está desarrollada con **Angular 20** y consume una API REST construida con **Java 21 y Spring Boot**.
 
 Este repositorio contiene exclusivamente la interfaz web del sistema.
 
@@ -22,9 +22,23 @@ Este repositorio contiene la aplicación Angular de DStore.
 
 ## 🎯 Objetivo del proyecto
 
-Construir una interfaz web sencilla, funcional y progresivamente mejorada que permita administrar las operaciones principales de DStore.
+DStore busca cubrir un flujo comercial completo y coherente:
 
-Actualmente el frontend permite interactuar con diferentes funcionalidades ya disponibles en el backend, manteniendo la autenticación mediante JWT y el control de acceso a las rutas de la aplicación.
+```text
+Productos
+   ↓
+Entradas de inventario
+   ↓
+Existencias
+   ↓
+Ventas
+   ↓
+Descuento automático de inventario
+   ↓
+Movimientos y trazabilidad
+```
+
+El frontend permite operar los principales módulos del sistema, administrar información comercial y consultar el estado del inventario mediante una interfaz protegida por autenticación JWT.
 
 ---
 
@@ -35,20 +49,17 @@ Actualmente el frontend permite interactuar con diferentes funcionalidades ya di
 - RxJS
 - Angular Router
 - HttpClient
+- Standalone Components
 - Functional Interceptors
 - Route Guards
 - HTML
-- CSS
-
-La aplicación utiliza componentes **standalone** de Angular.
+- SCSS
 
 ---
 
 ## 🔐 Autenticación y seguridad
 
-El frontend se encuentra integrado con el sistema de autenticación JWT del backend.
-
-El flujo actual es:
+El frontend está integrado con el sistema de autenticación JWT del backend.
 
 ```text
 Usuario
@@ -57,13 +68,13 @@ Login Angular
    ↓
 POST /api/v2/auth/login
    ↓
-Spring Boot valida credenciales
+Spring Security valida credenciales
    ↓
 JWT
    ↓
-Angular almacena la sesión
+Angular mantiene la sesión
    ↓
-Interceptor agrega el token
+Interceptor HTTP
    ↓
 Authorization: Bearer TOKEN
 ```
@@ -71,109 +82,273 @@ Authorization: Bearer TOKEN
 Actualmente se encuentra implementado:
 
 - Login de usuarios.
-- Almacenamiento del JWT.
+- Persistencia del JWT.
 - Manejo del usuario autenticado.
 - Manejo del rol del usuario.
 - Estado reactivo de sesión mediante RxJS.
-- Interceptor HTTP para enviar automáticamente el JWT.
-- Protección de rutas.
+- Interceptor HTTP para agregar automáticamente el JWT.
+- Protección de rutas mediante guard.
 - Cierre de sesión.
-- Integración con endpoints protegidos de Spring Security.
+- Manejo de respuestas `401`.
+- Validación inicial de expiración del token.
+- Perfil del usuario autenticado.
+- Cambio de contraseña desde **Mi perfil**.
 
 ---
 
-## 📦 Funcionalidades implementadas
+## 👤 Gestión de usuarios
 
-### 🔐 Autenticación
+El módulo administrativo permite:
 
-- Login.
-- Manejo de sesión.
-- Interceptor JWT.
-- Guards de navegación.
-- Logout.
-- Control de acceso según autenticación.
+- Listar usuarios.
+- Crear usuarios.
+- Editar datos generales.
+- Asignar roles.
+- Activar y desactivar usuarios.
+- Mantener la contraseña fuera del flujo normal de edición administrativa.
 
-### 🗂️ Catálogos
+Cada usuario dispone además de una sección **Mi perfil**, desde la cual puede:
 
-Actualmente existen interfaces para la gestión de:
+- Consultar sus datos.
+- Actualizar nombre y apellido.
+- Consultar su nombre de usuario y rol.
+- Cambiar su contraseña validando la contraseña actual.
 
-- Categorías / tipos de producto.
-- Presentaciones.
+---
+
+## 🗂️ Catálogos
+
+DStore dispone de interfaces para administrar:
+
+- Categorías.
 - Marcas.
+- Presentaciones.
+- Tarifas de IVA.
 
-Estas pantallas consumen información directamente desde la API de DStore.
-
-### 📦 Productos
-
-El módulo de productos permite actualmente:
-
-- Listar productos.
-- Visualizar nombre.
-- Descripción.
-- Precio.
-- Tarifa de IVA.
-- Marca.
-- Categoría.
-- Presentación.
-- Código de barras.
-- Stock calculado desde el backend.
-
-El frontend ya se encuentra consumiendo la versión actual de la API Spring Boot.
+Los registros manejan estados activo/inactivo sin eliminación física como flujo principal.
 
 ---
 
-## 🌐 Integración con el Backend
+## 📦 Productos
 
-La URL de la API se encuentra centralizada mediante los archivos de configuración de Angular.
+El módulo de productos permite:
 
-Ejemplo:
+- Crear y editar productos.
+- Consultar productos.
+- Activar y desactivar productos.
+- Manejar código de barras.
+- Asociar marca.
+- Asociar categoría.
+- Asociar presentación.
+- Asociar tarifa de IVA.
+- Indicar si el producto controla vencimiento.
+- Visualizar el stock calculado por el backend.
 
-```typescript
-export const environment = {
-  apiUrl: 'http://localhost:8080/api/v2'
-};
-```
-
-Los servicios utilizan esta configuración para construir las diferentes URLs:
-
-```typescript
-private apiUrl = `${environment.apiUrl}/auth`;
-```
-
-Esto evita definir URLs del backend directamente en cada componente.
+El stock no se administra directamente desde el producto. La fuente de verdad del inventario es el módulo de **Existencias**.
 
 ---
 
-## 🔑 Interceptor JWT
+## 👥 Clientes
 
-Las peticiones protegidas utilizan un interceptor funcional de Angular.
+El módulo de clientes permite:
 
-Ejemplo:
+- Crear clientes.
+- Editar clientes.
+- Consultar clientes.
+- Activar y desactivar clientes.
+- Manejar diferentes tipos de documento.
+- Registrar información de contacto y observaciones.
 
-```typescript
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-
-  const token = localStorage.getItem('token');
-
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    return next(cloned);
-  }
-
-  return next(req);
-};
-```
-
-De esta forma los componentes y servicios no necesitan agregar manualmente el token en cada petición.
+El cliente es opcional al momento de registrar una venta.
 
 ---
 
-## 🧱 Organización actual
+## 📥 Inventario
+
+El frontend incluye un módulo de inventario compuesto por varias operaciones.
+
+### Entradas de inventario
+
+Permite registrar entradas con múltiples productos y consultar posteriormente el detalle histórico de cada entrada.
+
+Cada detalle puede manejar:
+
+- Producto.
+- Cantidad.
+- Número de lote.
+- Fecha de vencimiento.
+
+### Existencias
+
+Permite consultar las existencias generadas a partir de las entradas de inventario.
+
+Incluye:
+
+- Filtro por producto.
+- Filtro de solo existencias disponibles.
+- Cantidad actual.
+- Lote.
+- Fecha de vencimiento.
+- Fecha de ingreso.
+
+### Próximos a vencer
+
+Permite consultar productos próximos a vencer indicando un rango de días.
+
+### Movimientos de inventario
+
+Permite consultar la trazabilidad histórica de un producto.
+
+Los movimientos pueden representar operaciones como:
+
+- Entradas.
+- Ventas.
+- Ajustes de entrada.
+- Ajustes de salida.
+- Anulación de ventas.
+
+### Ajustes de inventario
+
+Permite registrar ajustes sobre una existencia específica.
+
+Los ajustes pueden:
+
+- Incrementar una existencia.
+- Disminuir una existencia.
+- Registrar motivo y observación.
+- Generar automáticamente un movimiento de inventario.
+
+---
+
+## 🛒 Ventas
+
+El módulo de ventas cubre el flujo principal de una operación comercial.
+
+### Nueva venta
+
+La pantalla de nueva venta permite:
+
+- Seleccionar un cliente opcional.
+- Buscar productos mediante código de barras.
+- Agregar productos al carrito.
+- Modificar cantidades.
+- Eliminar productos del carrito.
+- Visualizar subtotales.
+- Calcular el total de la venta.
+- Registrar observaciones.
+- Calcular visualmente dinero recibido y cambio.
+
+El precio mostrado al cliente corresponde al **precio final con IVA incluido**.
+
+El frontend envía al backend únicamente la información necesaria para procesar la operación:
+
+```json
+{
+  "idCliente": null,
+  "observacion": null,
+  "detalles": [
+    {
+      "idProducto": 11,
+      "cantidad": 2
+    }
+  ]
+}
+```
+
+El backend es responsable de validar precios, IVA e inventario.
+
+### Historial de ventas
+
+Permite consultar:
+
+- Fecha.
+- Cliente.
+- Total.
+- Vendedor.
+- Estado.
+
+### Detalle de venta
+
+Permite visualizar:
+
+- Información general de la venta.
+- Productos vendidos.
+- Cantidades.
+- Precio unitario.
+- Subtotal.
+- Estado.
+- Información de anulación cuando aplica.
+
+### Anulación
+
+Una venta confirmada puede ser anulada indicando un motivo.
+
+La anulación se integra con el backend para:
+
+- Cambiar el estado de la venta.
+- Registrar fecha y motivo de anulación.
+- Restaurar las existencias afectadas.
+- Conservar el movimiento original.
+- Generar movimientos inversos de inventario para mantener trazabilidad.
+
+---
+
+## 📊 Estrategia de inventario aplicada en ventas
+
+La selección de existencias se realiza en el backend, por lo que Angular no necesita conocer qué lote específico debe consumir.
+
+```text
+Producto con vencimiento
+        ↓
+       FEFO
+        ↓
+vence primero → sale primero
+```
+
+```text
+Producto sin vencimiento
+        ↓
+       FIFO
+        ↓
+entra primero → sale primero
+```
+
+El frontend solamente indica:
+
+```text
+Producto + Cantidad
+```
+
+y el backend se encarga de resolver la salida de inventario.
+
+---
+
+## 🎨 UI / UX
+
+La interfaz fue reorganizada para ofrecer una experiencia más consistente y presentable.
+
+Actualmente incluye:
+
+- Sidebar lateral.
+- Navegación agrupada por módulos.
+- Indicador visual de la ruta activa.
+- Página de inicio con accesos rápidos.
+- Diseño específico para Nueva Venta.
+- Pantalla de login renovada.
+- Página Mi perfil.
+- Footer.
+- Tablas con estilo unificado.
+- Estados visuales activo/inactivo.
+- Botones reutilizables.
+- Formularios y filtros consistentes.
+- Mensajes para listados vacíos.
+- Diseño responsive básico.
+
+Los estilos comunes se centralizan para evitar duplicación entre módulos.
+
+---
+
+## 🧱 Organización del proyecto
 
 La aplicación se encuentra organizada principalmente en:
 
@@ -183,7 +358,11 @@ src/app
 ├── components
 ├── guards
 ├── interceptors
-├── model
+├── models
+│   ├── cliente
+│   ├── producto
+│   ├── usuario
+│   └── venta
 ├── pages
 ├── services
 ├── app.config.ts
@@ -192,29 +371,71 @@ src/app
 
 ### Responsabilidades
 
-**Pages**
+**Pages**  
+Contienen las pantallas principales de la aplicación.
 
-Contienen las vistas principales de la aplicación.
+**Components**  
+Contienen elementos reutilizables de interfaz, como la navegación.
 
-**Components**
-
-Componentes reutilizables de interfaz.
-
-**Services**
-
+**Services**  
 Centralizan la comunicación con la API REST.
 
-**Guards**
+**Guards**  
+Controlan el acceso a las rutas protegidas.
 
-Controlan el acceso a las rutas.
+**Interceptors**  
+Interceptan peticiones HTTP para agregar el JWT y manejar respuestas relacionadas con autenticación.
 
-**Interceptors**
+**Models**  
+Contienen las interfaces TypeScript utilizadas para representar Request, Response y modelos auxiliares del frontend.
 
-Interceptan peticiones HTTP y agregan información como el JWT.
+---
 
-**Model**
+## 🌐 Integración con el backend
 
-Contiene interfaces y modelos utilizados para representar la información intercambiada con el backend.
+La URL base de la API se centraliza mediante los archivos de configuración de Angular.
+
+Ejemplo:
+
+```typescript
+export const environment = {
+  apiUrl: 'http://localhost:8080/api/v2'
+};
+```
+
+Los servicios construyen sus endpoints a partir de esta URL:
+
+```typescript
+private apiUrl = `${environment.apiUrl}/ventas`;
+```
+
+Esto evita mantener URLs del backend directamente en los componentes.
+
+---
+
+## 🔑 Interceptor JWT
+
+Las peticiones protegidas utilizan un interceptor funcional.
+
+Conceptualmente:
+
+```typescript
+const token = localStorage.getItem('token');
+
+if (token) {
+  const requestConToken = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return next(requestConToken);
+}
+
+return next(req);
+```
+
+De esta forma los componentes y servicios no agregan manualmente el token en cada petición.
 
 ---
 
@@ -225,6 +446,7 @@ Contiene interfaces y modelos utilizados para representar la información interc
 - Node.js
 - npm
 - Angular CLI
+- Backend de DStore en ejecución
 
 Clonar el repositorio:
 
@@ -239,7 +461,7 @@ Instalar dependencias:
 npm install
 ```
 
-Ejecutar el proyecto:
+Ejecutar:
 
 ```bash
 npm start
@@ -257,78 +479,104 @@ La aplicación estará disponible normalmente en:
 http://localhost:4200
 ```
 
-Para utilizar todas las funcionalidades es necesario tener ejecutándose también el backend de DStore.
+La API REST debe estar disponible según la URL configurada en `environment`.
 
 ---
 
-## 🚧 Estado actual
+## ✅ Estado actual
 
-### Implementado
+### Autenticación
 
-- ✅ Angular Standalone.
 - ✅ Login.
-- ✅ Autenticación JWT.
+- ✅ JWT.
 - ✅ Interceptor HTTP.
-- ✅ Guards.
-- ✅ Manejo de sesión.
-- ✅ Integración con Spring Boot.
-- ✅ Consulta de catálogos.
-- ✅ Consulta de productos.
-- ✅ Visualización de stock proveniente del inventario.
+- ✅ Route Guard.
+- ✅ Logout.
+- ✅ Manejo de expiración y respuestas 401.
+- ✅ Mi perfil.
+- ✅ Cambio de contraseña.
 
-### En adaptación / mejora
+### Administración
 
-- 🚧 Formularios de creación y edición de productos.
-- 🚧 Activación y desactivación de registros.
-- 🚧 Actualización visual de la interfaz.
-- 🚧 Mejor organización de componentes reutilizables.
-- 🚧 Manejo centralizado de errores HTTP.
-- 🚧 Manejo de expiración del JWT.
+- ✅ Usuarios.
+- ✅ Roles.
+- ✅ Activación y desactivación de usuarios.
 
-### Próximos módulos
+### Catálogos
 
-- 🔜 Inventario.
-- 🔜 Entradas de inventario.
-- 🔜 Existencias.
-- 🔜 Control de vencimientos.
-- 🔜 Ajustes de inventario.
-- 🔜 Clientes.
-- 🔜 Ventas.
-- 🔜 Pagos.
-- 🔜 Dashboard.
-- 🔜 Alertas de productos próximos a vencer.
+- ✅ Categorías.
+- ✅ Marcas.
+- ✅ Presentaciones.
+- ✅ Tarifas de IVA.
+
+### Operación
+
+- ✅ Productos.
+- ✅ Clientes.
+- ✅ Entradas de inventario.
+- ✅ Detalle de entradas.
+- ✅ Existencias.
+- ✅ Próximos a vencer.
+- ✅ Movimientos de inventario.
+- ✅ Ajustes.
+- ✅ Nueva venta.
+- ✅ Historial de ventas.
+- ✅ Detalle de venta.
+- ✅ Anulación de venta.
+
+### Interfaz
+
+- ✅ Sidebar.
+- ✅ Página de inicio.
+- ✅ Login renovado.
+- ✅ Estilos reutilizables.
+- ✅ Tablas y formularios unificados.
+- ✅ Responsive básico.
 
 ---
 
-## 🎨 UI / UX
+## 🗺️ Alcance de esta versión
 
-La interfaz actual corresponde a una primera versión funcional.
+Esta versión está enfocada en completar y presentar correctamente el flujo principal de ventas e inventario.
 
-El objetivo inmediato es priorizar:
+No forman parte del alcance actual:
 
-1. Integración correcta con el backend.
-2. Funcionalidad de los módulos.
-3. Validaciones.
-4. Seguridad.
+- Caja con apertura y cierre.
+- Balance de caja.
+- Medios de pago configurables.
+- Proveedores.
+- Compras a proveedores.
+- Crédito o ventas fiadas.
+- Dashboard de métricas y reportes avanzados.
 
-Posteriormente se realizará una etapa específica de mejora de:
+Estas funcionalidades pueden incorporarse en futuras versiones sin afectar el flujo principal ya implementado.
 
-- Diseño visual.
-- Responsive design.
-- Componentes reutilizables.
-- Experiencia de usuario.
-- Feedback visual.
-- Navegación.
+---
+
+## 🚀 Posibles mejoras futuras
+
+- Dashboard con indicadores reales.
+- Reportes de ventas.
+- Alertas visuales avanzadas.
+- Paginación y filtros adicionales.
+- Manejo centralizado de mensajes y notificaciones.
+- Refresh Token.
+- Mejoras adicionales de accesibilidad.
+- Mayor cobertura responsive.
+- Caja y medios de pago.
+- Compras y proveedores.
+- Crédito a clientes.
 
 ---
 
 ## 🧠 Objetivo de aprendizaje
 
-DStore Frontend también forma parte de un proyecto personal orientado al fortalecimiento de habilidades en desarrollo Full Stack.
+DStore forma parte de un proyecto personal orientado al fortalecimiento de habilidades Full Stack.
 
-El proyecto permite aplicar conocimientos de:
+El frontend permite aplicar conocimientos de:
 
-- Angular.
+- Angular moderno.
+- Standalone Components.
 - TypeScript.
 - RxJS.
 - Consumo de APIs REST.
@@ -336,9 +584,11 @@ El proyecto permite aplicar conocimientos de:
 - Interceptors.
 - Guards.
 - Routing.
+- Formularios.
+- Modelado de Request y Response.
+- Manejo de sesión.
 - Integración Angular + Spring Boot.
-- Modelado de interfaces TypeScript.
-- Manejo de sesión en frontend.
+- Diseño y organización de interfaces administrativas.
 
 ---
 

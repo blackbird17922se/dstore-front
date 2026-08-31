@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { VentaModel } from '../../models/venta.model';
 import { VentaService } from '../../services/venta.service';
 import { Router } from '@angular/router';
+import { VentaRequest } from '../../models/venta/venta-request.model';
+import { VentaResponse } from '../../models/venta/venta-response.model';
 
 @Component({
   selector: 'app-venta',
@@ -13,7 +14,8 @@ import { Router } from '@angular/router';
 })
 export class Venta {
 
-  ventas: VentaModel[] = [];
+  ventas: VentaRequest[] = [];
+  ventasResponse: VentaResponse[] = [];
   mostrarModal = false;
   ventaSeleccionadaId?: number;
   motivo = '';
@@ -25,14 +27,12 @@ export class Venta {
   ) { }
 
   ngOnInit() {
-    this.getVentas();
+    this.listarVentas();
   }
 
-  getVentas() {
-    this.ventaService.getAll().subscribe({
-      next: (ventas) => {
-        this.ventas = ventas;
-      },
+  listarVentas() {
+    this.ventaService.listarVentas().subscribe({
+      next: (ventas) => {this.ventasResponse = ventas},
       error: (error) => {
         console.error('Error fetching ventas:', error);
       }
@@ -43,19 +43,19 @@ export class Venta {
     this.router.navigate(['/detalle-venta', id]);
   }
 
-  anularVenta(id: number | null, motivo?: string) {
-    if (id === null) return;
-    if (confirm('¿Estás seguro de que deseas anular esta venta?')) {
-      this.ventaService.anularVenta(id, motivo).subscribe({
-        next: () => {
-          this.getVentas();
-        },
-        error: (error) => {
-          console.error('Error al eliminar marca:', error);
-        }
-      });
-    }
-  }
+  // anularVenta(id: number | null, motivo?: string) {
+  //   if (id === null) return;
+  //   if (confirm('¿Estás seguro de que deseas anular esta venta?')) {
+  //     this.ventaService.anularVenta(id, motivo).subscribe({
+  //       next: () => {
+  //         this.getVentas();
+  //       },
+  //       error: (error) => {
+  //         console.error('Error al eliminar marca:', error);
+  //       }
+  //     });
+  //   }
+  // }
 
   abrirModalAnular(id: number) {
     this.ventaSeleccionadaId = id;
@@ -70,24 +70,24 @@ export class Venta {
   }
 
 
-  confirmarAnulacion() {
-    if (!this.ventaSeleccionadaId || !this.motivo) {
-      return;
-    }
+  // confirmarAnulacion() {
+  //   if (!this.ventaSeleccionadaId || !this.motivo) {
+  //     return;
+  //   }
 
-    this.ventaService.anularVenta(this.ventaSeleccionadaId, this.motivo)
-      .subscribe({
-        next: () => {
-          alert('Venta anulada exitosamente');
+  //   this.ventaService.anularVenta(this.ventaSeleccionadaId, this.motivo)
+  //     .subscribe({
+  //       next: () => {
+  //         alert('Venta anulada exitosamente');
 
-          this.cerrarModal();
-          this.getVentas(); // refresca la tabla
-        },
-        error: (err) => {
-          console.error(err);
-          alert('No se pudo anular la venta');
-        }
-      });
-  }
+  //         this.cerrarModal();
+  //         this.getVentas(); // refresca la tabla
+  //       },
+  //       error: (err) => {
+  //         console.error(err);
+  //         alert('No se pudo anular la venta');
+  //       }
+  //     });
+  // }
 
 }

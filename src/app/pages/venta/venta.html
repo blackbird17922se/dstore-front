@@ -14,11 +14,11 @@
             </tr>
         </thead>
         <tbody>
-            @for (venta of ventas; track venta.id) {
+            @for (venta of ventasResponse; track venta.id) {
             <tr>
                 <td>{{ venta.id }}</td>
                 <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy hh:mm a":'':'es-CO' }}</td>
-                <td>{{ venta.cliente }}</td>
+                <td>{{ venta.nombreCliente }}</td>
                 <td>{{ venta.total }}</td>
                 <td>{{ venta.vendedor }}</td>
                 <td>{{ venta.estado }}</td>
@@ -41,9 +41,9 @@
 
             <div class="acciones">
                 <button (click)="cerrarModal()">Cancelar</button>
-                <button (click)="confirmarAnulacion()" [disabled]="!motivo">
+                <!-- <button (click)="confirmarAnulacion()" [disabled]="!motivo">
                     Anular
-                </button>
+                </button> -->
             </div>
         </div>
     </div>

@@ -17,6 +17,7 @@ import { Existencias } from './pages/existencias/existencias';
 import { ProximosVencer } from './pages/proximos-vencer/proximos-vencer';
 import { MovimientoInventario } from './pages/movimiento-inventario/movimiento-inventario';
 import { AjusteInventario } from './pages/ajuste-inventario/ajuste-inventario';
+import { NuevaVenta } from './pages/nueva-venta/nueva-venta';
 
 
 export const routes: Routes = [
@@ -34,15 +35,16 @@ export const routes: Routes = [
       { path: 'presentacion', component: Presentacion },
       { path: 'marca', component: Marca },
       { path: 'producto', component: Producto },
-      { path: 'caja', component: Caja },
+      // { path: 'caja', component: Caja },
       { path: 'venta', component: Venta },
-      { path: 'detalle-venta/:id', component: DetalleVenta },
+      // { path: 'detalle-venta/:id', component: DetalleVenta },
       { path: 'clientes', component: Cliente},
       { path: 'entradas-inventario', component: EntradaInventario},
       { path: 'existencias', component: Existencias},
       { path: 'proximos-vencer', component: ProximosVencer},
       { path: 'movimientos-inventario', component: MovimientoInventario},
-      { path: 'ajuste-inventario', component: AjusteInventario}
+      { path: 'ajuste-inventario', component: AjusteInventario},
+      { path: 'nueva-venta', component: NuevaVenta}
     ]
   },
 

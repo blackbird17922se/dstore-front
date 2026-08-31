@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DetalleVentaService } from '../../services/detalle-venta.service';
 import { ActivatedRoute } from '@angular/router';
-import { VentaDetalleModel } from '../../models/ventaDetalle.model';
+// import { VentaDetalleModel } from '../../models/venta/venta-response.model';
 import { DetalleVentaItemModel } from '../../models/DetalleVentaItem.model';
 
 @Component({
@@ -13,21 +13,21 @@ import { DetalleVentaItemModel } from '../../models/DetalleVentaItem.model';
 })
 export class DetalleVenta {
 
-  venta!: VentaDetalleModel;
-  items: DetalleVentaItemModel[] = [];
+  // venta!: VentaDetalleModel;
+  // items: DetalleVentaItemModel[] = [];
 
-  constructor(
-    private detalleVentaService: DetalleVentaService,
-    private route: ActivatedRoute
-  ) { }
+  // constructor(
+  //   private detalleVentaService: DetalleVentaService,
+  //   private route: ActivatedRoute
+  // ) { }
 
-  ngOnInit() {
-    const id = this.route.snapshot.params['id'];
+  // ngOnInit() {
+  //   const id = this.route.snapshot.params['id'];
 
-    this.detalleVentaService.obtenerDetalleVenta(id).subscribe(res => {
-      this.venta = res;
-      this.items = res.items;
-    });
-  }
+  //   this.detalleVentaService.obtenerDetalleVenta(id).subscribe(res => {
+  //     this.venta = res;
+  //     this.items = res.items;
+  //   });
+  // }
 
 }

@@ -1,34 +1,103 @@
-<!-- <div class="detalle-venta-container">
+<div class="detalle-venta-container">
+
+    @if (venta) {
+
     <h2>Detalle Venta #{{ venta.id }}</h2>
 
-    <p><b>Estado:</b> {{ venta.estado }}</p>
+    <p>
+        <b>Fecha:</b>
+        {{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}
+    </p>
+
+    <p>
+        <b>Cliente:</b>
+        {{ venta.cliente || 'Consumidor final' }}
+    </p>
+
+    <p>
+        <b>Vendedor:</b>
+        {{ venta.vendedor }}
+    </p>
+
+    <p>
+        <b>Estado:</b>
+        {{ venta.estado }}
+    </p>
+
 
     @if (venta.estado === 'ANULADA') {
+
     <div>
-        <p><b>Fecha anulación:</b>
-            {{ venta.fechaAnulacion | date:'short' }}</p>
-        <p><b>Motivo:</b> {{ venta.motivoAnulacion }}</p>
+
+        <p>
+            <b>Fecha anulación:</b>
+            {{ venta.fechaAnulacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+
+        <p>
+            <b>Motivo:</b>
+            {{ venta.motivoAnulacion }}
+        </p>
+
     </div>
     }
 
+
+    <h3>Productos</h3>
+
     <table>
+
         <thead>
             <tr>
                 <th>Producto</th>
                 <th>Cantidad</th>
-                <th>Precio Unitario</th>
+                <th>Precio unitario</th>
                 <th>Subtotal</th>
             </tr>
         </thead>
+
         <tbody>
-            @for (item of items; track item.id) {
+
+            @for (item of venta.items; track item.id) {
+
             <tr>
-                <td>{{ item.producto}}</td>
-                <td>{{ item.cantidad}}</td>
-                <td>{{ item.precioUnitario}}</td>
-                <td>{{ item.subtotal}}</td>
+
+                <td>
+                    {{ item.producto }}
+                </td>
+
+                <td>
+                    {{ item.cantidad }}
+                </td>
+
+                <td>
+                    {{ item.precioUnitario
+                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </td>
+
+                <td>
+                    {{ item.subtotal
+                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </td>
+
             </tr>
             }
+
         </tbody>
+
     </table>
-</div> -->
+
+
+    <h3>
+        Total:
+        {{ venta.total
+        | currency:'COP':'symbol-narrow':'1.0-0' }}
+    </h3>
+
+    } @else {
+
+    <p>Cargando detalle de venta...</p>
+
+    }
+
+</div>

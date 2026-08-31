@@ -29,8 +29,9 @@
         </select>
 
 
-        <!-- Búsqueda rápida por código de barras -->
-        <!-- <label for="codigoBarras">Código de barras:</label>
+        <br>
+        Búsqueda rápida por código de barras <br>
+        <label for="codigoBarras">Código de barras:</label>
 
         <input
             type="text"
@@ -39,8 +40,8 @@
             placeholder="Código de barras"
             [(ngModel)]="codigoBuscado"
             (keyup.enter)="buscarPorCodigo()"
-        /> -->
-
+        />
+<br>
 
         <!--
             Por ahora ingresoCliente NO se envía al backend.
@@ -65,7 +66,7 @@
 
         <p>
             <strong>Cambio:</strong>
-            <!-- {{ cambio | currency:'COP':'symbol-narrow':'1.0-0' }} -->
+            {{ cambio | currency:'COP':'symbol-narrow':'1.0-0' }}
         </p>
 
 
@@ -125,7 +126,7 @@
 
                         <td>
 
-                            <!-- <input
+                            <input
                                 type="number"
                                 [(ngModel)]="item.cantidad"
                                 [name]="'cantidad-' + i"
@@ -133,13 +134,13 @@
                                 required
                                 #cant="ngModel"
                                 (ngModelChange)="actualizarCantidad(item, $event)"
-                            /> -->
+                            /> 
 
-                            <!-- @if (cant.invalid && cant.touched) {
+                             @if (cant.invalid && cant.touched) {
                                 <div class="error">
                                     La cantidad debe ser mayor a cero.
                                 </div>
-                            } -->
+                            }
 
                         </td>
 

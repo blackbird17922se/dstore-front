@@ -1,21 +1,15 @@
-import { VentaResponse } from "./venta-response.model";
+import { DetalleVentaItemResponse } from "./detalle-venta-item-response.model";
 
-export interface VentaDetalleResponse extends VentaResponse {
-  items: DetalleVentaItemResponse[];
-}
+export interface VentaDetalleResponse {
 
-export interface DetalleVentaItemResponse {
   id: number;
-
-  idProducto: number;
-  nombreProducto: string;
-
-  cantidad: number;
-
-  precioUnitario: number;
-  porcentajeIva: number;
-  valorIva: number;
-
-  subtotal: number;
+  fecha: string;
+  cliente: string | null;
   total: number;
+  vendedor: string;
+  estado: string;
+  fechaAnulacion: string | null;
+  motivoAnulacion: string | null;
+
+  items: DetalleVentaItemResponse[];
 }

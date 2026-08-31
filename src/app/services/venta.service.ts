@@ -31,8 +31,8 @@ export class VentaService {
         );
     }
 
-    anularVenta(id: number, motivo: string): Observable<VentaResponse> {
-        return this.http.patch<VentaResponse>(
+    anularVenta(id: number, motivo: string): Observable<{ mensaje: string }> {
+        return this.http.patch<{mensaje: string}>(
             `${this.apiUrl}/${id}/anular`, {motivo});
     }
 }

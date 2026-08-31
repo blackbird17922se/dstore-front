@@ -37,7 +37,7 @@ export const routes: Routes = [
       { path: 'producto', component: Producto },
       // { path: 'caja', component: Caja },
       { path: 'venta', component: Venta },
-      // { path: 'detalle-venta/:id', component: DetalleVenta },
+      { path: 'detalle-venta/:id', component: DetalleVenta },
       { path: 'clientes', component: Cliente},
       { path: 'entradas-inventario', component: EntradaInventario},
       { path: 'existencias', component: Existencias},

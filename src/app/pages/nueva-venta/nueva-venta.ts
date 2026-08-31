@@ -192,5 +192,39 @@ export class NuevaVenta {
     this.listarProductos();
   }
 
+  actualizarCantidad(item: ItemCarrito, valor: any) {
+    const cantidad = Number(valor);
+
+    // Si está vacío, no tocamos la cantidad original
+    if (valor === "" || valor === null) {
+      return;
+    }
+
+    // Si es número válido, actualizamos
+    if (!isNaN(cantidad) && cantidad > 0) {
+      item.cantidad = cantidad;
+    }
+  }
+
+
+  buscarPorCodigo() {
+    if (!this.codigoBuscado.trim()) return;
+
+    const encontrado = this.productos.find(
+      p => p.codigoBarras === this.codigoBuscado
+    );
+
+    if (encontrado) {
+      this.agregarAlCarrito(encontrado);
+      this.codigoBuscado = ''; // limpiar
+    } else {
+      alert("Producto no encontrado");
+    }
+  }
+
+  get cambio() {
+    if (this.ingresoCliente <= 0) return 0;
+    return this.ingresoCliente - this.totalGeneral;
+  }
 
 }

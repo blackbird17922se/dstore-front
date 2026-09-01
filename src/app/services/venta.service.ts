@@ -1,8 +1,12 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs/internal/Observable";
-import { VentaModel } from "../models/venta.model";
+
+import { VentaRequest } from "../models/venta/venta-request.model";
+import { VentaDetalleResponse } from "../models/venta/venta-detalle-response.model";
+import { VentaResponse } from "../models/venta/venta-response.model";
+import { Observable } from "rxjs";
+
 
 @Injectable({ providedIn: 'root' })
 export class VentaService {
@@ -10,13 +14,25 @@ export class VentaService {
 
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<VentaModel[]> {
-        return this.http.get<VentaModel[]>(this.apiUrl);
+    registrarVenta(request: VentaRequest): Observable<{mensaje: string}>{
+        return this.http.post<{mensaje: string}>(
+            this.apiUrl,
+            request
+        );
     }
 
-    anularVenta(id: number, motivo?: string): Observable<VentaModel> {
-        return this.http.patch<VentaModel>(
-            `${this.apiUrl}/${id}/anular`,
-            motivo ? {motivo} : {});
+    listarVentas(): Observable<VentaResponse[]> {
+        return this.http.get<VentaResponse[]>(this.apiUrl);
+    }
+
+    obtenerVentaPorId(id: number): Observable<VentaDetalleResponse> {
+        return this.http.get<VentaDetalleResponse>(
+        `${this.apiUrl}/${id}`
+        );
+    }
+
+    anularVenta(id: number, motivo: string): Observable<{ mensaje: string }> {
+        return this.http.patch<{mensaje: string}>(
+            `${this.apiUrl}/${id}/anular`, {motivo});
     }
 }

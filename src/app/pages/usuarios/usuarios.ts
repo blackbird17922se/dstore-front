@@ -5,6 +5,10 @@ import { RolModel } from '../../models/rol.model';
 import { UsuarioModel } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { UsuarioResponseModel } from '../../models/usuario/usuario-response.model';
+import { UsuarioForm } from '../../models/usuario/usuario-form.model';
+import { UsuarioUpdateRequest } from '../../models/usuario/usuario-update-request.model';
+import { UsuarioCreateRequest } from '../../models/usuario/usuario-create-request.model';
 
 @Component({
   selector: 'app-usuarios',
@@ -14,26 +18,26 @@ import { UsuarioService } from '../../services/usuario.service';
 })
 export class Usuarios {
   usuarios: UsuarioModel[] = [];
+  usuarioResponse: UsuarioResponseModel[] = [];
   roles: RolModel[] = [];
 
   modalAbierto = false;
   editando = false;
-  usuarioActual: UsuarioModel = { 
-    id: null, 
-    nombre: '', 
-    apellido: '', 
-    nombreUsuario: '', 
-    contrasena: '', 
-    rol: { id:0 } 
+  usuarioActual: UsuarioForm = {
+    id: null,
+    nombre: '',
+    apellido: '',
+    nombreUsuario: '',
+    contrasena: '',
+    idRol: null
   };
-
   constructor(
     private rolService: RolService, 
     private usuarioService: UsuarioService
   ) {}
 
   ngOnInit() {
-    this.getusuarios();
+    this.listarUsuarios();
     this.getRoles();
   }
 
@@ -44,10 +48,10 @@ export class Usuarios {
     });
   }
 
-  getusuarios() {
-    this.usuarioService.getAll().subscribe({
+  listarUsuarios() {
+    this.usuarioService.listarUsuarios().subscribe({
       next: (data) => {
-        this.usuarios = data;
+        this.usuarioResponse = data;
       },
       error: (error) => {
         console.error('Error al obtener Usuarios:', error);
@@ -56,48 +60,131 @@ export class Usuarios {
   }
 
 
-  editUsuario(usuario: UsuarioModel) {
+  actualizarUsuario(usuario: UsuarioResponseModel) {
+
     this.editando = true;
+
     this.usuarioActual = {
-      ...usuario,
-      rol: {
-        id: usuario.rol.id
-      }
+      id: usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      nombreUsuario: usuario.nombreUsuario,
+      contrasena: '',
+      idRol: usuario.idRol
     };
     this.modalAbierto = true;
   }
 
-  saveUsuario() {
-    const action = this.editando
-      ? this.usuarioService.update(this.usuarioActual)
-      : this.usuarioService.create(this.usuarioActual);
-    action.subscribe({
-      next: () => {
-        this.getusuarios();
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error al guardar el usuario:', error);
-      }
-    });
-  }
 
-  deleteUsuario(id: number | null) {
-    if (id === null) return;
-    if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-      this.usuarioService.delete(id).subscribe({
-        next: () => {
-          this.getusuarios();
-        },
-        error: (error) => {
-          console.error('Error al eliminar el usuario:', error);
-        }
-      });
+  guardarUsuario() {
+
+    if (this.usuarioActual.idRol === null) {
+      return;
+    }
+
+    if (this.editando) {
+
+      if (this.usuarioActual.id === null) {
+        return;
+      }
+
+      const request: UsuarioUpdateRequest = {
+        nombre:this.usuarioActual.nombre.trim(),
+        apellido:this.usuarioActual.apellido.trim(),
+        nombreUsuario:this.usuarioActual.nombreUsuario.trim(),
+        idRol:this.usuarioActual.idRol
+      };
+
+      this.usuarioService.actualizarUsuario(this.usuarioActual.id, request)
+        .subscribe({
+
+          next: () => {
+            this.listarUsuarios();
+            this.closeModal();
+          },
+
+          error: error => {
+            console.error('Error al actualizar usuario:', error);
+          }
+
+        });
+
+    } else {
+
+      const request: UsuarioCreateRequest = {
+        nombre:this.usuarioActual.nombre.trim(),
+        apellido:this.usuarioActual.apellido.trim(),
+        nombreUsuario:this.usuarioActual.nombreUsuario.trim(),
+        contrasena:this.usuarioActual.contrasena,
+        idRol:this.usuarioActual.idRol
+      };
+
+      this.usuarioService.crearUsuario(request)
+        .subscribe({
+
+          next: () => {
+            this.listarUsuarios();
+            this.closeModal();
+          },
+
+          error: error => {
+            console.error('Error al crear usuario:', error);
+          }
+        });
     }
   }
 
+  cambiarEstadoUsuario(
+    usuario: UsuarioResponseModel
+  ) {
+
+    const nuevoEstado =
+      !usuario.activo;
+
+    const accion =
+      nuevoEstado
+        ? 'activar'
+        : 'desactivar';
+
+    if (
+      !confirm(
+        `¿Estás seguro de que deseas ${accion} este usuario?`
+      )
+    ) {
+      return;
+    }
+
+    this.usuarioService
+      .cambiarEstado(
+        usuario.id!,
+        nuevoEstado
+      )
+      .subscribe({
+
+        next: () => {
+          this.listarUsuarios();
+        },
+
+        error: error => {
+
+          console.error(
+            'Error al cambiar estado del usuario:',
+            error
+          );
+        }
+
+      });
+  }
+
   resetUsuarioActual() {
-    this.usuarioActual = { id: null, nombre: '', apellido: '', nombreUsuario: '', contrasena: '', rol: { id:0 } };
+    this.usuarioActual = {
+      id: null,
+      nombre: '',
+      apellido: '',
+      nombreUsuario: '',
+      contrasena: '',
+      idRol: null
+    };
   }
 
   openModal() {

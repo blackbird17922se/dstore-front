@@ -1,7 +1,7 @@
-import { ProductoConStockModel } from "./ProductoConStock.model";
+import { ProductoModel } from "./producto/producto.model";
 
 export interface ItemCarrito {
-  producto: ProductoConStockModel;
+  producto: ProductoModel;
   cantidad: number;
 }
 

@@ -1,4 +1,4 @@
-<div class="venta-container">
+<div class="page-container venta-container">
     <h2>Venta</h2>
 
     <table>
@@ -14,37 +14,71 @@
             </tr>
         </thead>
         <tbody>
-            @for (venta of ventas; track venta.id) {
+            @for (venta of ventasResponse; track venta.id) {
             <tr>
                 <td>{{ venta.id }}</td>
                 <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy hh:mm a":'':'es-CO' }}</td>
-                <td>{{ venta.cliente }}</td>
+                <td>{{ venta.nombreCliente }}</td>
                 <td>{{ venta.total }}</td>
                 <td>{{ venta.vendedor }}</td>
                 <td>{{ venta.estado }}</td>
                 <td>
                     <button (click)="verDetalle(venta.id)" [disabled]="!venta.id">Detalle</button>
-                    <button (click)="abrirModalAnular(venta.id!)" [disabled]="!venta.id">Anular</button>
+
+                    @if (authService.esAdmin() && venta.estado !== 'ANULADA'
+                        ) {
+                        <button
+                            class="btn-danger"
+                            (click)="abrirModalAnular(venta.id)"
+                            [disabled]="venta.estado === 'ANULADA'">
+                            Anular
+                        </button>
+                        }
                 </td>
             </tr>
             }
         </tbody>
     </table>
 
-    <div class="modal-backdrop" *ngIf="mostrarModal">
+    @if (mostrarModal) {
+
+    <div class="modal-backdrop">
+
         <div class="modal">
+
             <h3>Anular venta</h3>
 
-            <p>¿Seguro que deseas anular la venta #{{ ventaSeleccionadaId }}?</p>
+            <p>
+                ¿Está seguro de anular la venta
+                #{{ ventaSeleccionadaId }}?
+            </p>
 
-            <textarea [(ngModel)]="motivo" placeholder="Motivo de la anulación"></textarea>
+            <label for="motivo">
+                Motivo:
+            </label>
+
+            <textarea id="motivo" name="motivo" [(ngModel)]="motivo" maxlength="500" rows="3"
+                placeholder="Ingrese el motivo de la anulación">
+            </textarea>
 
             <div class="acciones">
-                <button (click)="cerrarModal()">Cancelar</button>
-                <button (click)="confirmarAnulacion()" [disabled]="!motivo">
-                    Anular
+
+                <button type="button" (click)="cerrarModal()">
+
+                    Cancelar
+
                 </button>
+
+                <button type="button" (click)="confirmarAnulacion()" [disabled]="!motivo.trim()">
+
+                    Confirmar anulación
+
+                </button>
+
             </div>
+
         </div>
+
     </div>
+    }
 </div>

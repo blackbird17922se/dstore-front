@@ -17,6 +17,9 @@ import { Existencias } from './pages/existencias/existencias';
 import { ProximosVencer } from './pages/proximos-vencer/proximos-vencer';
 import { MovimientoInventario } from './pages/movimiento-inventario/movimiento-inventario';
 import { AjusteInventario } from './pages/ajuste-inventario/ajuste-inventario';
+import { NuevaVenta } from './pages/nueva-venta/nueva-venta';
+import { MiPerfil } from './pages/mi-perfil/mi-perfil';
+import { adminGuard } from './guards/admin.guard';
 
 
 export const routes: Routes = [
@@ -28,21 +31,38 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'inicio', component: Inicio },
-      { path: 'usuarios', component: Usuarios },
-      { path: 'roles', component: Roles },
+      // { path: 'usuarios', component: Usuarios },
+      // { path: 'roles', component: Roles },
       { path: 'categoria', component: Categoria },
       { path: 'presentacion', component: Presentacion },
       { path: 'marca', component: Marca },
       { path: 'producto', component: Producto },
-      { path: 'caja', component: Caja },
+      // { path: 'caja', component: Caja },
       { path: 'venta', component: Venta },
       { path: 'detalle-venta/:id', component: DetalleVenta },
       { path: 'clientes', component: Cliente},
-      { path: 'entradas-inventario', component: EntradaInventario},
+      // { path: 'entradas-inventario', component: EntradaInventario},
       { path: 'existencias', component: Existencias},
       { path: 'proximos-vencer', component: ProximosVencer},
       { path: 'movimientos-inventario', component: MovimientoInventario},
-      { path: 'ajuste-inventario', component: AjusteInventario}
+      { path: 'ajuste-inventario', component: AjusteInventario},
+      { path: 'nueva-venta', component: NuevaVenta},
+      { path: 'mi-perfil', component: MiPerfil },
+      {
+        path: 'usuarios',
+        component: Usuarios,
+        canActivate: [authGuard, adminGuard]
+      },
+      {
+        path: 'roles',
+        component: Roles,
+        canActivate: [authGuard, adminGuard]
+      },
+      {
+        path: 'entradas-inventario',
+        component: EntradaInventario,
+        canActivate: [authGuard, adminGuard]
+      }
     ]
   },
 

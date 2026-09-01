@@ -1,0 +1,282 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   PÁGINA
+   ========================================================= */
+
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #eef2f7 55%,
+      #dbeafe 100%
+    );
+}
+
+
+/* =========================================================
+   TARJETA
+   ========================================================= */
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  overflow: hidden;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.12);
+}
+
+
+/* =========================================================
+   MARCA
+   ========================================================= */
+
+.login-brand {
+  padding: 32px 32px 26px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #111827 0%,
+      #1f2937 60%,
+      #1e3a8a 100%
+    );
+
+  color: #ffffff;
+}
+
+.logo-container {
+  width: 76px;
+  height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.logo-container img {
+  width: 55px;
+  height: 55px;
+
+  object-fit: contain;
+}
+
+.login-brand h1 {
+  margin: 0;
+
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.login-brand p {
+  margin: 6px 0 0;
+
+  font-size: 0.85rem;
+
+  color: #cbd5e1;
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.login-content {
+  padding: 30px 32px;
+}
+
+.login-heading {
+  margin-bottom: 24px;
+}
+
+.login-heading h2 {
+  margin: 0 0 6px;
+
+  font-size: 1.35rem;
+
+  color: #111827;
+}
+
+.login-heading p {
+  margin: 0;
+
+  font-size: 0.86rem;
+  line-height: 1.5;
+
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.form-group input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font: inherit;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.form-group input:focus {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.error {
+  font-size: 0.78rem;
+
+  color: #b91c1c;
+}
+
+
+/* =========================================================
+   BOTÓN
+   ========================================================= */
+
+.login-button {
+  width: 100%;
+
+  margin-top: 6px;
+
+  padding: 11px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+}
+
+.login-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.login-footer {
+  padding: 14px 24px;
+
+  text-align: center;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #f9fafb;
+
+  color: #6b7280;
+
+  font-size: 0.76rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 500px) {
+
+  .login-page {
+    padding: 14px;
+  }
+
+  .login-brand {
+    padding: 26px 24px 22px;
+  }
+
+  .login-content {
+    padding: 26px 24px;
+  }
+
+}

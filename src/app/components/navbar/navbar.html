@@ -1,32 +1,220 @@
-<nav class="navbar">
-  <div class="logo">DStore M1</div>
+<aside class="sidebar">
 
-  <div><button (click)="logout()">Salir</button></div>
+  <div class="sidebar-header">
 
-  <div class="menu">
-    <a routerLink="/inicio">Inicio</a>
+    <div class="logo">
+      DStore
+    </div>
 
-    <!-- SOLO ADMIN -->
-    <a *ngIf="authService.getRol() === 'ROLE_ADMIN'" routerLink="/usuarios">
-      Usuarios
-    </a>
+    <span class="version">
+      Inventory & Sales
+    </span>
 
-    <a *ngIf="authService.getRol() === 'ROLE_ADMIN'" routerLink="/roles">
-      Roles
-    </a>
-
-    <!-- ADMIN y VENDEDOR -->
-    <a routerLink="/categoria">Categoría de Producto</a>
-    <a routerLink="/presentacion">Presentación</a>
-    <a routerLink="/marca">Marca</a>
-    <a routerLink="/clientes">Clientes</a>
-    <a routerLink="/producto">Producto</a>
-    <a routerLink="/entradas-inventario">Entradas inventario</a>
-    <a routerLink="/existencias">Existencias</a>
-    <a routerLink="/proximos-vencer">⚠️ Próximos a vencer</a>
-    <a routerLink="/movimientos-inventario">Movimientos Inventario</a>
-    <a routerLink="/ajuste-inventario">Ajuste Inventario</a>
-    <!-- <a routerLink="/venta">Ventas</a> -->
-    <!-- <a routerLink="/caja">Caja</a> -->
   </div>
-</nav>
+
+
+  <nav class="menu">
+
+    <!-- PRINCIPAL -->
+
+    <div class="menu-section">
+
+      <span class="menu-title">
+        Principal
+      </span>
+
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active">
+
+        🏠 Inicio
+
+      </a>
+
+    </div>
+
+
+    <!-- VENTAS -->
+
+    <div class="menu-section">
+
+      <span class="menu-title">
+        Ventas
+      </span>
+
+      <a
+        routerLink="/nueva-venta"
+        routerLinkActive="active">
+
+        🛒 Nueva venta
+
+      </a>
+
+      <a
+        routerLink="/venta"
+        routerLinkActive="active">
+
+        📋 Historial de ventas
+
+      </a>
+
+      <a
+        routerLink="/clientes"
+        routerLinkActive="active">
+
+        👥 Clientes
+
+      </a>
+
+    </div>
+
+
+    <!-- INVENTARIO -->
+
+    <div class="menu-section">
+
+      <span class="menu-title">
+        Inventario
+      </span>
+
+      @if (authService.esAdmin()) {
+      <a
+        routerLink="/entradas-inventario"
+        routerLinkActive="active">
+
+        📥 Entradas
+
+      </a>
+      }
+
+      <a
+        routerLink="/existencias"
+        routerLinkActive="active">
+
+        📦 Existencias
+
+      </a>
+
+      <a
+        routerLink="/proximos-vencer"
+        routerLinkActive="active">
+
+        ⚠️ Próximos a vencer
+
+      </a>
+
+      <a
+        routerLink="/movimientos-inventario"
+        routerLinkActive="active">
+
+        🔄 Movimientos
+
+      </a>
+
+      <a
+        routerLink="/ajuste-inventario"
+        routerLinkActive="active">
+
+        🛠️ Ajustes
+
+      </a>
+
+    </div>
+
+
+    <!-- PRODUCTOS -->
+
+    <div class="menu-section">
+
+      <span class="menu-title">
+        Productos
+      </span>
+
+      <a
+        routerLink="/producto"
+        routerLinkActive="active">
+
+        🏷️ Productos
+
+      </a>
+
+      <a
+        routerLink="/categoria"
+        routerLinkActive="active">
+
+        Categorías
+
+      </a>
+
+      <a
+        routerLink="/marca"
+        routerLinkActive="active">
+
+        Marcas
+
+      </a>
+
+      <a
+        routerLink="/presentacion"
+        routerLinkActive="active">
+
+        Presentaciones
+
+      </a>
+
+    </div>
+
+
+    <!-- ADMINISTRACIÓN -->
+
+    @if (authService.esAdmin()) {
+    <div
+      class="menu-section"
+      >
+
+      <span class="menu-title">
+        Administración
+      </span>
+
+      <a
+        routerLink="/usuarios"
+        routerLinkActive="active">
+
+        👤 Usuarios
+
+      </a>
+
+      <a
+        routerLink="/roles"
+        routerLinkActive="active">
+
+        🔐 Roles
+
+      </a>
+
+    </div>
+  }
+
+    <a
+      routerLink="/mi-perfil"
+      routerLinkActive="active">
+      👤 Mi perfil
+    </a>
+
+  </nav>
+
+
+  <div class="sidebar-footer">
+
+    <button
+      type="button"
+      class="logout-button"
+      (click)="logout()">
+
+      Cerrar sesión
+
+    </button>
+
+  </div>
+
+</aside>

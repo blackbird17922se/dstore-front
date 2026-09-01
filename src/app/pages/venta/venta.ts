@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { VentaModel } from '../../models/venta.model';
 import { VentaService } from '../../services/venta.service';
 import { Router } from '@angular/router';
+import { VentaRequest } from '../../models/venta/venta-request.model';
+import { VentaResponse } from '../../models/venta/venta-response.model';
+import { VentaDetalleResponse } from '../../models/venta/venta-detalle-response.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-venta',
@@ -13,49 +16,53 @@ import { Router } from '@angular/router';
 })
 export class Venta {
 
-  ventas: VentaModel[] = [];
+  ventas: VentaRequest[] = [];
+  detalleVenta: VentaDetalleResponse | null = null;
+  ventasResponse: VentaResponse[] = [];
   mostrarModal = false;
-  ventaSeleccionadaId?: number;
+  ventaSeleccionadaId: number | null = null;
   motivo = '';
 
 
   constructor(
     private ventaService: VentaService,
+    public authService: AuthService,
     private router: Router
   ) { }
 
   ngOnInit() {
-    this.getVentas();
+    this.listarVentas();
   }
 
-  getVentas() {
-    this.ventaService.getAll().subscribe({
-      next: (ventas) => {
-        this.ventas = ventas;
-      },
+  listarVentas() {
+    this.ventaService.listarVentas().subscribe({
+      next: (ventas) => { this.ventasResponse = ventas },
       error: (error) => {
         console.error('Error fetching ventas:', error);
       }
     });
   }
 
+  // verDetalle(id: number) {
+  //   this.ventaService.obtenerVentaPorId(id).subscribe({
+  //     next: (ventas) => {this.detalleVenta = ventas},
+  //     error: (error) => {
+  //       console.error('Error fetching ventas:', error);
+  //     }
+  //   })
+  // }
   verDetalle(id: number | null) {
-    this.router.navigate(['/detalle-venta', id]);
+
+    if (id === null) {
+      return;
+    }
+
+    this.router.navigate([
+      '/detalle-venta',
+      id
+    ]);
   }
 
-  anularVenta(id: number | null, motivo?: string) {
-    if (id === null) return;
-    if (confirm('¿Estás seguro de que deseas anular esta venta?')) {
-      this.ventaService.anularVenta(id, motivo).subscribe({
-        next: () => {
-          this.getVentas();
-        },
-        error: (error) => {
-          console.error('Error al eliminar marca:', error);
-        }
-      });
-    }
-  }
 
   abrirModalAnular(id: number) {
     this.ventaSeleccionadaId = id;
@@ -66,28 +73,47 @@ export class Venta {
   cerrarModal() {
     this.mostrarModal = false;
     this.motivo = '';
-    this.ventaSeleccionadaId = undefined;
+    this.ventaSeleccionadaId = null;
   }
 
-
   confirmarAnulacion() {
-    if (!this.ventaSeleccionadaId || !this.motivo) {
+
+    if (
+      this.ventaSeleccionadaId === null ||
+      !this.motivo.trim()
+    ) {
       return;
     }
 
-    this.ventaService.anularVenta(this.ventaSeleccionadaId, this.motivo)
+    this.ventaService
+      .anularVenta(
+        this.ventaSeleccionadaId,
+        this.motivo.trim()
+      )
       .subscribe({
-        next: () => {
-          alert('Venta anulada exitosamente');
+
+        next: response => {
+
+          alert(response.mensaje);
 
           this.cerrarModal();
-          this.getVentas(); // refresca la tabla
+
+          this.listarVentas();
         },
-        error: (err) => {
-          console.error(err);
-          alert('No se pudo anular la venta');
+
+        error: error => {
+
+          console.error(
+            'Error al anular venta:',
+            error
+          );
+
+          alert(
+            error.error?.mensaje ||
+            'No se pudo anular la venta'
+          );
         }
+
       });
   }
-
 }

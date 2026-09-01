@@ -1,6 +1,7 @@
-import { DetalleVentaItemModel } from "./DetalleVentaItem.model";
+import { DetalleVentaItemResponse } from "./detalle-venta-item-response.model";
 
-export interface VentaDetalleModel {
+export interface VentaDetalleResponse {
+
   id: number;
   fecha: string;
   cliente: string | null;
@@ -9,5 +10,6 @@ export interface VentaDetalleModel {
   estado: string;
   fechaAnulacion: string | null;
   motivoAnulacion: string | null;
-  items: DetalleVentaItemModel[];
+
+  items: DetalleVentaItemResponse[];
 }

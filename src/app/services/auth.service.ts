@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from "../../environments/environment";
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { LoginResponse } from '../models/login-response';
 
 @Injectable({
@@ -11,16 +11,15 @@ export class AuthService {
 
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  // 🔥 Creamos estado reactivo
-  private loggedInSubject = new BehaviorSubject<boolean>(this.checkInitialLogin());
+  private loggedInSubject = new BehaviorSubject<boolean>(
+    this.checkInitialLogin()
+  );
 
   loggedIn$ = this.loggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 Método privado para revisar localStorage al iniciar
   private checkInitialLogin(): boolean {
-
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -28,7 +27,6 @@ export class AuthService {
     }
 
     if (this.tokenExpirado(token)) {
-
       localStorage.removeItem('token');
       localStorage.removeItem('rol');
       localStorage.removeItem('usuario');
@@ -38,12 +36,10 @@ export class AuthService {
     return true;
   }
 
-
   login(
     nombreUsuario: string,
     contrasena: string
   ): Observable<LoginResponse> {
-
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/login`,
       {
@@ -52,7 +48,6 @@ export class AuthService {
       }
     );
   }
-
 
   guardarUsuario(usuario: string) {
     localStorage.setItem('usuario', usuario);
@@ -75,25 +70,25 @@ export class AuthService {
     return localStorage.getItem('usuario');
   }
 
-    getRol(): string | null {
+  getRol(): string | null {
     return localStorage.getItem('rol');
   }
 
+  esAdmin(): boolean {
+    return this.getRol() === 'ADMIN';
+  }
 
   private tokenExpirado(token: string): boolean {
+    try {
+      const payload = JSON.parse(
+        atob(token.split('.')[1])
+      );
 
-  try {
+      const expiracion = payload.exp * 1000;
 
-    const payload = JSON.parse(
-      atob(token.split('.')[1])
-    );
-
-    const expiracion = payload.exp * 1000;
-
-    return Date.now() >= expiracion;
-
-  } catch {
-    return true;
+      return Date.now() >= expiracion;
+    } catch {
+      return true;
+    }
   }
-}
 }

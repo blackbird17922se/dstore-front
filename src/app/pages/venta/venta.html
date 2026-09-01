@@ -24,9 +24,16 @@
                 <td>{{ venta.estado }}</td>
                 <td>
                     <button (click)="verDetalle(venta.id)" [disabled]="!venta.id">Detalle</button>
-                    <button type="button" (click)="abrirModalAnular(venta.id)" [disabled]="venta.estado === 'ANULADA'">
-                        Anular
-                    </button>
+
+                    @if (authService.esAdmin() && venta.estado !== 'ANULADA'
+                        ) {
+                        <button
+                            class="btn-danger"
+                            (click)="abrirModalAnular(venta.id)"
+                            [disabled]="venta.estado === 'ANULADA'">
+                            Anular
+                        </button>
+                        }
                 </td>
             </tr>
             }

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { VentaRequest } from '../../models/venta/venta-request.model';
 import { VentaResponse } from '../../models/venta/venta-response.model';
 import { VentaDetalleResponse } from '../../models/venta/venta-detalle-response.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-venta',
@@ -25,6 +26,7 @@ export class Venta {
 
   constructor(
     private ventaService: VentaService,
+    public authService: AuthService,
     private router: Router
   ) { }
 

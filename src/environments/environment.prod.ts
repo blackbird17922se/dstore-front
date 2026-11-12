@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://mi-backend-en-produccion.com/api'
+  apiUrl: 'https://rdstore-api.ashygrass-2a26be9a.eastus2.azurecontainerapps.io/api/v2'
 };

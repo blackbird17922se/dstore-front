@@ -4,7 +4,7 @@
 }
 
 .sidebar {
-  width: 250px;
+  width: 100%;
   height: 100vh;
 
   position: sticky;
@@ -111,4 +111,120 @@
 .logout-button:hover {
   background: #374151;
   color: #ffffff;
+}
+
+/* ICONOS Y ETIQUETAS */
+
+.menu a {
+  gap: 12px;
+}
+
+.menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  font-size: 1.1rem;
+}
+
+.menu-label {
+  white-space: nowrap;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.brand {
+  min-width: 0;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* SIDEBAR COMPACTO */
+
+.sidebar.compact .sidebar-header {
+  justify-content: center;
+  padding: 24px 8px;
+}
+
+.sidebar.compact .logo {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.sidebar.compact .version,
+.sidebar.compact .menu-title,
+.sidebar.compact .menu-label,
+.sidebar.compact .logout-label {
+  display: none;
+}
+
+.sidebar.compact .menu {
+  padding: 16px 8px;
+}
+
+.sidebar.compact .menu-section {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar.compact .menu a {
+  justify-content: center;
+  padding: 12px 4px;
+  gap: 0;
+}
+
+.sidebar.compact .sidebar-footer {
+  padding: 12px 8px;
+}
+
+.sidebar.compact .logout-button {
+  justify-content: center;
+  padding: 12px 4px;
+  gap: 0;
+}
+
+/* COMPORTAMIENTO MÓVIL */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    height: 100dvh;
+  }
+
+  .sidebar-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 }

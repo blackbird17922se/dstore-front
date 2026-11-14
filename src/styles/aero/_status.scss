@@ -1,0 +1,29 @@
+/* Indicadores de estado y puntos de acción compartidos. */
+.ds-aero .aero-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 90px;
+  min-height: 25px;
+  padding: 3px 11px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.82rem;
+
+  &.is-active { background: var(--ds-success-bg); color: var(--ds-success); }
+  &.is-inactive { background: var(--ds-danger-bg); color: var(--ds-danger); }
+}
+
+.ds-aero .aero-dot,
+.ds-aero .aero-action-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-radius: 50%;
+  background: #e74760;
+}
+.ds-aero .is-active .aero-dot,
+.ds-aero .aero-action-dot-on { background: #1fc879; }

@@ -9,6 +9,29 @@
   background: #f5f7fa;
 }
 
+/* SIDEBAR */
+
+.app-layout > app-navbar {
+  display: block;
+  flex: 0 0 250px;
+  width: 250px;
+  overflow: hidden;
+
+  transition:
+    width 0.25s ease,
+    flex-basis 0.25s ease;
+}
+
+/* Sidebar oculto en escritorio */
+
+.app-layout.sidebar-compact > app-navbar {
+  width: 72px;
+  flex-basis: 72px;
+  visibility: visible;
+}
+
+/* CONTENIDO PRINCIPAL */
+
 .app-main {
   flex: 1;
   min-width: 0;
@@ -16,11 +39,50 @@
   flex-direction: column;
 }
 
+/* BARRA SUPERIOR */
+
+.app-toolbar {
+  display: flex;
+  align-items: center;
+
+  height: 56px;
+  padding: 0 20px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.menu-toggle {
+  padding: 8px 14px;
+
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  color: #111827;
+  font-size: 0.9rem;
+
+  cursor: pointer;
+}
+
+.menu-toggle:hover {
+  background: #e5e7eb;
+}
+
+.mobile-toggle {
+  display: none;
+}
+
+/* CONTENIDO */
+
 .content {
   flex: 1;
+  min-width: 0;
   padding: 28px;
   overflow-x: auto;
 }
+
+/* FOOTER */
 
 .footer {
   padding: 16px 28px;
@@ -33,4 +95,71 @@
 
 .public-content {
   min-height: 100vh;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* RESPONSIVE: CELULARES Y TABLETS PEQUEÑAS */
+
+@media (max-width: 768px) {
+
+  .app-layout > app-navbar,
+  .app-layout.sidebar-compact > app-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 250px;
+    height: 100dvh;
+    flex: none;
+
+    z-index: 1001;
+    visibility: visible;
+
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  .app-layout > app-navbar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    border: 0;
+    padding: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+  }
+
+  .desktop-toggle {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: inline-block;
+  }
+
+  .app-main {
+    width: 100%;
+  }
+
+  .app-toolbar {
+    padding: 0 14px;
+  }
+
+  .content {
+    padding: 14px;
+  }
+
+  .footer {
+    padding: 12px;
+  }
 }

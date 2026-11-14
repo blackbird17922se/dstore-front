@@ -1,217 +1,214 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.compact]="collapsed">
 
   <div class="sidebar-header">
 
-    <div class="logo">
-      DStore
+    <div class="brand">
+      <div class="logo">
+        {{ collapsed ? 'DS' : 'DStore' }}
+      </div>
+
+      <span class="version">
+        Inventory & Sales
+      </span>
     </div>
 
-    <span class="version">
-      Inventory & Sales
-    </span>
+    <button
+      type="button"
+      class="sidebar-close"
+      aria-label="Cerrar menú"
+      (click)="closeRequested.emit()">
+      ✕
+    </button>
 
   </div>
-
 
   <nav class="menu">
 
     <!-- PRINCIPAL -->
-
     <div class="menu-section">
 
-      <span class="menu-title">
-        Principal
-      </span>
+      <span class="menu-title">Principal</span>
 
-      <a
-        routerLink="/inicio"
-        routerLinkActive="active">
+      <a routerLink="/inicio"
+         routerLinkActive="active"
+         title="Inicio">
 
-        🏠 Inicio
-
+        <span class="menu-icon" aria-hidden="true">🏠</span>
+        <span class="menu-label">Inicio</span>
       </a>
 
     </div>
-
 
     <!-- VENTAS -->
-
     <div class="menu-section">
 
-      <span class="menu-title">
-        Ventas
-      </span>
+      <span class="menu-title">Ventas</span>
 
-      <a
-        routerLink="/nueva-venta"
-        routerLinkActive="active">
+      <a routerLink="/nueva-venta"
+         routerLinkActive="active"
+         title="Nueva venta">
 
-        🛒 Nueva venta
-
+        <span class="menu-icon" aria-hidden="true">🛒</span>
+        <span class="menu-label">Nueva venta</span>
       </a>
 
-      <a
-        routerLink="/venta"
-        routerLinkActive="active">
+      <a routerLink="/venta"
+         routerLinkActive="active"
+         title="Historial de ventas">
 
-        📋 Historial de ventas
-
+        <span class="menu-icon" aria-hidden="true">📋</span>
+        <span class="menu-label">Historial de ventas</span>
       </a>
 
-      <a
-        routerLink="/clientes"
-        routerLinkActive="active">
+      <a routerLink="/clientes"
+         routerLinkActive="active"
+         title="Clientes">
 
-        👥 Clientes
-
+        <span class="menu-icon" aria-hidden="true">👥</span>
+        <span class="menu-label">Clientes</span>
       </a>
 
     </div>
-
 
     <!-- INVENTARIO -->
-
     <div class="menu-section">
 
-      <span class="menu-title">
-        Inventario
-      </span>
+      <span class="menu-title">Inventario</span>
 
       @if (authService.esAdmin()) {
-      <a
-        routerLink="/entradas-inventario"
-        routerLinkActive="active">
+        <a routerLink="/entradas-inventario"
+           routerLinkActive="active"
+           title="Entradas">
 
-        📥 Entradas
-
-      </a>
+          <span class="menu-icon" aria-hidden="true">📥</span>
+          <span class="menu-label">Entradas</span>
+        </a>
       }
 
-      <a
-        routerLink="/existencias"
-        routerLinkActive="active">
+      <a routerLink="/existencias"
+         routerLinkActive="active"
+         title="Existencias">
 
-        📦 Existencias
-
+        <span class="menu-icon" aria-hidden="true">📦</span>
+        <span class="menu-label">Existencias</span>
       </a>
 
-      <a
-        routerLink="/proximos-vencer"
-        routerLinkActive="active">
+      <a routerLink="/proximos-vencer"
+         routerLinkActive="active"
+         title="Próximos a vencer">
 
-        ⚠️ Próximos a vencer
-
+        <span class="menu-icon" aria-hidden="true">⚠️</span>
+        <span class="menu-label">Próximos a vencer</span>
       </a>
 
-      <a
-        routerLink="/movimientos-inventario"
-        routerLinkActive="active">
+      <a routerLink="/movimientos-inventario"
+         routerLinkActive="active"
+         title="Movimientos">
 
-        🔄 Movimientos
-
+        <span class="menu-icon" aria-hidden="true">🔄</span>
+        <span class="menu-label">Movimientos</span>
       </a>
 
-      <a
-        routerLink="/ajuste-inventario"
-        routerLinkActive="active">
+      <a routerLink="/ajuste-inventario"
+         routerLinkActive="active"
+         title="Ajustes">
 
-        🛠️ Ajustes
-
+        <span class="menu-icon" aria-hidden="true">🛠️</span>
+        <span class="menu-label">Ajustes</span>
       </a>
 
     </div>
 
-
     <!-- PRODUCTOS -->
+    <div class="menu-section">
+
+      <span class="menu-title">Productos</span>
+
+      <a routerLink="/producto"
+         routerLinkActive="active"
+         title="Productos">
+
+        <span class="menu-icon" aria-hidden="true">🏷️</span>
+        <span class="menu-label">Productos</span>
+      </a>
+
+      <a routerLink="/categoria"
+         routerLinkActive="active"
+         title="Categorías">
+
+        <span class="menu-icon" aria-hidden="true">🗂️</span>
+        <span class="menu-label">Categorías</span>
+      </a>
+
+      <a routerLink="/marca"
+         routerLinkActive="active"
+         title="Marcas">
+
+        <span class="menu-icon" aria-hidden="true">🔖</span>
+        <span class="menu-label">Marcas</span>
+      </a>
+
+      <a routerLink="/presentacion"
+         routerLinkActive="active"
+         title="Presentaciones">
+
+        <span class="menu-icon" aria-hidden="true">📐</span>
+        <span class="menu-label">Presentaciones</span>
+      </a>
+
+    </div>
+
+    <!-- ADMINISTRACIÓN -->
+    @if (authService.esAdmin()) {
+
+      <div class="menu-section">
+
+        <span class="menu-title">Administración</span>
+
+        <a routerLink="/usuarios"
+           routerLinkActive="active"
+           title="Usuarios">
+
+          <span class="menu-icon" aria-hidden="true">👤</span>
+          <span class="menu-label">Usuarios</span>
+        </a>
+
+        <a routerLink="/roles"
+           routerLinkActive="active"
+           title="Roles">
+
+          <span class="menu-icon" aria-hidden="true">🔐</span>
+          <span class="menu-label">Roles</span>
+        </a>
+
+      </div>
+
+    }
 
     <div class="menu-section">
 
-      <span class="menu-title">
-        Productos
-      </span>
+      <a routerLink="/mi-perfil"
+         routerLinkActive="active"
+         title="Mi perfil">
 
-      <a
-        routerLink="/producto"
-        routerLinkActive="active">
-
-        🏷️ Productos
-
-      </a>
-
-      <a
-        routerLink="/categoria"
-        routerLinkActive="active">
-
-        Categorías
-
-      </a>
-
-      <a
-        routerLink="/marca"
-        routerLinkActive="active">
-
-        Marcas
-
-      </a>
-
-      <a
-        routerLink="/presentacion"
-        routerLinkActive="active">
-
-        Presentaciones
-
+        <span class="menu-icon" aria-hidden="true">👤</span>
+        <span class="menu-label">Mi perfil</span>
       </a>
 
     </div>
-
-
-    <!-- ADMINISTRACIÓN -->
-
-    @if (authService.esAdmin()) {
-    <div
-      class="menu-section"
-      >
-
-      <span class="menu-title">
-        Administración
-      </span>
-
-      <a
-        routerLink="/usuarios"
-        routerLinkActive="active">
-
-        👤 Usuarios
-
-      </a>
-
-      <a
-        routerLink="/roles"
-        routerLinkActive="active">
-
-        🔐 Roles
-
-      </a>
-
-    </div>
-  }
-
-    <a
-      routerLink="/mi-perfil"
-      routerLinkActive="active">
-      👤 Mi perfil
-    </a>
 
   </nav>
-
 
   <div class="sidebar-footer">
 
     <button
       type="button"
       class="logout-button"
+      title="Cerrar sesión"
       (click)="logout()">
 
-      Cerrar sesión
+      <span class="menu-icon" aria-hidden="true">🚪</span>
+      <span class="logout-label">Cerrar sesión</span>
 
     </button>
 

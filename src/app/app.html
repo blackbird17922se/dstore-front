@@ -1,18 +1,65 @@
 @if (authService.loggedIn$ | async) {
 
-  <div class="app-layout">
+  <div class="app-layout"
+     [class.sidebar-compact]="!sidebarVisible">
 
-    <app-navbar></app-navbar>
+    <app-navbar
+      [collapsed]="!sidebarVisible && !mobileMenuOpen"
+      [class.mobile-open]="mobileMenuOpen"
+      (closeRequested)="closeMobileMenu()">
+    </app-navbar>
+
+    @if (mobileMenuOpen) {
+      <button
+        type="button"
+        class="sidebar-backdrop"
+        aria-label="Cerrar menú"
+        (click)="closeMobileMenu()">
+      </button>
+    }
 
     <div class="app-main">
+
+      <header class="app-toolbar">
+
+        <!-- Botón para escritorio -->
+        <button
+          type="button"
+          class="menu-toggle desktop-toggle"
+          [attr.aria-expanded]="sidebarVisible"
+          (click)="toggleSidebar()">
+
+          ☰ Menú
+        </button>
+
+        <!-- Botón para celular -->
+        <button
+          type="button"
+          class="menu-toggle mobile-toggle"
+          [attr.aria-expanded]="mobileMenuOpen"
+          (click)="toggleMobileMenu()">
+
+          ☰ Menú
+        </button>
+
+        <div class="toolbar-spacer"></div>
+        <button type="button"
+                class="theme-toggle"
+                [attr.aria-label]="theme.theme() === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'"
+                (click)="theme.toggle()">
+          <span aria-hidden="true">{{ theme.theme() === 'dark' ? '☀️' : '🌙' }}</span>
+          {{ theme.theme() === 'dark' ? 'Claro' : 'Oscuro' }}
+        </button>
+
+      </header>
 
       <main class="content">
         <router-outlet></router-outlet>
       </main>
 
-      <footer class="footer">
+      <!-- <footer class="footer">
         DStore · Sistema de ventas e inventario
-      </footer>
+      </footer> -->
 
     </div>
 

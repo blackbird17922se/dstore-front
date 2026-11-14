@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   Router,
   RouterLink,
@@ -21,12 +21,16 @@ import { CommonModule } from '@angular/common';
 })
 export class Navbar {
 
+  @Input() collapsed = false;
+
+  @Output() closeRequested = new EventEmitter<void>();
+
   constructor(
     public authService: AuthService,
     private rutas: Router
   ) {}
 
-  logout() {
+  logout(): void {
     this.authService.logout();
     this.rutas.navigate(['/login']);
   }

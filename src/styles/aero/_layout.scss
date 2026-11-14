@@ -1,0 +1,119 @@
+/* Layout global: estilos que conectan el selector de tema con App. */
+body {
+  background: var(--ds-canvas);
+  color: var(--ds-text);
+}
+
+:root[data-theme] .app-layout { background: var(--ds-canvas); }
+:root[data-theme] .app-toolbar {
+  background: var(--ds-toolbar);
+  border-bottom: 1px solid var(--ds-border);
+  backdrop-filter: blur(14px);
+}
+:root[data-theme] .app-toolbar .menu-toggle {
+  background: var(--ds-button-soft);
+  border-color: var(--ds-button-border);
+  color: var(--ds-text);
+}
+:root[data-theme] .footer {
+  background: var(--ds-panel-solid);
+  color: var(--ds-muted);
+  border-color: var(--ds-border);
+}
+:root[data-theme] .app-toolbar .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--ds-button-border);
+  border-radius: 9px;
+  background: var(--ds-button-soft);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+:root[data-theme] .app-toolbar .theme-toggle:hover { background: var(--ds-button-hover); }
+:root[data-theme] .app-toolbar .toolbar-spacer { margin-left: auto; }
+
+/* Activar biblioteca solo en pantallas que tengan class="ds-aero aero-panel". */
+.page-container.ds-aero.aero-panel {
+  position: relative;
+  min-width: 0;
+  padding: clamp(16px, 2vw, 24px);
+  overflow: visible;
+  border: 1px solid var(--ds-border);
+  border-radius: 17px;
+  background: var(--ds-panel);
+  color: var(--ds-text);
+  box-shadow: var(--ds-panel-shadow);
+}
+
+.ds-aero.aero-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 190px;
+  border-radius: 17px 17px 0 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 80% at 78% -8%, var(--ds-glow), transparent 72%),
+    linear-gradient(125deg, var(--ds-wash), transparent 74%);
+}
+
+.ds-aero .aero-page-header,
+.ds-aero .aero-page-actions,
+.ds-aero .aero-table-wrap { position: relative; }
+
+.ds-aero .aero-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.ds-aero .aero-page-icon {
+  width: 58px;
+  height: 58px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--ds-icon-border);
+  border-radius: 15px;
+  color: var(--ds-primary);
+  background: var(--ds-icon-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  svg { width: 33px; height: 33px; }
+}
+
+.ds-aero .aero-page-heading {
+  min-width: 0;
+
+  h2 {
+    margin: 0 0 5px;
+    color: var(--ds-text);
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ds-muted);
+    font-size: 0.9rem;
+  }
+}
+
+.ds-aero .aero-page-actions { margin-bottom: 16px; }
+
+@media (max-width: 640px) {
+  .page-container.ds-aero.aero-panel { padding: 16px; border-radius: 13px; }
+  .ds-aero .aero-page-icon { width: 46px; height: 46px; border-radius: 12px; }
+  .ds-aero .aero-page-icon svg { width: 27px; height: 27px; }
+  .ds-aero .aero-page-header { gap: 11px; }
+  .ds-aero .aero-page-heading p { font-size: 0.82rem; }
+  .ds-aero .aero-page-actions .aero-btn { width: 100%; }
+}

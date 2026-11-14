@@ -1,20 +1,20 @@
-<div class="page-container presentacion-container">
+<div class="page-container ds-aero aero-panel presentacion-container">
 
-  <header class="presentation-header">
-    <div class="presentation-icon" aria-hidden="true">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
         <path d="m12 2 9 5-9 5-9-5 9-5Z" />
         <path d="m3 12 9 5 9-5" />
         <path d="m3 17 9 5 9-5" />
       </svg>
     </div>
-    <div class="presentation-heading">
+    <div class="aero-page-heading">
       <h2>Presentación</h2>
       <p>Administra las presentaciones de los productos.</p>
     </div>
   </header>
 
-  <div class="presentation-actions">
+  <div class="aero-page-actions">
     <button type="button" class="aero-btn aero-btn-primary" (click)="abrirModal()">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M12 5v14M5 12h14" />
@@ -23,8 +23,8 @@
     </button>
   </div>
 
-  <div class="presentation-table-wrap">
-    <table class="presentation-table">
+  <div class="aero-table-wrap">
+    <table class="aero-table">
       <thead>
         <tr>
           <th scope="col">Nombre</th>
@@ -35,17 +35,17 @@
       <tbody>
         @for (presentacion of presentaciones; track presentacion.id) {
           <tr>
-            <td class="presentation-name" data-label="Nombre">{{ presentacion.nombre }}</td>
+            <td class="aero-record-title" data-label="Nombre">{{ presentacion.nombre }}</td>
             <td data-label="Estado">
               @if (presentacion.activo) {
-                <span class="presentation-status is-active"><span class="status-dot" aria-hidden="true"></span>Activo</span>
+                <span class="aero-status is-active"><span class="aero-dot" aria-hidden="true"></span>Activo</span>
               } @else {
-                <span class="presentation-status is-inactive"><span class="status-dot" aria-hidden="true"></span>Inactivo</span>
+                <span class="aero-status is-inactive"><span class="aero-dot" aria-hidden="true"></span>Inactivo</span>
               }
             </td>
             <td data-label="Acciones">
-              <div class="presentation-row-actions">
-                <button type="button" class="aero-btn aero-btn-soft btn-editar"
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-edit"
                         (click)="editarPresentacion(presentacion)"
                         [attr.aria-label]="'Editar ' + presentacion.nombre">
                   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -54,18 +54,18 @@
                   Editar
                 </button>
                 <button type="button"
-                        class="aero-btn aero-btn-soft btn-cambiar-estado"
+                        class="aero-btn aero-btn-soft aero-btn-state"
                         [class.aero-btn-activate]="!presentacion.activo"
                         [attr.aria-label]="(presentacion.activo ? 'Desactivar ' : 'Activar ') + presentacion.nombre"
                         (click)="cambiarEstadoPresentacion(presentacion)">
-                  <span class="action-dot" [class.action-dot-on]="!presentacion.activo" aria-hidden="true"></span>
+                  <span class="aero-action-dot" [class.aero-action-dot-on]="!presentacion.activo" aria-hidden="true"></span>
                   {{ presentacion.activo ? 'Desactivar' : 'Activar' }}
                 </button>
               </div>
             </td>
           </tr>
         } @empty {
-          <tr class="presentation-empty-row">
+          <tr class="aero-empty-row">
             <td colspan="3">No hay presentaciones registradas.</td>
           </tr>
         }
@@ -74,15 +74,15 @@
   </div>
 
   @if (modalAbierto) {
-    <div class="presentation-modal-backdrop">
-      <section class="presentation-modal" role="dialog" aria-modal="true"
-               aria-labelledby="presentation-modal-title">
-        <header class="presentation-modal-header">
+    <div class="aero-modal-backdrop">
+      <section class="aero-modal" role="dialog" aria-modal="true"
+               aria-labelledby="aero-modal-title">
+        <header class="aero-modal-header">
           <div>
-            <span class="modal-eyebrow">DSTORE · PRESENTACIONES</span>
-            <h3 id="presentation-modal-title">{{ editando ? 'Editar presentación' : 'Crear presentación' }}</h3>
+            <span class="aero-modal-eyebrow">DSTORE · PRESENTACIONES</span>
+            <h3 id="aero-modal-title">{{ editando ? 'Editar presentación' : 'Crear presentación' }}</h3>
           </div>
-          <button type="button" class="modal-close" aria-label="Cerrar formulario" (click)="cerrarModal()">
+          <button type="button" class="aero-modal-close" aria-label="Cerrar formulario" (click)="cerrarModal()">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
@@ -90,16 +90,16 @@
         </header>
 
         <form #formPresentacion="ngForm" (ngSubmit)="guardarPresentacion()">
-          <div class="presentation-modal-body">
+          <div class="aero-modal-body">
             <label for="presentacion-nombre">Nombre de la presentación</label>
             <input id="presentacion-nombre" type="text" name="nombre"
                    placeholder="Ej. Caja, Unidad o Sobre"
                    [(ngModel)]="presentacionActual.nombre" required #nombre="ngModel" />
             @if (nombre.invalid && nombre.touched) {
-              <p class="field-error">El nombre es obligatorio.</p>
+              <p class="aero-field-error">El nombre es obligatorio.</p>
             }
           </div>
-          <footer class="presentation-modal-actions">
+          <footer class="aero-modal-actions">
             <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarModal()">Cancelar</button>
             <button type="submit" class="aero-btn aero-btn-primary" [disabled]="formPresentacion.invalid">
               {{ editando ? 'Guardar cambios' : 'Crear presentación' }}

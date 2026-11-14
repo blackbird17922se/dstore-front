@@ -1,0 +1,99 @@
+/* Tablas Aero: escritorio tabular, móvil tarjetas con data-label. */
+.ds-aero .aero-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid var(--ds-table-border);
+  border-radius: 13px;
+  background: var(--ds-table-body);
+}
+
+.ds-aero .aero-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+  color: var(--ds-text);
+  font-size: 0.89rem;
+
+  th,
+  td {
+    padding: 12px 18px;
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+    border-bottom: 1px solid var(--ds-table-border);
+    color: var(--ds-text);
+  }
+
+  th {
+    background: var(--ds-table-heading);
+    color: var(--ds-table-heading-text);
+    font-weight: 700;
+    letter-spacing: 0.005em;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--ds-row-alt); }
+  tbody tr:hover { background: var(--ds-row-hover); }
+}
+
+.ds-aero .aero-record-title { font-weight: 600; }
+.ds-aero .aero-row-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ds-aero .aero-table .aero-empty-row td {
+  text-align: center !important;
+  color: var(--ds-muted) !important;
+  padding: 28px !important;
+}
+
+@media (max-width: 640px) {
+  .ds-aero .aero-table-wrap { overflow: visible; border: 0; background: transparent; }
+  .ds-aero .aero-table,
+  .ds-aero .aero-table tbody { display: block; min-width: 0; width: 100%; }
+  .ds-aero .aero-table thead { display: none; }
+  .ds-aero .aero-table tbody tr:not(.aero-empty-row) {
+    display: grid;
+    gap: 11px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid var(--ds-table-border);
+    border-radius: 12px;
+    background: var(--ds-table-body);
+  }
+  .ds-aero .aero-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .ds-aero .aero-table td::before {
+    content: attr(data-label);
+    flex: 0 0 65px;
+    color: var(--ds-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .ds-aero .aero-table td[data-label='Acciones'] {
+    display: block;
+    padding-top: 10px;
+    border-top: 1px solid var(--ds-table-border);
+  }
+  .ds-aero .aero-table td[data-label='Acciones']::before {
+    display: block;
+    margin-bottom: 8px;
+  }
+  .ds-aero .aero-row-actions { gap: 7px; }
+  .ds-aero .aero-table .aero-empty-row { display: block; }
+  .ds-aero .aero-table .aero-empty-row td { display: block; }
+  .ds-aero .aero-table .aero-empty-row td::before { display: none; }
+}

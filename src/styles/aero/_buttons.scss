@@ -1,0 +1,48 @@
+/* Botones Aero. La clase .ds-aero evita afectar pantallas sin migrar. */
+.ds-aero .aero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.87rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+
+  svg { width: 16px; height: 16px; flex: none; }
+
+  &:hover:not(:disabled) { transform: translateY(-1px); }
+  &:focus-visible { outline: 3px solid var(--ds-focus); outline-offset: 2px; }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.ds-aero .aero-btn-primary {
+  background: linear-gradient(135deg, #2884ff, #0753e8);
+  color: #fff;
+  border-color: #3478ef;
+  box-shadow: 0 2px 7px rgba(13, 85, 221, 0.19);
+
+  &:hover:not(:disabled) { background: linear-gradient(135deg, #2379f0, #044bd6); }
+}
+
+.ds-aero .aero-btn-soft {
+  background: var(--ds-button-soft);
+  color: var(--ds-text);
+  border-color: var(--ds-button-border);
+
+  &:hover:not(:disabled) { background: var(--ds-button-hover); }
+}
+
+/* Mismo tamaño por tipo de acción, sin alterar sus colores. */
+.ds-aero .aero-row-actions .aero-btn-edit { min-width: 90px; }
+.ds-aero .aero-row-actions .aero-btn-state { min-width: 120px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-aero .aero-btn { transition: none; }
+}

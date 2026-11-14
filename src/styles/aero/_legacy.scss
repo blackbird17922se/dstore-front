@@ -1,0 +1,267 @@
+// src/styles.scss
+
+// 🎨 Paleta de colores
+$color-bg: #f4f6f8;
+$color-navbar: #1e3a8a;
+$color-text: #1f2937;
+$color-primary: #2563eb;
+$color-primary-light: #3b82f6;
+$color-success: #16a34a;
+$color-warning: #facc15;
+$color-error: #dc2626;
+
+// 🌐 Estilos base
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: $color-bg;
+  color: $color-text;
+}
+
+/* =========================================================
+   CONTENEDOR GENERAL DE PÁGINAS
+   ========================================================= */
+
+.page-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08);
+
+  overflow-x: auto;
+}
+
+.page-container h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  color: #111827;
+}
+
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+
+.filtros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+  padding: 16px;
+
+  background: #f9fafb;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.filtros label {
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  color: #374151;
+}
+
+.filtros select,
+.filtros input[type='text'],
+.filtros input[type='number'],
+.filtros input[type='date'] {
+  min-height: 38px;
+
+  padding: 7px 10px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  font-size: 0.9rem;
+}
+
+.filtros select:focus,
+.filtros input:focus {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+
+.page-container table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background: #ffffff;
+
+  font-size: 0.9rem;
+}
+
+.page-container thead {
+  background: #f3f4f6;
+}
+
+.page-container th {
+  padding: 12px 14px;
+
+  text-align: left;
+
+  font-weight: 600;
+
+  color: #374151;
+
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.page-container td {
+  padding: 12px 14px;
+
+  color: #4b5563;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.page-container tbody tr {
+  transition: background 0.15s ease;
+}
+
+.page-container tbody tr:hover {
+  background: #f9fafb;
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.page-container button {
+  padding: 8px 14px;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.page-container button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* Botón principal */
+
+.btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+
+/* Botón secundario */
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+
+/* Botón peligro */
+
+.btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+  /* =========================================================
+   ESTADOS
+   ========================================================= */
+
+  .estado-activo,
+  .estado-inactivo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 90px;
+    padding: 4px 8px;
+    box-sizing: border-box;
+
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .estado-activo {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .estado-inactivo {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  /* Botones de acciones */
+  .btn-editar {
+    min-width: 90px;
+  }
+
+  .btn-cambiar-estado {
+    min-width: 120px;
+  }
+
+
+/* =========================================================
+   MENSAJE SIN DATOS
+   ========================================================= */
+
+.empty-message {
+  padding: 24px;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  background: #f9fafb;
+
+  border-radius: 8px;
+}

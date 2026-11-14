@@ -1,0 +1,66 @@
+/* Variables globales de los temas claro y oscuro de DStore Aero Modern. */
+:root {
+  color-scheme: light;
+  --ds-canvas: #edf3fc;
+  --ds-panel: rgba(246, 250, 255, 0.96);
+  --ds-panel-solid: #f7faff;
+  --ds-border: #cbdcf2;
+  --ds-panel-shadow: 0 10px 26px rgba(53, 102, 171, 0.13);
+  --ds-text: #14243c;
+  --ds-muted: #60738f;
+  --ds-primary: #1266f1;
+  --ds-focus: rgba(37, 99, 235, 0.20);
+  --ds-glow: rgba(67, 155, 255, 0.30);
+  --ds-wash: rgba(113, 174, 255, 0.13);
+  --ds-icon-bg: #dbeaff;
+  --ds-icon-border: #ccddf7;
+  --ds-table-body: rgba(250, 253, 255, 0.86);
+  --ds-table-heading: #dceafb;
+  --ds-table-heading-text: #172941;
+  --ds-table-border: #cbd9ea;
+  --ds-row-alt: rgba(168, 202, 246, 0.18);
+  --ds-row-hover: rgba(106, 160, 237, 0.16);
+  --ds-button-soft: #e4eaf3;
+  --ds-button-border: #d5deec;
+  --ds-button-hover: #d6e2f2;
+  --ds-input-bg: #ffffff;
+  --ds-input-border: #bacbe0;
+  --ds-success-bg: #d9f7e9;
+  --ds-success: #126843;
+  --ds-danger-bg: #ffe1e8;
+  --ds-danger: #a02b42;
+  --ds-toolbar: rgba(239, 246, 255, 0.87);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ds-canvas: #081628;
+  --ds-panel: rgba(19, 35, 59, 0.97);
+  --ds-panel-solid: #16253d;
+  --ds-border: #3d5879;
+  --ds-panel-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  --ds-text: #edf4ff;
+  --ds-muted: #a6bbd6;
+  --ds-primary: #80b4ff;
+  --ds-focus: rgba(108, 169, 255, 0.25);
+  --ds-glow: rgba(24, 112, 240, 0.39);
+  --ds-wash: rgba(53, 126, 229, 0.15);
+  --ds-icon-bg: #2c4569;
+  --ds-icon-border: #42618a;
+  --ds-table-body: rgba(13, 27, 47, 0.85);
+  --ds-table-heading: #263f63;
+  --ds-table-heading-text: #edf5ff;
+  --ds-table-border: #3d5674;
+  --ds-row-alt: rgba(52, 102, 171, 0.28);
+  --ds-row-hover: rgba(71, 132, 213, 0.26);
+  --ds-button-soft: #31435e;
+  --ds-button-border: #415575;
+  --ds-button-hover: #405878;
+  --ds-input-bg: #10243b;
+  --ds-input-border: #527094;
+  --ds-success-bg: #184d40;
+  --ds-success: #a4f2c7;
+  --ds-danger-bg: #583042;
+  --ds-danger: #ffadb8;
+  --ds-toolbar: rgba(17, 34, 60, 0.91);
+}

@@ -1,0 +1,175 @@
+/* DStore Aero Modern: controles reutilizables de búsqueda, filtros,
+   ordenamiento y paginación. Activar únicamente dentro de .ds-aero. */
+
+.ds-aero .aero-data-tools {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--ds-table-border);
+  border-radius: 12px 12px 0 0;
+  background: var(--ds-toolbar);
+}
+
+.ds-aero .aero-tools-main,
+.ds-aero .aero-tools-extra {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ds-aero .aero-tools-extra {
+  padding-top: 12px;
+  border-top: 1px solid var(--ds-table-border);
+}
+
+.ds-aero .aero-filter-field {
+  display: grid;
+  flex: 1 1 160px;
+  gap: 6px;
+  min-width: 140px;
+}
+.ds-aero .aero-search-field { flex: 2 1 270px; }
+.ds-aero .aero-state-field { flex: 0 1 172px; }
+.ds-aero .aero-filter-label {
+  color: var(--ds-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.ds-aero .aero-filter-field select,
+.ds-aero .aero-filter-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 39px;
+  box-sizing: border-box;
+  padding: 8px 11px;
+  border: 1px solid var(--ds-input-border);
+  border-radius: 9px;
+  background: var(--ds-input-bg);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: 0.88rem;
+}
+.ds-aero .aero-filter-field select:focus-visible,
+.ds-aero .aero-filter-field input:focus-visible {
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+.ds-aero .aero-search-control { position: relative; display: block; }
+.ds-aero .aero-search-control svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--ds-muted);
+  pointer-events: none;
+}
+.ds-aero .aero-search-control input { padding-left: 39px; }
+.ds-aero .aero-advanced-toggle { min-height: 39px; }
+.ds-aero .aero-tools-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--ds-muted);
+}
+.ds-aero .aero-clear-filters {
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: var(--ds-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.ds-aero .aero-clear-filters:hover { text-decoration: underline; }
+
+/* Flechas accesibles de ordenamiento en los encabezados. */
+.ds-aero .aero-sort-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin: -5px -7px;
+  padding: 5px 7px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ds-aero .aero-sort-button:hover { background: var(--ds-row-hover); }
+.ds-aero .aero-sort-button:focus-visible { outline: 3px solid var(--ds-focus); }
+
+/* Paginación bajo la tabla. */
+.ds-aero .aero-pagination {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-top: 0;
+  border: 1px solid var(--ds-table-border);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: var(--ds-toolbar);
+  color: var(--ds-text);
+  font-size: 0.85rem;
+}
+.ds-aero .aero-page-size,
+.ds-aero .aero-page-nav {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ds-aero .aero-page-size select {
+  min-height: 34px;
+  padding: 5px 9px;
+  border: 1px solid var(--ds-input-border);
+  border-radius: 8px;
+  background: var(--ds-input-bg);
+  color: var(--ds-text);
+  font: inherit;
+}
+.ds-aero .aero-page-count,
+.ds-aero .aero-page-current { color: var(--ds-muted); font-variant-numeric: tabular-nums; }
+.ds-aero .aero-page-button {
+  min-width: 34px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ds-button-border);
+  border-radius: 8px;
+  background: var(--ds-button-soft);
+  color: var(--ds-text);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+.ds-aero .aero-page-button:hover:not(:disabled) { background: var(--ds-button-hover); }
+.ds-aero .aero-page-button:disabled { opacity: 0.40; cursor: not-allowed; }
+.ds-aero .aero-page-button:focus-visible { outline: 3px solid var(--ds-focus); }
+
+/* La tarjeta de la tabla Aero ocupa su propio bloque en teléfonos. */
+@media (max-width: 640px) {
+  .ds-aero .aero-tools-main,
+  .ds-aero .aero-tools-extra { display: grid; grid-template-columns: minmax(0,1fr); }
+  .ds-aero .aero-filter-field { min-width: 0; }
+  .ds-aero .aero-advanced-toggle { width: 100%; }
+  .ds-aero .aero-pagination { justify-content: center; }
+  .ds-aero .aero-page-nav { justify-content: center; }
+}

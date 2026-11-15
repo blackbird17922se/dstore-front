@@ -1,197 +1,303 @@
-<div class="page-container producto-container">
-    <h2>Producto</h2>
-    <button (click)="abrirModal()">➕ Crear Producto</button>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>IVA</th>
-                <th>Marca</th>
-                <th>Categoría</th>
-                <th>Presentación</th>
-                <th>Código de barras</th>
-                <th>Stock</th>
-                <th>Controla vencimiento</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (producto of productos; track producto.id) {
-            <tr>
-                <td>{{ producto.nombre }}</td>
-                <td>{{ producto.descripcion }}</td>
-                <td>
-                    {{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}
-                </td>
-                <td>{{ mostrarIva(producto) }}</td>
-                <td>{{ producto.nombreMarca }}</td>
-                <td>{{ producto.nombreCategoria }}</td>
-                <td>{{ producto.nombrePresentacion }}</td>
-                <td>{{ producto.codigoBarras || '-' }}</td>
-                <td>{{ producto.stock }}</td>
-
-                <td>@if (producto.controlaVencimiento) {
-                    <span>Si</span>
-                    }@else {
-                        <span>No</span>
-                    }
-                </td>
-                <td>
-                    @if (producto.activo) {
-                        <span class="estado-activo">🟢 Activo</span>
-                    }@else {
-                        <span class="estado-inactivo">🔴 Inactivo</span>
-                    }
-                </td>
-
-                <td>
-                    <button (click)="editarProducto(producto)">✏️ Editar</button>
-                    <button (click)="cambiarEstadoProducto(producto)">
-                        {{ producto.activo ? '🔴 Desactivar' : '🟢 Activar'}}
-                    </button>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
-
-    <!-- Modal -->
-    @if (modalAbierto) {
-    <div class="modal">
-        <div class="modal-content">
-            <h3>{{ editando ? 'Editar Producto' : 'Crear Producto' }}</h3>
-
-            <!-- FORMULARIO -->
-            <form #formProducto="ngForm" (ngSubmit)="guardarProducto()">
-
-                <label for="nombre">Producto:</label>
-                <br>
-                <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" [(ngModel)]="productoActual.nombre"
-                    required #nombre="ngModel" />
-                @if (nombre.invalid && nombre.touched) {
-                    <div class="error">
-                        ⚠️ El nombre es obligatorio.
-                    </div>
-                }
-                <br>
-
-                <label for="descripcion">Descripción:</label>
-                <br>
-                <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" 
-                    [(ngModel)]="productoActual.descripcion" #descripcion="ngModel" />
-                <br>
-
-                <label for="precio">Precio:</label>
-                <br>
-                <input type="number" id="precio" name="precio" placeholder="Precio" [(ngModel)]="productoActual.precio" required
-                    #precio="ngModel" />
-                @if (precio.invalid && precio.touched) {
-                <div class="error">
-                    ⚠️ El precio es obligatorio.
-                </div>
-                }
-                <br>
-
-                <label for="idTarifaIva">Tarifa IVA:</label>
-                <br>
-                <select 
-                    id="idTarifaIva" name="idTarifaIva" 
-                    [(ngModel)]="productoActual.idTarifaIva"
-                    #idPresentacion="ngModel"
-                    required>
-
-                    <option [ngValue]="null">-- Selecciona una tarifa --</option>
-
-                    <option
-                        *ngFor="let tarifa of tarifasIva"
-                        [ngValue]="tarifa.id">
-                        {{ mostrarTarifa(tarifa) }}
-                    </option>
-                </select>
-
-
-                <br>
-                <label for="idMarca">Marca:</label>
-                <br />
-                <select 
-                    id="idMarca" name="idMarca" 
-                    [(ngModel)]="productoActual.idMarca" 
-                    #idMarca="ngModel"
-                    required>
-                    
-                    <option [ngValue]="null">-- Selecciona una marca --</option>
-
-                    <option 
-                        *ngFor="let marca of marcas" 
-                        [ngValue]="marca.id">
-                        {{ marca.nombre }}
-                    </option>
-                </select>
-
-                <br>
-                <label for="idCategoria">Categoría de Producto:</label>
-                <br />
-                <select 
-                    id="idCategoria" name="idCategoria" 
-                    [(ngModel)]="productoActual.idCategoria"
-                    #idCategoria="ngModel"
-                    required>
-
-                    <option [ngValue]="null">-- Selecciona una categoría de producto --</option>
-
-                    <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
-                        {{ categoria.nombre }}
-                    </option>
-                </select>
-
-                <br>
-                <label for="idPresentacion">Presentación:</label>
-                <br />
-                <select 
-                    id="idPresentacion" name="idPresentacion" 
-                    [(ngModel)]="productoActual.idPresentacion"
-                    #idPresentacion="ngModel"
-                    required>
-
-                    <option [ngValue]="null">-- Selecciona una Presentación --</option>
-
-                    <option *ngFor="let categoria of presentaciones" [ngValue]="categoria.id">
-                        {{ categoria.nombre }}
-                    </option>
-                </select>
-
-                <br>
-                <label for="codigoBarras">Código de barras:</label>
-                <br />
-                <input type="text" name="codigoBarras" placeholder="Código de Barras"
-                    [(ngModel)]="productoActual.codigoBarras" #codigoBarras="ngModel" />
-                <br>
-
-                <br>
-                <label for="controlaVencimiento">
-                <input
-                    type="checkbox"
-                    id="controlaVencimiento"
-                    name="controlaVencimiento"
-                    [(ngModel)]="productoActual.controlaVencimiento"
-                />
-
-                Controla vencimiento
-                </label>
-
-                <br>
-
-                <button type="submit" [disabled]="formProducto.invalid">
-                    {{ editando ? 'Guardar cambios' : 'Crear' }}
-                </button>
-                <button type="button" (click)="cerrarModal()">Cancelar</button>
-
-
-            </form>
-        </div>
+<div class="page-container ds-aero aero-panel producto-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5ZM3 7.5V17l9 4 9-4V7.5M12 12v9" />
+      </svg>
     </div>
+    <div class="aero-page-heading">
+      <h2>Productos</h2>
+      <p>Gestiona el catálogo, precios, impuestos y existencias.</p>
+    </div>
+  </header>
+
+  <div class="aero-page-actions">
+    <button type="button" class="aero-btn aero-btn-primary" (click)="abrirModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Crear producto
+    </button>
+  </div>
+
+  <!-- Barra de herramientas compartida (SCSS: _data-tools.scss). -->
+  <section class="aero-data-tools" aria-label="Buscar y filtrar productos">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar producto</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" />
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="Nombre o código de barras..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda($event)" />
+        </span>
+      </label>
+
+      <label class="aero-filter-field aero-state-field">
+        <span class="aero-filter-label">Estado</span>
+        <select name="estadoSeleccionado" [(ngModel)]="estadoSeleccionado" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="true">Activos</option>
+          <option value="false">Inactivos</option>
+        </select>
+      </label>
+
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados"
+              aria-controls="filtros-avanzados-productos"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M7 12h10M10 17h4" />
+        </svg>
+        Más filtros @if (filtrosAvanzadosActivos > 0) { ({{ filtrosAvanzadosActivos }}) }
+      </button>
+    </div>
+
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra" id="filtros-avanzados-productos">
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Categoría</span>
+          <select name="idCategoriaFiltro" [(ngModel)]="idCategoriaFiltro" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Todas las categorías</option>
+            @for (categoria of categorias; track categoria.id) {
+              <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Marca</span>
+          <select name="idMarcaFiltro" [(ngModel)]="idMarcaFiltro" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Todas las marcas</option>
+            @for (marca of marcas; track marca.id) {
+              <option [ngValue]="marca.id">{{ marca.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Presentación</span>
+          <select name="idPresentacionFiltro" [(ngModel)]="idPresentacionFiltro" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Todas las presentaciones</option>
+            @for (presentacion of presentaciones; track presentacion.id) {
+              <option [ngValue]="presentacion.id">{{ presentacion.nombre }}</option>
+            }
+          </select>
+        </label>
+      </div>
     }
+
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} producto(s) encontrado(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
+      }
+    </div>
+  </section>
+
+  @if (errorListado) {
+    <div class="producto-feedback" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="getProductos()">Reintentar</button>
+    </div>
+  }
+
+  <div class="aero-table-wrap producto-table-wrap" [attr.aria-busy]="cargando">
+    <table class="aero-table producto-grid">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'nombre' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('nombre')">
+              Nombre <span aria-hidden="true">{{ ordenarPor === 'nombre' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col">Descripción</th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'precio' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('precio')">
+              Precio <span aria-hidden="true">{{ ordenarPor === 'precio' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col">IVA</th>
+          <th scope="col">Marca</th>
+          <th scope="col">Categoría</th>
+          <th scope="col">Presentación</th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'codigoBarras' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('codigoBarras')">
+              Código de barras <span aria-hidden="true">{{ ordenarPor === 'codigoBarras' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col">Stock</th>
+          <th scope="col">Vencimiento</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (producto of productos; track producto.id) {
+          <tr>
+            <td class="aero-record-title producto-name-cell" data-label="Nombre">
+              <div class="producto-name-value">
+                <span>{{ producto.nombre }}</span>
+                <button type="button" class="producto-details-toggle"
+                        [attr.aria-expanded]="detalleExpandido(producto.id)"
+                        (click)="toggleDetalles(producto.id)">
+                  {{ detalleExpandido(producto.id) ? 'Ocultar detalles' : 'Ver detalles' }}
+                </button>
+              </div>
+            </td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Descripción">
+              <span class="producto-truncate" [title]="producto.descripcion">{{ producto.descripcion || '-' }}</span>
+            </td>
+            <td class="producto-money" data-label="Precio">{{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="IVA">{{ mostrarIva(producto) }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Marca">{{ producto.nombreMarca }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Categoría">{{ producto.nombreCategoria }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Presentación">{{ producto.nombrePresentacion }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Código de barras">{{ producto.codigoBarras || '-' }}</td>
+            <td data-label="Stock">{{ producto.stock }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Vencimiento">{{ producto.controlaVencimiento ? 'Sí' : 'No' }}</td>
+            <td data-label="Estado">
+              <span class="aero-status" [class.is-active]="producto.activo" [class.is-inactive]="!producto.activo">
+                <span class="aero-dot" aria-hidden="true"></span>{{ producto.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-edit"
+                        [attr.aria-label]="'Editar ' + producto.nombre" (click)="editarProducto(producto)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m16 5 3 3M4 20l4.5-.9L19.1 8.5a2.12 2.12 0 0 0-3-3L5.5 16.1 4 20Z" />
+                  </svg> Editar
+                </button>
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-state"
+                        [attr.aria-label]="(producto.activo ? 'Desactivar ' : 'Activar ') + producto.nombre"
+                        (click)="cambiarEstadoProducto(producto)">
+                  <span class="aero-action-dot" [class.aero-action-dot-on]="!producto.activo" aria-hidden="true"></span>
+                  {{ producto.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row"><td colspan="12">{{ cargando ? 'Cargando productos...' : 'No hay productos que coincidan con los filtros.' }}</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="aero-pagination" aria-label="Paginación de productos">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="cargando || pagina === 0" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="cargando || pagina + 1 >= totalPaginas" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
+
+  @if (modalAbierto) {
+    <div class="aero-modal-backdrop">
+      <section class="aero-modal producto-modal" role="dialog" aria-modal="true" aria-labelledby="producto-modal-title">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">DSTORE · PRODUCTOS</span>
+            <h3 id="producto-modal-title">{{ editando ? 'Editar producto' : 'Crear producto' }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar formulario"
+                  [disabled]="guardando" (click)="cerrarModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </header>
+        <form #formProducto="ngForm" (ngSubmit)="guardarProducto()">
+          <div class="aero-modal-body">
+            <div class="producto-form-grid">
+              <div class="producto-form-field producto-form-wide">
+                <label for="producto-nombre">Nombre del producto *</label>
+                <input id="producto-nombre" type="text" name="nombre" placeholder="Nombre del producto"
+                       [(ngModel)]="productoActual.nombre" required maxlength="150" #nombre="ngModel" />
+                @if (nombre.invalid && nombre.touched) {
+                  <p class="aero-field-error">El nombre es obligatorio (máximo 150 caracteres).</p>
+                }
+              </div>
+              <div class="producto-form-field producto-form-wide">
+                <label for="producto-descripcion">Descripción</label>
+                <input id="producto-descripcion" type="text" name="descripcion" placeholder="Descripción"
+                       [(ngModel)]="productoActual.descripcion" maxlength="500" />
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-precio">Precio *</label>
+                <input id="producto-precio" type="number" name="precio" min="0" step="0.01"
+                       [(ngModel)]="productoActual.precio" required #precio="ngModel" />
+                @if (precio.invalid && precio.touched) {
+                  <p class="aero-field-error">Ingresa un precio válido (cero o mayor).</p>
+                }
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-iva">Tarifa IVA *</label>
+                <select id="producto-iva" name="idTarifaIva" [(ngModel)]="productoActual.idTarifaIva" required #iva="ngModel">
+                  <option [ngValue]="null">Selecciona una tarifa</option>
+                  @for (tarifa of tarifasIva; track tarifa.id) {
+                    <option [ngValue]="tarifa.id">{{ mostrarTarifa(tarifa) }}</option>
+                  }
+                </select>
+                @if (iva.invalid && iva.touched) { <p class="aero-field-error">Selecciona la tarifa IVA.</p> }
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-marca">Marca *</label>
+                <select id="producto-marca" name="idMarca" [(ngModel)]="productoActual.idMarca" required #marca="ngModel">
+                  <option [ngValue]="null">Selecciona una marca</option>
+                  @for (item of marcas; track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }
+                </select>
+                @if (marca.invalid && marca.touched) { <p class="aero-field-error">Selecciona la marca.</p> }
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-categoria">Categoría *</label>
+                <select id="producto-categoria" name="idCategoria" [(ngModel)]="productoActual.idCategoria" required #categoria="ngModel">
+                  <option [ngValue]="null">Selecciona una categoría</option>
+                  @for (item of categorias; track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }
+                </select>
+                @if (categoria.invalid && categoria.touched) { <p class="aero-field-error">Selecciona la categoría.</p> }
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-presentacion">Presentación *</label>
+                <select id="producto-presentacion" name="idPresentacion" [(ngModel)]="productoActual.idPresentacion" required #presentacion="ngModel">
+                  <option [ngValue]="null">Selecciona una presentación</option>
+                  @for (item of presentaciones; track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }
+                </select>
+                @if (presentacion.invalid && presentacion.touched) { <p class="aero-field-error">Selecciona la presentación.</p> }
+              </div>
+              <div class="producto-form-field">
+                <label for="producto-codigo">Código de barras</label>
+                <input id="producto-codigo" type="text" name="codigoBarras" placeholder="Opcional"
+                       [(ngModel)]="productoActual.codigoBarras" maxlength="50" />
+              </div>
+              <label class="producto-check producto-form-wide" for="producto-vencimiento">
+                <input id="producto-vencimiento" type="checkbox" name="controlaVencimiento"
+                       [(ngModel)]="productoActual.controlaVencimiento" />
+                Controla vencimiento
+              </label>
+            </div>
+            @if (errorModal) { <p class="producto-error-modal" role="alert">{{ errorModal }}</p> }
+          </div>
+          <footer class="aero-modal-actions">
+            <button type="button" class="aero-btn aero-btn-soft" [disabled]="guardando" (click)="cerrarModal()">Cancelar</button>
+            <button type="submit" class="aero-btn aero-btn-primary"
+                    [disabled]="formProducto.invalid || guardando">
+              {{ guardando ? 'Guardando...' : (editando ? 'Guardar cambios' : 'Crear producto') }}
+            </button>
+          </footer>
+        </form>
+      </section>
+    </div>
+  }
+</div>

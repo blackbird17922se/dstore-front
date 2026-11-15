@@ -1,44 +1,120 @@
-.producto-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Solo particularidades del módulo Productos.
+   Panel, botones, tabla, estados, filtros y modal vienen de src/styles/aero/. */
+:host {
+  display: block;
+  min-width: 0;
 }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
+.ds-aero.producto-container {
+  min-width: 0;
+}
+
+.ds-aero .producto-table-wrap {
+  margin-top: 0;
+}
+
+/* En escritorio conservamos todas las columnas, con scroll DENTRO de la tabla. */
+.ds-aero .producto-grid {
+  min-width: 1480px;
+}
+
+.ds-aero .producto-grid th,
+.ds-aero .producto-grid td {
+  padding-inline: 12px;
+}
+
+.ds-aero .producto-grid .producto-name-cell { min-width: 140px; }
+.ds-aero .producto-grid .producto-money { white-space: nowrap; font-weight: 600; }
+.ds-aero .producto-grid .producto-truncate {
+  display: block;
+  max-width: 165px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ds-aero .producto-grid .aero-row-actions { flex-wrap: nowrap; }
+.ds-aero .producto-details-toggle { display: none; }
+.ds-aero .producto-feedback {
   display: flex;
+  gap: 10px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 12px;
+  margin: 0 0 12px;
+  color: var(--ds-danger);
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: var(--ds-panel-solid);
+}
 
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
+/* Formulario de Producto: más ancho que el modal sencillo de Presentación. */
+.ds-aero .producto-modal { width: min(100%, 720px); }
+.ds-aero .producto-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.ds-aero .producto-form-field { display: grid; gap: 6px; min-width: 0; }
+.ds-aero .producto-form-wide { grid-column: 1 / -1; }
+.ds-aero .producto-form-field select {
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--ds-input-border);
+  border-radius: 9px;
+  background: var(--ds-input-bg);
+  color: var(--ds-text);
+  font: inherit;
+}
+.ds-aero .producto-form-field select:focus-visible {
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+.ds-aero .producto-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.89rem;
+  font-weight: 600;
+}
+/* Contrarrestar el ancho:100% que reciben los inputs del cuerpo del modal. */
+.ds-aero .aero-modal-body .producto-check input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  accent-color: #1266f1;
+}
+.ds-aero .producto-error-modal {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--ds-danger);
+  background: var(--ds-danger-bg);
+}
 
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
+@media (max-width: 640px) {
+  .ds-aero .producto-grid { min-width: 0; }
+  .ds-aero .producto-grid td.producto-secondary:not(.show-details) { display: none; }
+  .ds-aero .producto-grid td.producto-secondary.show-details { display: flex; }
+  .ds-aero .producto-grid td.producto-name-cell::before { display: none; }
+  .ds-aero .producto-grid .producto-name-cell { min-width: 0; }
+  .ds-aero .producto-name-value { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+  .ds-aero .producto-details-toggle {
+    display: inline-block;
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    font-size: 0.77rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    border: 0;
+    background: transparent;
+    color: var(--ds-primary);
+    cursor: pointer;
   }
+  .ds-aero .producto-grid .producto-truncate { max-width: 180px; white-space: normal; overflow-wrap: anywhere; }
+  .ds-aero .producto-grid .aero-row-actions { flex-wrap: wrap; }
+  .ds-aero .producto-form-grid { grid-template-columns: 1fr; }
+  .ds-aero .producto-form-wide { grid-column: auto; }
+  .ds-aero .producto-feedback { flex-direction: column; align-items: flex-start; }
 }

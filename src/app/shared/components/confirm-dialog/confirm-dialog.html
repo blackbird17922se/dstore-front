@@ -1,0 +1,48 @@
+<dialog
+  #dialogo
+  class="ds-confirm-dialog"
+  aria-modal="true"
+  aria-labelledby="ds-confirm-title"
+  aria-describedby="ds-confirm-message"
+  (cancel)="cancelarConEscape($event)"
+  (close)="alCerrarNativo()">
+
+  @if (solicitud) {
+    <div class="ds-confirm-header">
+      <div class="ds-confirm-icon" [class.ds-confirm-icon-danger]="solicitud.variante === 'danger'" aria-hidden="true">
+        @if (solicitud.variante === 'danger') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5"/><path d="M12 18h.01"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        }
+      </div>
+      <div class="ds-confirm-heading">
+        <span class="ds-confirm-eyebrow">DSTORE · CONFIRMACIÓN</span>
+        <h2 id="ds-confirm-title">{{ solicitud.titulo }}</h2>
+      </div>
+    </div>
+
+    <div class="ds-confirm-body">
+      <p id="ds-confirm-message">{{ solicitud.mensaje }}</p>
+
+      @if (solicitud.detalle) {
+        <p class="ds-confirm-detail">{{ solicitud.detalle }}</p>
+      }
+    </div>
+
+    <div class="ds-confirm-actions">
+      <button #cancelarBoton type="button" class="ds-confirm-button ds-confirm-cancel" (click)="cancelar()">
+        {{ solicitud.textoCancelar || 'Cancelar' }}
+      </button>
+      <button type="button" class="ds-confirm-button ds-confirm-accept"
+              [class.ds-confirm-accept-danger]="solicitud.variante === 'danger'"
+              (click)="aceptar()">
+        {{ solicitud.textoConfirmar || 'Confirmar' }}
+      </button>
+    </div>
+  }
+</dialog>

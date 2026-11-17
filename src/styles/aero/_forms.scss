@@ -27,3 +27,21 @@
 @media (max-width: 640px) {
   .ds-aero .aero-modal-body { padding: 18px; }
 }
+
+/* ============================================
+   MENSAJES DE ERROR DE FORMULARIOS AERO
+   ============================================ */
+
+.ds-aero .aero-form-alert {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+
+  border-radius: 8px;
+  border: 1px solid var(--ds-danger-bg);
+
+  background: var(--ds-danger-bg);
+  color: var(--ds-danger);
+
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

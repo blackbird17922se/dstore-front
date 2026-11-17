@@ -3,6 +3,9 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { PresentacionModel } from "../models/presentacion.model";
 import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
+import { PageResponse } from '../models/common/page-response.model';
+import { PresentacionBusquedaParams } from '../models/presentacion/presentacion-busqueda-params.model';
 
 @Injectable({ providedIn: 'root' })
 export class PresentacionService {
@@ -43,4 +46,19 @@ export class PresentacionService {
         { activo }
         );
     }
+
+    getPaginados(filtros: PresentacionBusquedaParams): Observable<PageResponse<PresentacionModel>> {
+    let params = new HttpParams()
+        .set('page', filtros.page)
+        .set('size', filtros.size)
+        .set('ordenarPor', filtros.ordenarPor)
+        .set('direccion', filtros.direccion);
+
+    const nombre = filtros.nombre.trim();
+    if (nombre) params = params.set('nombre', nombre);
+    if (filtros.activo !== null) params = params.set('activo', filtros.activo);
+
+    return this.http.get<PageResponse<PresentacionModel>>(`${this.apiUrl}/paginadas`, { params });
+    }
+
 }

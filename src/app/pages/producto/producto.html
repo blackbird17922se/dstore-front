@@ -102,7 +102,7 @@
   }
 
   <div class="aero-table-wrap producto-table-wrap" [attr.aria-busy]="cargando">
-    <table class="aero-table producto-grid">
+    <table class="aero-table producto-grid aero-table--sticky-actions">
       <thead>
         <tr>
           <th scope="col" [attr.aria-sort]="ordenarPor === 'nombre' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
@@ -118,14 +118,14 @@
           </th>
           <th scope="col">IVA</th>
           <th scope="col">Marca</th>
-          <th scope="col">Categoría</th>
-          <th scope="col">Presentación</th>
           <th scope="col" [attr.aria-sort]="ordenarPor === 'codigoBarras' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
             <button type="button" class="aero-sort-button" (click)="ordenar('codigoBarras')">
               Código de barras <span aria-hidden="true">{{ ordenarPor === 'codigoBarras' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
             </button>
           </th>
           <th scope="col">Stock</th>
+          <th scope="col">Presentación</th>
+          <th scope="col">Categoría</th>
           <th scope="col">Vencimiento</th>
           <th scope="col">Estado</th>
           <th scope="col">Acciones</th>
@@ -150,10 +150,10 @@
             <td class="producto-money" data-label="Precio">{{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
             <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="IVA">{{ mostrarIva(producto) }}</td>
             <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Marca">{{ producto.nombreMarca }}</td>
-            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Categoría">{{ producto.nombreCategoria }}</td>
-            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Presentación">{{ producto.nombrePresentacion }}</td>
             <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Código de barras">{{ producto.codigoBarras || '-' }}</td>
             <td data-label="Stock">{{ producto.stock }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Presentación">{{ producto.nombrePresentacion }}</td>
+            <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Categoría">{{ producto.nombreCategoria }}</td>
             <td class="producto-secondary" [class.show-details]="detalleExpandido(producto.id)" data-label="Vencimiento">{{ producto.controlaVencimiento ? 'Sí' : 'No' }}</td>
             <td data-label="Estado">
               <span class="aero-status" [class.is-active]="producto.activo" [class.is-inactive]="!producto.activo">

@@ -23,11 +23,52 @@
     </button>
   </div>
 
-  <div class="aero-table-wrap">
+  <!-- Reutiliza los estilos globales de _data-tools.scss, ya instalados con Productos. -->
+  <section class="aero-data-tools" aria-label="Buscar y filtrar presentaciones">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar presentación</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" />
+          </svg>
+          <input type="search" name="nombreBusqueda" placeholder="Buscar por nombre..."
+                 [(ngModel)]="nombreBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+      <label class="aero-filter-field aero-state-field">
+        <span class="aero-filter-label">Estado</span>
+        <select name="estadoSeleccionado" [(ngModel)]="estadoSeleccionado" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="true">Activos</option>
+          <option value="false">Inactivos</option>
+        </select>
+      </label>
+    </div>
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} presentación(es) encontrada(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
+      }
+    </div>
+  </section>
+
+  @if (errorListado) {
+    <div class="presentacion-feedback" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="getPresentaciones()">Reintentar</button>
+    </div>
+  }
+
+  <div class="aero-table-wrap" [attr.aria-busy]="cargando">
     <table class="aero-table">
       <thead>
         <tr>
-          <th scope="col">Nombre</th>
+          <th scope="col" [attr.aria-sort]="direccion === 'asc' ? 'ascending' : 'descending'">
+            <button type="button" class="aero-sort-button" (click)="ordenarNombre()">
+              Nombre <span aria-hidden="true">{{ direccion === 'asc' ? '↑' : '↓' }}</span>
+            </button>
+          </th>
           <th scope="col">Estado</th>
           <th scope="col">Acciones</th>
         </tr>
@@ -66,12 +107,31 @@
           </tr>
         } @empty {
           <tr class="aero-empty-row">
-            <td colspan="3">No hay presentaciones registradas.</td>
+            <td colspan="3">{{ hayFiltros ? 'No se encontraron presentaciones con estos filtros.' : 'No hay presentaciones registradas.' }}</td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+
+  <nav class="aero-pagination" aria-label="Paginación de presentaciones">
+    <label class="aero-page-size">
+      <span>Filas:</span>
+      <select [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" aria-label="Registros por página">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="pagina === 0 || cargando" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="pagina >= totalPaginas - 1 || cargando" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
 
   @if (modalAbierto) {
     <div class="aero-modal-backdrop">
@@ -97,6 +157,11 @@
                    [(ngModel)]="presentacionActual.nombre" required #nombre="ngModel" />
             @if (nombre.invalid && nombre.touched) {
               <p class="aero-field-error">El nombre es obligatorio.</p>
+            }
+            @if (errorModal) {
+              <p class="aero-form-alert" role="alert">
+                {{ errorModal }}
+              </p>
             }
           </div>
           <footer class="aero-modal-actions">

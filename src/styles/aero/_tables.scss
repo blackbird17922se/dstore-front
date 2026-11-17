@@ -97,3 +97,57 @@
   .ds-aero .aero-table .aero-empty-row td { display: block; }
   .ds-aero .aero-table .aero-empty-row td::before { display: none; }
 }
+
+/* =========================================================
+   AERO MODERN - COLUMNA ACCIONES FIJA
+   Uso opcional: aero-table--sticky-actions
+   ========================================================= */
+
+@media (min-width: 641px) {
+
+  .ds-aero .aero-table.aero-table--sticky-actions {
+
+    th:last-child,
+    td:last-child {
+      position: sticky;
+      right: 0;
+      z-index: 2;
+
+      box-sizing: border-box;
+      min-width: var(--ds-sticky-actions-width, 245px);
+      width: var(--ds-sticky-actions-width, 245px);
+
+      box-shadow: -7px 0 12px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    thead th:last-child {
+      z-index: 3;
+      background: var(--ds-table-heading);
+    }
+
+    tbody td:last-child {
+      background:
+        linear-gradient(var(--ds-table-body), var(--ds-table-body)),
+        var(--ds-panel-solid);
+    }
+
+    tbody tr:nth-child(even) td:last-child {
+      background:
+        linear-gradient(var(--ds-row-alt), var(--ds-row-alt)),
+        linear-gradient(var(--ds-table-body), var(--ds-table-body)),
+        var(--ds-panel-solid);
+    }
+
+    tbody tr:hover td:last-child {
+      background:
+        linear-gradient(var(--ds-row-hover), var(--ds-row-hover)),
+        linear-gradient(var(--ds-table-body), var(--ds-table-body)),
+        var(--ds-panel-solid);
+    }
+
+    td:last-child .aero-row-actions {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+    }
+  }
+}

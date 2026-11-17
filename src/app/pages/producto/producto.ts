@@ -18,6 +18,7 @@ import { PresentacionModel } from '../../models/presentacion.model';
 import { PresentacionService } from '../../services/presentacion.service';
 import { TarifaIvaModel } from '../../models/tarifaIva.model';
 import { TarifaIvaService } from '../../services/tarifaIva.service';
+import { ConfirmDialogService } from '../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-producto',
@@ -27,6 +28,7 @@ import { TarifaIvaService } from '../../services/tarifaIva.service';
 })
 export class Producto implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly busqueda$ = new Subject<string>();
   private readonly recarga$ = new Subject<void>();
 
@@ -268,10 +270,22 @@ export class Producto implements OnInit {
     });
   }
 
-  cambiarEstadoProducto(producto: ProductoResponse): void {
+  async cambiarEstadoProducto(producto: ProductoResponse): Promise<void> {
     const nuevoEstado = !producto.activo;
-    const accion = nuevoEstado ? 'activar' : 'desactivar';
-    if (!confirm(`¿Estás seguro de que deseas ${accion} este producto?`)) return;
+    const verbo = nuevoEstado ? 'Activar' : 'Desactivar';
+
+    const confirmado = await this.confirmDialog.confirmar({
+      titulo: `${verbo} producto`,
+      mensaje: `¿Deseas ${verbo.toLowerCase()} el producto «${producto.nombre}»?`,
+      detalle: nuevoEstado
+        ? 'El producto volverá a estar disponible para nuevas operaciones.'
+        : 'El producto dejará de estar disponible para nuevas operaciones.',
+      textoConfirmar: verbo,
+      variante: nuevoEstado ? 'primary' : 'danger',
+    });
+
+    if (!confirmado) return;
+
     this.productoService.cambiarEstado(producto.id, nuevoEstado)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

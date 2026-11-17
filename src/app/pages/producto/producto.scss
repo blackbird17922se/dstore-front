@@ -16,6 +16,8 @@
 /* En escritorio conservamos todas las columnas, con scroll DENTRO de la tabla. */
 .ds-aero .producto-grid {
   min-width: 1480px;
+
+  --ds-sticky-actions-width: 245px;
 }
 
 .ds-aero .producto-grid th,
@@ -92,6 +94,7 @@
   color: var(--ds-danger);
   background: var(--ds-danger-bg);
 }
+
 
 @media (max-width: 640px) {
   .ds-aero .producto-grid { min-width: 0; }

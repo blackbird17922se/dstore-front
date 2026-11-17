@@ -7,13 +7,14 @@ import { AuthService } from './services/auth.service';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs';
 import { ThemeService } from './services/theme.service';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog';
 
 registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Navbar],
+  imports: [CommonModule, RouterOutlet, Navbar, ConfirmDialogComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

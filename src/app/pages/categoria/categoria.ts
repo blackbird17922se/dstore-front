@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, distinctUntilChanged, of, startWith, Subject, switchMap } from 'rxjs';
-import { CategoriaModel } from '../../models/categoria.model';
+import { CategoriaModel } from '../../models/categoria/categoria.model';
 import { PageResponse } from '../../models/common/page-response.model';
 import { CategoriaService } from '../../services/categoria.service';
 import { ConfirmDialogService } from '../../shared/services/confirm-dialog.service';

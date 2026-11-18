@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { CategoriaModel } from "../models/categoria.model";
-import { CategoriaBusquedaParams } from "../models/categoria-busqueda-params";
+import { CategoriaModel } from "../models/categoria/categoria.model";
+import { CategoriaBusquedaParams } from "../models/categoria/categoria-busqueda-params";
 import { PageResponse } from "../models/common/page-response.model";
 import { crearPaginacionHttpParams } from "../shared/utils/paginacion-http-params";
 

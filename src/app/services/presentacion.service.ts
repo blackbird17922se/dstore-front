@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { PresentacionModel } from "../models/presentacion.model";
+import { PresentacionModel } from "../models/presentacion/presentacion.model";
 import { Observable } from 'rxjs';
 import { PageResponse } from '../models/common/page-response.model';
-import { PresentacionBusquedaParams } from "../models/presentacion-busqueda-params";
+import { PresentacionBusquedaParams } from "../models/presentacion/presentacion-busqueda-params";
 import { crearPaginacionHttpParams } from "../shared/utils/paginacion-http-params";
 
 @Injectable({ providedIn: 'root' })

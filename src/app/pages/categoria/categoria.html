@@ -1,73 +1,181 @@
-<div class="page-container categoria-container">
-  <h2>Categoría de Producto</h2>
+<div class="page-container ds-aero aero-panel categoria-container">
 
-
-  <button class="btn-primary" (click)="abrirModal()">
-    ➕ Crear nueva categoría
-  </button>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (Categoria of Categorias; track Categoria.id) {
-      <tr>
-        <td>{{ Categoria.nombre }}</td>
-
-        <td>
-          @if (Categoria.activo) {
-          <span class="estado-activo">
-            🟢 Activo
-          </span>
-          } @else {
-          <span class="estado-inactivo">
-            🔴 Inactivo
-          </span>
-          }
-        </td>
-
-        <td>
-          <button (click)="editarCategoria(Categoria)">✏️ Editar</button>
-
-          <button (click)="cambiarEstadoCategoria(Categoria)">
-            {{ Categoria.activo
-            ? '🔴 Desactivar'
-            : '🟢 Activar'
-            }}
-          </button>
-
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
-
-  <!-- Modal -->
-  <div class="modal" *ngIf="modalAbierto">
-    <div class="modal-content">
-      <h3>{{ editando ? 'Editar Categoría' : 'Crear Categoría' }}</h3>
-
-      <!-- FORMULARIO -->
-      <form #formCategoria="ngForm" (ngSubmit)="guardarCategoria()">
-
-        <input type="text" name="nombre" placeholder="Nombre de la categoría" [(ngModel)]="CategoriaActual.nombre"
-          required #nombre="ngModel" />
-        <div *ngIf="nombre.invalid && nombre.touched" class="error">
-          ⚠️ El nombre es obligatorio.
-        </div>
-
-        <div class="buttons">
-          <button type="submit" [disabled]="formCategoria.invalid">
-            {{ editando ? 'Guardar cambios' : 'Crear' }}
-          </button>
-          <button type="button" (click)="cerrarModal()">Cancelar</button>
-        </div>
-      </form>
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+        <path d="M3 10h18" />
+      </svg>
     </div>
+    <div class="aero-page-heading">
+      <h2>Categorías</h2>
+      <p>Administra las categorías del catálogo de productos.</p>
+    </div>
+  </header>
+
+  <div class="aero-page-actions">
+    <button type="button" class="aero-btn aero-btn-primary" (click)="abrirModal()">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Crear categoría
+    </button>
   </div>
+
+  <!-- Barra de búsqueda y filtros compartida con Presentaciones. -->
+  <section class="aero-data-tools" aria-label="Buscar y filtrar categorías">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar categoría</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m16 16 5 5" />
+          </svg>
+          <input type="search" name="nombreBusqueda" placeholder="Buscar por nombre..."
+                 [(ngModel)]="nombreBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+
+      <label class="aero-filter-field aero-state-field">
+        <span class="aero-filter-label">Estado</span>
+        <select name="estadoSeleccionado" [(ngModel)]="estadoSeleccionado" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="true">Activos</option>
+          <option value="false">Inactivos</option>
+        </select>
+      </label>
+    </div>
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} categoría(s) encontrada(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
+      }
+    </div>
+  </section>
+
+  @if (errorListado) {
+    <div class="categoria-feedback" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="getCategorias()">Reintentar</button>
+    </div>
+  }
+  @if (errorEstado) {
+    <div class="categoria-feedback" role="alert">{{ errorEstado }}</div>
+  }
+
+  <div class="aero-table-wrap" [attr.aria-busy]="cargando">
+    <table class="aero-table">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="direccion === 'asc' ? 'ascending' : 'descending'">
+            <button type="button" class="aero-sort-button" (click)="ordenarNombre()">
+              Nombre <span aria-hidden="true">{{ direccion === 'asc' ? '↑' : '↓' }}</span>
+            </button>
+          </th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (categoria of categorias; track categoria.id) {
+          <tr>
+            <td class="aero-record-title" data-label="Nombre">{{ categoria.nombre }}</td>
+            <td data-label="Estado">
+              @if (categoria.activo) {
+                <span class="aero-status is-active"><span class="aero-dot" aria-hidden="true"></span>Activo</span>
+              } @else {
+                <span class="aero-status is-inactive"><span class="aero-dot" aria-hidden="true"></span>Inactivo</span>
+              }
+            </td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-edit"
+                        [attr.aria-label]="'Editar ' + categoria.nombre"
+                        (click)="editarCategoria(categoria)">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m16 5 3 3M4 20l4.5-.9L19.1 8.5a2.12 2.12 0 0 0-3-3L5.5 16.1 4 20Z" />
+                  </svg>
+                  Editar
+                </button>
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-state"
+                        [class.aero-btn-activate]="!categoria.activo"
+                        [attr.aria-label]="(categoria.activo ? 'Desactivar ' : 'Activar ') + categoria.nombre"
+                        (click)="cambiarEstadoCategoria(categoria)">
+                  <span class="aero-action-dot" [class.aero-action-dot-on]="!categoria.activo" aria-hidden="true"></span>
+                  {{ categoria.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row">
+            <td colspan="3">{{ cargando ? 'Cargando categorías...' : (hayFiltros ? 'No se encontraron categorías con estos filtros.' : 'No hay categorías registradas.') }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="aero-pagination" aria-label="Paginación de categorías">
+    <label class="aero-page-size">
+      <span>Filas:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)"
+              [disabled]="cargando" aria-label="Registros por página">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="pagina === 0 || cargando" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="pagina >= totalPaginas - 1 || cargando" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
+
+  @if (modalAbierto) {
+    <div class="aero-modal-backdrop">
+      <section class="aero-modal" role="dialog" aria-modal="true" aria-labelledby="categoria-modal-title">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">DSTORE · CATEGORÍAS</span>
+            <h3 id="categoria-modal-title">{{ editando ? 'Editar categoría' : 'Crear categoría' }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar formulario"
+                  [disabled]="guardando" (click)="cerrarModal()">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </header>
+
+        <form #formCategoria="ngForm" (ngSubmit)="guardarCategoria()">
+          <div class="aero-modal-body">
+            <label for="categoria-nombre">Nombre de la categoría</label>
+            <input id="categoria-nombre" type="text" name="nombre"
+                   placeholder="Ej. Alimentos, Electrónicos o Juguetería"
+                   [(ngModel)]="categoriaActual.nombre" required #nombre="ngModel" />
+            @if ((nombre.invalid || !categoriaActual.nombre.trim()) && nombre.touched) {
+              <p class="aero-field-error">El nombre es obligatorio.</p>
+            }
+            @if (errorModal) {
+              <p class="aero-form-alert" role="alert">{{ errorModal }}</p>
+            }
+          </div>
+          <footer class="aero-modal-actions">
+            <button type="button" class="aero-btn aero-btn-soft" [disabled]="guardando"
+                    (click)="cerrarModal()">Cancelar</button>
+            <button type="submit" class="aero-btn aero-btn-primary"
+                    [disabled]="formCategoria.invalid || !categoriaActual.nombre.trim() || guardando">
+              {{ guardando ? 'Guardando...' : (editando ? 'Guardar cambios' : 'Crear categoría') }}
+            </button>
+          </footer>
+        </form>
+      </section>
+    </div>
+  }
 </div>

@@ -1,4 +1,4 @@
-import { PaginacionParams } from '../shared/models/paginacion-params';
+import { PaginacionParams } from '../common/paginacion-params';
 
 export interface PresentacionBusquedaParams
   extends PaginacionParams<'nombre'> {

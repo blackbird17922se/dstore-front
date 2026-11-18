@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { PaginacionParams } from '../models/paginacion-params'; 
+import { PaginacionParams } from '../../models/common/paginacion-params'; 
 
 export function crearPaginacionHttpParams(
   filtros: PaginacionParams

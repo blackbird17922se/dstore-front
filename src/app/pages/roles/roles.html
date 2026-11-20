@@ -1,40 +1,59 @@
-<div class="page-container roles-container">
-  <h2>Roles</h2>
-  <button (click)="openModal()">➕ Crear rol</button>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (rol of roles; track rol.id) {
-      <tr>
-        <td>{{ rol.id }}</td>
-        <td>{{ rol.nombre }}</td>
-        <td>
-          <button (click)="editRol(rol)">✏️ Editar</button>
-          <button (click)="deleteRol(rol.id)">🗑️ Eliminar</button>
-        </td>
-      </tr>
-    }
-    </tbody>
-  </table>
-
-  <!-- Modal -->
-  <div class="modal" *ngIf="isModalOpen">
-    <div class="modal-content">
-      <h3>{{ editing ? 'Editar Rol' : 'Crear Rol' }}</h3>
-      <input type="text" placeholder="Nombre del rol" [(ngModel)]="rolActual.nombre" />
-      <div class="buttons">
-        <button (click)="saveRol()">
-          {{ editing ? 'Guardar cambios' : 'Crear' }}
-        </button>
-        <button (click)="closeModal()">Cancelar</button>
-      </div>
+<div class="page-container ds-aero aero-panel roles-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
     </div>
+    <div class="aero-page-heading">
+      <h2>Roles del sistema</h2>
+      <p>Consulta los roles disponibles en DStore.</p>
+    </div>
+  </header>
+
+  <!-- V1: catálogo de solo lectura. La administración de permisos se implementará después. -->
+  <div class="roles-info" role="note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5M12 8h.01" />
+    </svg>
+    <span>Los roles son de solo lectura. La gestión de roles y permisos estará disponible en una versión futura.</span>
   </div>
+
+  @if (errorListado) {
+    <div class="roles-feedback" role="alert">
+      <span>{{ errorListado }}</span>
+      <button type="button" class="aero-btn aero-btn-soft" (click)="getRoles()">Reintentar</button>
+    </div>
+  }
+
+  @if (!errorListado) {
+    <div class="roles-counter" aria-live="polite">
+      {{ cargando ? 'Consultando roles...' : roles.length + ' rol(es) registrado(s)' }}
+    </div>
+
+    <div class="aero-table-wrap" [attr.aria-busy]="cargando">
+      <table class="aero-table" aria-label="Listado de roles del sistema">
+        <thead>
+          <tr>
+            <th scope="col">Nombre del rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rol of roles; track rol.id) {
+            <tr>
+              <td class="aero-record-title" data-label="Rol">{{ rol.nombre }}</td>
+            </tr>
+          } @empty {
+            <tr class="aero-empty-row">
+              <td>{{ cargando ? 'Cargando roles...' : 'No hay roles registrados.' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

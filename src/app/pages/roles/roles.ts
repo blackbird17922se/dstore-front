@@ -1,84 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RolModel } from '../../models/rol.model';
 import { RolService } from '../../services/rol.service';
 
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './roles.html',
-  styleUrls: ['./roles.scss']
+  styleUrls: ['./roles.scss'],
 })
-export class Roles {
+export class Roles implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   roles: RolModel[] = [];
-  isModalOpen = false;
-  editing = false;
-  rolActual: RolModel = { id: null, nombre: '' };
+  cargando = false;
+  errorListado = '';
 
-  constructor(private rolService: RolService) {}
+  constructor(private readonly rolService: RolService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getRoles();
   }
 
-  getRoles() {
-    this.rolService.getAll().subscribe({
-      next: (data) => {
-        this.roles = data;
-      },
-      error: (error) => {
-        console.error('Error al obtener Roles:', error);
-      }
-    });
-  }
+  // Roles V1 es de solo lectura: no se crean, editan ni eliminan roles desde Angular.
+  // La gestión de roles y permisos se implementará como una funcionalidad posterior.
+  getRoles(): void {
+    if (this.cargando) return;
 
-  editRol(rol: RolModel) {
-    this.editing = true;
-    this.rolActual = { ...rol };
-    this.isModalOpen = true;
-  }
+    this.cargando = true;
+    this.errorListado = '';
 
-  saveRol() {
-    const action = this.editing
-      ? this.rolService.update(this.rolActual)
-      : this.rolService.create(this.rolActual);
-    action.subscribe({
-      next: () => {
-        this.getRoles();
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error al guardar el rol:', error);
-      }
-    });
-  }
-
-  deleteRol(id: number | null) {
-    if (id === null) return;
-      if(confirm('¿Estás seguro de que deseas eliminar este rol?')) {
-        this.rolService.delete(id).subscribe({
-        next: () => {
-          this.getRoles();
+    this.rolService.getAll()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => { this.cargando = false; }),
+      )
+      .subscribe({
+        next: (data) => {
+          this.roles = data;
         },
         error: (error) => {
-          console.error('Error al eliminar el rol:', error);
-        }
+          this.roles = [];
+          this.errorListado = 'No fue posible cargar los roles.';
+          console.error('Error al obtener roles:', error);
+        },
       });
-    }
-  }
-
-  resetRolActual() {
-    this.rolActual = { id: null, nombre: '' };
-  }
-
-  openModal() {
-    this.editing = false;
-    this.resetRolActual();
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
   }
 }

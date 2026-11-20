@@ -4,24 +4,15 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { RolModel } from '../models/rol.model';
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class RolService {
+  private readonly apiUrl = `${environment.apiUrl}/roles`;
 
-  private apiUrl = `${environment.apiUrl}/roles`;
+  constructor(private readonly http: HttpClient) {}
 
-  constructor(private http: HttpClient) {}
-
+  // Roles V1: el backend expone únicamente GET /api/v2/roles.
+  // No llamar endpoints de creación, modificación o eliminación inexistentes.
   getAll(): Observable<RolModel[]> {
     return this.http.get<RolModel[]>(this.apiUrl);
-  }
-  create(rol: RolModel): Observable<RolModel> {
-    return this.http.post<RolModel>(this.apiUrl, rol);
-  }
-  update(rol: RolModel): Observable<RolModel> {
-    return this.http.put<RolModel>(`${this.apiUrl}/${rol.id}`, rol);
-  }
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

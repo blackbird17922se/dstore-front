@@ -12,10 +12,15 @@
 /* SIDEBAR */
 
 .app-layout > app-navbar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
   display: block;
   flex: 0 0 250px;
   width: 250px;
   overflow: hidden;
+  min-height: 0;
 
   transition:
     width 0.25s ease,
@@ -161,5 +166,30 @@
 
   .footer {
     padding: 12px;
+  }
+}
+/* =========================================================
+   DSTORE AERO MODERN — Integración del menú de cuenta
+   La apariencia del menú vive en su propio componente.
+   ========================================================= */
+
+.app-toolbar {
+  position: relative;
+  z-index: 40;
+  gap: 12px;
+}
+
+/* Fallback: los temas Aero ya definen este token global. */
+.app-toolbar .toolbar-spacer {
+  margin-left: auto;
+}
+
+.app-toolbar > app-account-menu {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .app-toolbar {
+    gap: 8px;
   }
 }

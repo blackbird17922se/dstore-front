@@ -1,0 +1,145 @@
+:host {
+  display: inline-flex;
+  flex: 0 0 auto;
+  position: relative;
+  color: var(--ds-text, #14243c);
+}
+
+.account-menu-root { position: relative; }
+
+.account-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  padding: 4px 9px 4px 5px;
+  border: 1px solid var(--ds-button-border, #d5deec);
+  border-radius: 13px;
+  color: var(--ds-text, #14243c);
+  background: var(--ds-button-soft, #e4eaf3);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.account-trigger:hover,
+.account-trigger[aria-expanded='true'] {
+  background: var(--ds-button-hover, #d6e2f2);
+  border-color: var(--ds-primary, #1266f1);
+}
+
+.account-trigger:focus-visible,
+.account-action:focus-visible {
+  outline: 3px solid var(--ds-focus, rgba(37, 99, 235, .20));
+  outline-offset: 2px;
+}
+
+.account-avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #1575f4 5%, #5d66ea 100%);
+  box-shadow: 0 2px 9px rgba(29, 92, 211, .22);
+  color: #fff;
+  font-weight: 800;
+  font-size: .77rem;
+  letter-spacing: .025em;
+}
+
+.account-trigger-label,
+.account-popover-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.account-username {
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.account-role {
+  font-size: .68rem;
+  color: var(--ds-muted, #60738f);
+  white-space: nowrap;
+}
+
+.account-chevron { width: 15px; height: 15px; flex: 0 0 15px; }
+
+.account-popover {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 270px;
+  border: 1px solid var(--ds-border, #cbdcf2);
+  border-radius: 16px;
+  background: var(--ds-panel-solid, #f7faff);
+  box-shadow: var(--ds-panel-shadow, 0 10px 26px rgba(53, 102, 171, .20)), 0 14px 34px rgba(0, 0, 0, .10);
+  overflow: hidden;
+}
+
+.account-popover-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 16px;
+  background: var(--ds-wash, rgba(113, 174, 255, .13));
+  border-bottom: 1px solid var(--ds-border, #cbdcf2);
+}
+
+.account-avatar-large { width: 44px; height: 44px; font-size: .95rem; }
+
+.account-popover-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .91rem;
+}
+
+.account-popover-role,
+.account-popover-hint {
+  color: var(--ds-muted, #60738f);
+  font-size: .78rem;
+}
+
+.account-popover-actions { padding: 7px; }
+
+.account-action {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ds-text, #14243c);
+  text-decoration: none;
+  font: inherit;
+  font-size: .88rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-action:hover { background: var(--ds-row-hover, rgba(106, 160, 237, .16)); }
+.account-action svg { width: 19px; height: 19px; flex: 0 0 19px; }
+.account-logout { color: var(--ds-danger, #a02b42); }
+
+@media (max-width: 640px) {
+  .account-trigger { padding: 4px 7px 4px 4px; gap: 5px; }
+  .account-trigger-label { display: none; }
+  .account-popover { width: min(270px, calc(100vw - 24px)); }
+}

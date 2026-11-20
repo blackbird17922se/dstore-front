@@ -1,193 +1,236 @@
-<div class="page-container perfil-container">
+<div class="page-container ds-aero aero-panel perfil-container">
 
-  <div class="page-header">
-    <div>
-      <h2>Mi perfil</h2>
-
-      <p class="page-subtitle">
-        Consulta y actualiza la información de tu cuenta.
-      </p>
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+        <circle cx="12" cy="12" r="10"></circle>
+      </svg>
     </div>
-  </div>
+    <div class="aero-page-heading">
+      <h2>Mi cuenta</h2>
+      <p>Consulta tu información y administra la seguridad de tu cuenta.</p>
+    </div>
+  </header>
 
+  @if (cargandoPerfil) {
+    <div class="perfil-feedback" role="status">Cargando información del perfil...</div>
+  } @else if (errorCarga) {
+    <div class="perfil-feedback perfil-feedback--error" role="alert">
+      <span>{{ errorCarga }}</span>
+      <button type="button" class="aero-btn aero-btn-soft" (click)="cargarPerfil()">Reintentar</button>
+    </div>
+  } @else if (perfil) {
 
-  @if (perfil) {
+    <section class="perfil-identidad" aria-label="Identidad de la cuenta">
+      <div class="perfil-avatar" aria-hidden="true">{{ inicialesPerfil }}</div>
+      <div class="perfil-identidad-info">
+        <span class="perfil-eyebrow">CUENTA DE DSTORE</span>
+        <h3>{{ perfil.nombre }} {{ perfil.apellido }}</h3>
+        <p>&#64;{{ perfil.nombreUsuario }}</p>
+      </div>
+      <span class="perfil-rol-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2 20 6v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10V6l8-4Z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        {{ perfil.nombreRol }}
+      </span>
+    </section>
 
-    <div class="perfil-grid">
+    <section class="perfil-accesos" aria-labelledby="perfil-accesos-titulo">
+      <div class="perfil-seccion-encabezado">
+        <h3 id="perfil-accesos-titulo">Administrar mi cuenta</h3>
+        <p>Selecciona la acción que deseas realizar.</p>
+      </div>
 
-      <!-- ======================================= -->
-      <!-- DATOS PERSONALES -->
-      <!-- ======================================= -->
+      <div class="perfil-acciones-grid">
+        <button type="button" class="perfil-accion" [class.is-selected]="seccionActiva === 'datos'"
+                [attr.aria-pressed]="seccionActiva === 'datos'" (click)="abrirSeccion('datos')">
+          <span class="perfil-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"></path><path d="m17 5 2 2 3-3"></path>
+            </svg>
+          </span>
+          <span class="perfil-accion-texto">
+            <strong>Información personal</strong>
+            <small>Cambiar nombre y apellido</small>
+          </span>
+          <span class="perfil-chevron" aria-hidden="true">›</span>
+        </button>
 
-      <section class="perfil-card">
+        <button type="button" class="perfil-accion" [class.is-selected]="seccionActiva === 'seguridad'"
+                [attr.aria-pressed]="seccionActiva === 'seguridad'" (click)="abrirSeccion('seguridad')">
+          <span class="perfil-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15" r="1"></circle>
+            </svg>
+          </span>
+          <span class="perfil-accion-texto">
+            <strong>Contraseña y seguridad</strong>
+            <small>Cambiar contraseña de acceso</small>
+          </span>
+          <span class="perfil-chevron" aria-hidden="true">›</span>
+        </button>
 
-        <h3>Información personal</h3>
+        <button type="button" class="perfil-accion" [class.is-selected]="seccionActiva === 'rol'"
+                [attr.aria-pressed]="seccionActiva === 'rol'" (click)="abrirSeccion('rol')">
+          <span class="perfil-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 20 6v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10V6l8-4Z"></path><path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span class="perfil-accion-texto">
+            <strong>Rol y acceso</strong>
+            <small>Consultar el rol asignado</small>
+          </span>
+          <span class="perfil-chevron" aria-hidden="true">›</span>
+        </button>
 
-        <form
-          #perfilForm="ngForm"
-          (ngSubmit)="guardarPerfil()">
+        <button type="button" class="perfil-accion" [class.is-selected]="seccionActiva === 'avatar'"
+                [attr.aria-pressed]="seccionActiva === 'avatar'" (click)="abrirSeccion('avatar')">
+          <span class="perfil-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8" cy="9" r="2"></circle><path d="m4 18 5-5 3 3 3-4 5 6"></path>
+            </svg>
+          </span>
+          <span class="perfil-accion-texto">
+            <strong>Imagen de perfil</strong>
+            <small>Iniciales ahora · Personalización futura</small>
+          </span>
+          <span class="perfil-chevron" aria-hidden="true">›</span>
+        </button>
+      </div>
+    </section>
 
-          <div class="form-group">
-            <label for="nombre">
-              Nombre
-            </label>
-
-            <input
-              id="nombre"
-              type="text"
-              name="nombre"
-              [(ngModel)]="nombre"
-              required
-            />
-          </div>
-
-
-          <div class="form-group">
-            <label for="apellido">
-              Apellido
-            </label>
-
-            <input
-              id="apellido"
-              type="text"
-              name="apellido"
-              [(ngModel)]="apellido"
-              required
-            />
-          </div>
-
-
-          <div class="form-group">
-            <label for="nombreUsuario">
-              Nombre de usuario
-            </label>
-
-            <input
-              id="nombreUsuario"
-              type="text"
-              [value]="perfil.nombreUsuario"
-              disabled
-            />
-
-            <small class="form-help">
-              El nombre de usuario no puede modificarse desde el perfil.
-            </small>
-          </div>
-
-
-          <div class="form-group">
-            <label for="rol">
-              Rol
-            </label>
-
-            <input
-              id="rol"
-              type="text"
-              [value]="perfil.nombreRol"
-              disabled
-            />
-          </div>
-
-
-          <button
-            type="submit"
-            class="btn-primary"
-            [disabled]="perfilForm.invalid">
-
-            Guardar cambios
-
+    @if (seccionActiva !== 'resumen') {
+      <section class="perfil-detalle" aria-live="polite">
+        <div class="perfil-detalle-encabezado">
+          <button type="button" class="aero-btn aero-btn-soft" (click)="abrirSeccion('resumen')">
+            <span aria-hidden="true">←</span> Volver a mi cuenta
           </button>
+        </div>
 
-        </form>
+        @switch (seccionActiva) {
+          @case ('datos') {
 
+            <!-- ======================================= -->
+            <!-- DATOS PERSONALES -->
+            <!-- ======================================= -->
+            <div class="perfil-detalle-cabecera">
+              <h3>Información personal</h3>
+              <p>Actualiza los datos visibles de tu cuenta.</p>
+            </div>
+            <div class="perfil-form-grid">
+              <form #perfilForm="ngForm" (ngSubmit)="guardarPerfil()" class="perfil-form">
+                <div class="form-group">
+                  <label for="nombre">Nombre</label>
+                  <input id="nombre" type="text" name="nombre" [(ngModel)]="nombre"
+                         autocomplete="given-name" maxlength="100" required />
+                </div>
+                <div class="form-group">
+                  <label for="apellido">Apellido</label>
+                  <input id="apellido" type="text" name="apellido" [(ngModel)]="apellido"
+                         autocomplete="family-name" maxlength="100" required />
+                </div>
+
+                @if (mensajePerfil) {
+                  <p class="perfil-mensaje" [class.is-error]="tipoMensajePerfil === 'error'"
+                     [class.is-success]="tipoMensajePerfil === 'exito'" role="status">
+                    {{ mensajePerfil }}
+                  </p>
+                }
+
+                <button type="submit" class="aero-btn aero-btn-primary"
+                        [disabled]="perfilForm.invalid || guardandoPerfil || !hayCambiosPerfil()">
+                  {{ guardandoPerfil ? 'Guardando...' : 'Guardar cambios' }}
+                </button>
+              </form>
+
+              <aside class="perfil-lectura" aria-label="Datos de solo lectura">
+                <h4>Datos de la cuenta</h4>
+                <div class="perfil-dato"><span>Nombre de usuario</span><strong>{{ perfil.nombreUsuario }}</strong></div>
+                <p>El nombre de usuario no puede modificarse desde el perfil.</p>
+                <div class="perfil-dato"><span>Rol asignado</span><strong>{{ perfil.nombreRol }}</strong></div>
+                <p>El rol es administrado por el sistema.</p>
+              </aside>
+            </div>
+          }
+          @case ('seguridad') {
+
+            <!-- ======================================= -->
+            <!-- CONTRASEÑA -->
+            <!-- ======================================= -->
+            <div class="perfil-detalle-cabecera">
+              <h3>Contraseña y seguridad</h3>
+              <p>Cambia la contraseña utilizada para ingresar al sistema.</p>
+            </div>
+            <div class="perfil-form-grid">
+              <form #contrasenaForm="ngForm" (ngSubmit)="guardarContrasena(contrasenaForm)" class="perfil-form">
+                <div class="form-group">
+                  <label for="contrasenaActual">Contraseña actual</label>
+                  <input id="contrasenaActual" type="password" name="contrasenaActual"
+                         [(ngModel)]="contrasenaActual" autocomplete="current-password" required />
+                </div>
+                <div class="form-group">
+                  <label for="nuevaContrasena">Nueva contraseña</label>
+                  <input id="nuevaContrasena" type="password" name="nuevaContrasena"
+                         [(ngModel)]="nuevaContrasena" autocomplete="new-password" required minlength="6" />
+                </div>
+                <div class="form-group">
+                  <label for="confirmarContrasena">Confirmar nueva contraseña</label>
+                  <input id="confirmarContrasena" type="password" name="confirmarContrasena"
+                         [(ngModel)]="confirmarContrasena" autocomplete="new-password" required minlength="6" />
+                </div>
+
+                @if (mensajeContrasena) {
+                  <p class="perfil-mensaje" [class.is-error]="tipoMensajeContrasena === 'error'"
+                     [class.is-success]="tipoMensajeContrasena === 'exito'" role="status">
+                    {{ mensajeContrasena }}
+                  </p>
+                }
+
+                <button type="submit" class="aero-btn aero-btn-primary"
+                        [disabled]="contrasenaForm.invalid || guardandoContrasena">
+                  {{ guardandoContrasena ? 'Actualizando...' : 'Cambiar contraseña' }}
+                </button>
+              </form>
+
+              <aside class="perfil-lectura" aria-label="Recomendaciones de seguridad">
+                <h4>Protege tu cuenta</h4>
+                <p>Confirma tu contraseña actual antes de establecer una nueva.</p>
+                <p>Usa una contraseña única y difícil de adivinar. No la compartas con otras personas.</p>
+                <p>Los cambios de contraseña se procesan en el servidor; la contraseña nunca se muestra en pantalla.</p>
+              </aside>
+            </div>
+          }
+          @case ('rol') {
+            <div class="perfil-detalle-cabecera">
+              <h3>Rol y acceso</h3>
+              <p>Información de los permisos asignados a tu cuenta.</p>
+            </div>
+            <div class="perfil-panel-info">
+              <span class="perfil-rol-badge">{{ perfil.nombreRol }}</span>
+              <p>Tu rol es de solo lectura. Los cambios de rol corresponden a la administración de usuarios.</p>
+              <p>La gestión de permisos personalizados por rol se contempla para una versión futura de DStore.</p>
+            </div>
+          }
+          @case ('avatar') {
+            <div class="perfil-detalle-cabecera">
+              <h3>Imagen de perfil</h3>
+              <p>Personaliza cómo aparece tu cuenta en DStore.</p>
+            </div>
+            <div class="perfil-panel-info perfil-panel-avatar">
+              <span class="perfil-avatar perfil-avatar--grande" aria-hidden="true">{{ inicialesPerfil }}</span>
+              <div>
+                <strong>Avatar con iniciales</strong>
+                <p>Por ahora usamos tus iniciales para identificar la cuenta. La opción de subir una imagen estará disponible en una versión futura.</p>
+              </div>
+            </div>
+          }
+        }
       </section>
-
-
-      <!-- ======================================= -->
-      <!-- CONTRASEÑA -->
-      <!-- ======================================= -->
-
-      <section class="perfil-card">
-
-        <h3>Seguridad</h3>
-
-        <p class="card-description">
-          Cambia la contraseña utilizada para ingresar al sistema.
-        </p>
-
-
-        <form
-          #contrasenaForm="ngForm"
-          (ngSubmit)="guardarContrasena()">
-
-          <div class="form-group">
-            <label for="contrasenaActual">
-              Contraseña actual
-            </label>
-
-            <input
-              id="contrasenaActual"
-              type="password"
-              name="contrasenaActual"
-              [(ngModel)]="contrasenaActual"
-              required
-            />
-          </div>
-
-
-          <div class="form-group">
-            <label for="nuevaContrasena">
-              Nueva contraseña
-            </label>
-
-            <input
-              id="nuevaContrasena"
-              type="password"
-              name="nuevaContrasena"
-              [(ngModel)]="nuevaContrasena"
-              required
-              minlength="6"
-            />
-          </div>
-
-
-          <div class="form-group">
-            <label for="confirmarContrasena">
-              Confirmar nueva contraseña
-            </label>
-
-            <input
-              id="confirmarContrasena"
-              type="password"
-              name="confirmarContrasena"
-              [(ngModel)]="confirmarContrasena"
-              required
-              minlength="6"
-            />
-          </div>
-
-
-          <button
-            type="submit"
-            class="btn-primary"
-            [disabled]="contrasenaForm.invalid">
-
-            Cambiar contraseña
-
-          </button>
-
-        </form>
-
-      </section>
-
-    </div>
-
-  } @else {
-
-    <div class="empty-message">
-      Cargando información del perfil...
-    </div>
-
+    }
   }
-
 </div>

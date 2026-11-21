@@ -1,44 +1,373 @@
-.usuarios-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Usuarios V1: selección de cuentas inspirada en Windows Vista.
+   La apariencia reutiliza los tokens, indicadores y botones de DStore Aero Modern. */
+:host {
+  display: block;
+  min-width: 0;
 }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
+.usuarios-container {
+  max-width: 1350px;
+  margin: 0 auto;
+}
+
+/* Las secciones quedan por encima del brillo decorativo del panel Aero. */
+.usuarios-container > header,
+.usuarios-container > section {
+  position: relative;
+  z-index: 1;
+}
+
+.usuarios-encabezado {
+  flex-wrap: wrap;
+}
+.usuarios-encabezado-texto {
+  flex: 1;
+}
+.usuarios-crear-boton {
+  margin-left: auto;
+}
+
+.usuarios-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 26px;
+}
+.usuarios-indicador {
+  display: grid;
+  gap: 9px;
+  padding: 18px 19px;
+  border: 1px solid var(--ds-border);
+  border-radius: 13px;
+  background: linear-gradient(125deg, var(--ds-wash), var(--ds-panel-solid));
+}
+.usuarios-indicador-etiqueta {
+  color: var(--ds-muted);
+  font-size: .81rem;
+  font-weight: 600;
+}
+.usuarios-indicador strong {
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1;
+  color: var(--ds-text);
+}
+.usuarios-indicador .usuarios-numero-activo { color: var(--ds-success); }
+.usuarios-indicador .usuarios-numero-inactivo { color: var(--ds-danger); }
+
+.usuarios-seccion-encabezado { margin: 0 0 15px; }
+.usuarios-seccion-encabezado h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ds-text);
+}
+.usuarios-seccion-encabezado p {
+  margin: 0;
+  font-size: .85rem;
+  color: var(--ds-muted);
+}
+
+.usuarios-filtros {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.5fr) minmax(130px, .7fr) minmax(160px, .8fr);
+  gap: 12px;
+  padding: 17px;
+  margin-bottom: 18px;
+  border: 1px solid var(--ds-border);
+  border-radius: 13px;
+  background: var(--ds-panel-solid);
+}
+.usuarios-campo-filtro {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.usuarios-campo-filtro label {
+  font-size: .79rem;
+  font-weight: 650;
+  color: var(--ds-text);
+}
+
+.usuarios-filtros input,
+.usuarios-filtros select,
+.usuarios-form input,
+.usuarios-form select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 9px 12px;
+  border: 1px solid var(--ds-input-border);
+  border-radius: 9px;
+  background: var(--ds-input-bg);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: .89rem;
+  outline: none;
+}
+.usuarios-filtros input:focus,
+.usuarios-filtros select:focus,
+.usuarios-form input:focus,
+.usuarios-form select:focus {
+  border-color: var(--ds-primary);
+  box-shadow: 0 0 0 3px var(--ds-focus);
+}
+.usuarios-filtros input::placeholder,
+.usuarios-form input::placeholder { color: var(--ds-muted); }
+.usuarios-form select:disabled { opacity: .66; cursor: not-allowed; }
+
+/* Tarjetas de usuario: la lista actúa como selector de cuentas. */
+.usuarios-cuentas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.ds-aero .usuarios-cuenta {
   display: flex;
   align-items: center;
-  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 124px;
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid var(--ds-border);
+  border-radius: 15px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.ds-aero .usuarios-cuenta:hover {
+  border-color: var(--ds-primary);
+  box-shadow: 0 9px 23px rgba(35, 91, 171, .13);
+  transform: translateY(-2px);
+}
+.ds-aero .usuarios-cuenta:focus-visible,
+.ds-aero .usuarios-accion:focus-visible {
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 3px;
+}
 
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
+.usuarios-avatar {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  flex: none;
+  border: 3px solid rgba(255, 255, 255, .32);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #2789ff, #4341d5);
+  box-shadow: 0 9px 19px rgba(22, 91, 222, .19);
+  color: #fff;
+  font-size: 1.32rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+.usuarios-avatar-grande { width: 82px; height: 82px; font-size: 1.65rem; border-radius: 24px; }
+.usuarios-cuenta-contenido {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+.usuarios-cuenta-contenido > strong {
+  overflow-wrap: anywhere;
+  font-size: .96rem;
+  line-height: 1.3;
+}
+.usuarios-username {
+  overflow-wrap: anywhere;
+  font-size: .81rem;
+  color: var(--ds-muted);
+}
+.usuarios-cuenta-etiquetas,
+.usuarios-identidad-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.usuarios-cuenta-etiquetas { margin-top: 5px; }
+.usuarios-rol-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 10px;
+  border: 1px solid var(--ds-icon-border);
+  border-radius: 999px;
+  background: var(--ds-icon-bg);
+  color: var(--ds-text);
+  font-size: .76rem;
+  font-weight: 700;
+}
+.usuarios-chevron { margin-left: auto; flex: none; font-size: 1.7rem; color: var(--ds-muted); }
+.ds-aero .usuarios-cuenta .aero-status { min-width: auto; min-height: 24px; padding: 3px 9px; font-size: .76rem; }
 
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+.usuarios-paginacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  color: var(--ds-muted);
+  font-size: .81rem;
+}
+.usuarios-controles-pagina { display: inline-flex; align-items: center; gap: 10px; }
+.ds-aero .usuarios-controles-pagina .aero-btn { min-width: 37px; padding: 5px 10px; }
+
+.usuarios-vacio {
+  padding: 40px 20px;
+  border: 1px dashed var(--ds-border);
+  border-radius: 13px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-muted);
+  text-align: center;
+}
+.usuarios-vacio strong { color: var(--ds-text); }
+.usuarios-vacio p { margin: 8px 0 14px; }
+.usuarios-vacio-error { color: var(--ds-danger); }
+
+/* Administración individual, con navegación por acciones como en Mi cuenta. */
+.usuarios-vista-cuenta {
+  display: grid;
+  gap: 20px;
+}
+.usuarios-navegacion { display: flex; justify-content: flex-start; }
+.usuarios-identidad {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: clamp(18px, 2vw, 25px);
+  border: 1px solid var(--ds-border);
+  border-radius: 16px;
+  background: linear-gradient(125deg, var(--ds-icon-bg), var(--ds-panel-solid) 70%);
+}
+.usuarios-identidad-texto { flex: 1; min-width: 0; }
+.usuarios-eyebrow {
+  color: var(--ds-muted);
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+.usuarios-identidad h3 {
+  margin: 6px 0 4px;
+  overflow-wrap: anywhere;
+  font-size: clamp(1.05rem, 1.9vw, 1.42rem);
+  color: var(--ds-text);
+}
+.usuarios-identidad p { margin: 0; overflow-wrap: anywhere; color: var(--ds-muted); font-size: .87rem; }
+.usuarios-identidad-etiquetas { justify-content: flex-end; }
+.usuarios-acciones-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ds-aero .usuarios-accion {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--ds-border);
+  border-radius: 14px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.ds-aero .usuarios-accion:hover { border-color: var(--ds-primary); transform: translateY(-2px); }
+.ds-aero .usuarios-accion.is-selected { border-color: var(--ds-primary); box-shadow: inset 0 0 0 1px var(--ds-primary); }
+.usuarios-accion-icono {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  flex: none;
+  border: 1px solid var(--ds-icon-border);
+  border-radius: 12px;
+  background: var(--ds-icon-bg);
+  color: var(--ds-primary);
+}
+.usuarios-accion-icono svg { width: 21px; height: 21px; }
+.usuarios-accion-texto { display: grid; gap: 5px; min-width: 0; flex: 1; }
+.usuarios-accion-texto strong { font-size: .86rem; line-height: 1.25; }
+.usuarios-accion-texto small { color: var(--ds-muted); font-size: .77rem; line-height: 1.3; }
+
+.usuarios-detalle {
+  padding: clamp(18px, 2.2vw, 25px);
+  border: 1px solid var(--ds-border);
+  border-radius: 16px;
+  background: var(--ds-panel-solid);
+}
+.usuarios-volver { margin-bottom: 21px; }
+.usuarios-detalle-encabezado { margin-bottom: 20px; }
+.usuarios-detalle-encabezado h3 { margin: 0 0 5px; color: var(--ds-text); font-size: 1.13rem; }
+.usuarios-detalle-encabezado p { margin: 0; color: var(--ds-muted); font-size: .85rem; }
+.usuarios-detalle-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(230px, .78fr);
+  gap: clamp(18px, 2.6vw, 32px);
+  align-items: start;
+}
+.usuarios-nuevo-grid { max-width: 1000px; }
+.usuarios-form { display: grid; justify-items: start; gap: 15px; min-width: 0; }
+.usuarios-form-group { display: grid; gap: 7px; width: 100%; min-width: 0; }
+.usuarios-form-group label { color: var(--ds-text); font-weight: 650; font-size: .88rem; }
+.usuarios-form-group .aero-field-error { color: var(--ds-danger); }
+.usuarios-form-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 3px; }
+.usuarios-nota {
+  display: grid;
+  gap: 13px;
+  padding: 19px;
+  border: 1px solid var(--ds-border);
+  border-radius: 12px;
+  background: var(--ds-wash);
+  color: var(--ds-text);
+}
+.usuarios-nota h4 { margin: 0; font-size: .94rem; }
+.usuarios-nota p { margin: 0; color: var(--ds-muted); font-size: .82rem; line-height: 1.55; }
+.usuarios-nota span { font-size: .76rem; color: var(--ds-muted); }
+.usuarios-nota strong { font-size: .92rem; overflow-wrap: anywhere; }
+.usuarios-estado-panel { display: grid; justify-items: start; gap: 16px; }
+.usuarios-estado-panel p { margin: 0; font-size: .87rem; line-height: 1.55; color: var(--ds-muted); }
+.usuarios-ayuda { margin: 0; font-size: .83rem; line-height: 1.5; color: var(--ds-muted); }
+.usuarios-mensaje { margin: 0 0 4px; padding: 12px 14px; border-radius: 10px; font-size: .84rem; line-height: 1.5; }
+.usuarios-mensaje.is-success { background: var(--ds-success-bg); color: var(--ds-success); }
+.usuarios-mensaje.is-error { background: var(--ds-danger-bg); color: var(--ds-danger); }
+
+@media (max-width: 1050px) {
+  .usuarios-acciones-grid { grid-template-columns: 1fr; }
+  .usuarios-accion { min-height: 70px; }
+}
+@media (max-width: 900px) {
+  .usuarios-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .usuarios-busqueda { grid-column: 1 / -1; }
+  .usuarios-detalle-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .usuarios-cuentas-grid { grid-template-columns: 1fr; }
+  .usuarios-identidad { flex-wrap: wrap; }
+  .usuarios-identidad-etiquetas { width: 100%; justify-content: flex-start; }
+  .usuarios-resumen { gap: 8px; }
+  .usuarios-indicador { padding: 13px 12px; }
+}
+@media (max-width: 560px) {
+  .usuarios-encabezado .usuarios-crear-boton { margin-left: 0; width: 100%; }
+  .usuarios-filtros { grid-template-columns: 1fr; }
+  .usuarios-busqueda { grid-column: auto; }
+  .usuarios-avatar { width: 54px; height: 54px; border-radius: 16px; font-size: 1.1rem; }
+  .usuarios-avatar-grande { width: 70px; height: 70px; font-size: 1.4rem; }
+  .usuarios-cuenta { padding: 13px; }
+  .usuarios-resumen { grid-template-columns: 1fr 1fr; }
+  .usuarios-indicador:first-child { grid-column: 1 / -1; }
+  .usuarios-form-acciones { width: 100%; }
+  .usuarios-form-acciones .aero-btn { flex: 1; }
+  .usuarios-detalle { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-aero .usuarios-cuenta,
+  .ds-aero .usuarios-accion { transition: none; }
+  .ds-aero .usuarios-cuenta:hover,
+  .ds-aero .usuarios-accion:hover { transform: none; }
 }

@@ -219,14 +219,60 @@
 }
 
 @media (max-width: 700px) {
-  .perfil-acciones-grid { grid-template-columns: 1fr; }
-  .perfil-identidad { flex-wrap: wrap; gap: 13px; }
-  .perfil-avatar { width: 64px; height: 64px; border-radius: 18px; font-size: 1.35rem; }
-  .perfil-rol-badge { margin-left: 77px; }
-  .perfil-accion { padding: 14px; }
-  .perfil-detalle { padding: 17px; }
-  .perfil-panel-avatar { flex-direction: column; align-items: flex-start; }
-  .perfil-panel-avatar .perfil-rol-badge { margin: 0; }
+
+  .perfil-acciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Identidad del usuario: avatar y nombre en dos columnas */
+  .perfil-identidad {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+  }
+
+  .perfil-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    font-size: 1.35rem;
+  }
+
+  .perfil-identidad-info {
+    min-width: 0;
+  }
+
+  /* Evita que el nombre se divida letra por letra */
+  .perfil-identidad h3 {
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-height: 1.3;
+  }
+
+  /* El rol ocupa una fila independiente */
+  .perfil-identidad > .perfil-rol-badge {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-left: 0;
+  }
+
+  .perfil-accion {
+    padding: 14px;
+  }
+
+  .perfil-detalle {
+    padding: 17px;
+  }
+
+  .perfil-panel-avatar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .perfil-panel-avatar .perfil-rol-badge {
+    margin: 0;
+  }
 }
 
 @media (max-width: 380px) {

@@ -1,102 +1,206 @@
-<div class="page-container existencias-container">
+<div class="page-container ds-aero aero-panel existencias-container">
 
-  <h2>Existencias de inventario</h2>
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5ZM3 7.5V17l9 4 9-4V7.5M12 12v9"/>
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Existencias de inventario</h2>
+      <p>Consulta cantidades, lotes y fechas de vencimiento por ingreso.</p>
+    </div>
+  </header>
 
-  <!-- FILTROS -->
-  <div class="filtros">
+  <!-- FILTROS: reutilizamos la barra de herramientas global de Productos. -->
+  <section class="aero-data-tools" aria-label="Filtros de existencias">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar existencia</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="Producto, código de barras o lote..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
 
-    <label for="producto">Producto:</label>
+      <label class="aero-filter-field aero-state-field">
+        <span class="aero-filter-label">Unidades</span>
+        <select name="estadoStock" [(ngModel)]="estadoStock" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos los registros</option>
+          <option value="true">Con unidades</option>
+          <option value="false">Sin unidades</option>
+        </select>
+      </label>
 
-    <select id="producto" name="producto" [(ngModel)]="idProductoSeleccionado" (ngModelChange)="filtrarPorProducto()">
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados"
+              aria-controls="filtros-avanzados-existencias"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M7 12h10M10 17h4"/>
+        </svg>
+        Más filtros @if (filtrosAvanzadosActivos > 0) { ({{ filtrosAvanzadosActivos }}) }
+      </button>
+    </div>
 
-      <option [ngValue]="null">-- Todos los productos --</option>
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra existencias-extra" id="filtros-avanzados-existencias">
+        <label class="aero-filter-field existencias-producto-filtro">
+          <span class="aero-filter-label">Producto específico</span>
+          <select name="idProductoSeleccionado" [(ngModel)]="idProductoSeleccionado" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Todos los productos</option>
+            @for (producto of productos; track producto.id) {
+              <option [ngValue]="producto.id">{{ producto.nombre }}</option>
+            }
+          </select>
+        </label>
 
-      @for (producto of productos; track producto.id) {
-      <option [ngValue]="producto.id">
-        {{ producto.nombre }}
-      </option>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Número de lote</span>
+          <input type="search" name="numeroLote" placeholder="Buscar lote..."
+                 [(ngModel)]="numeroLote" (ngModelChange)="alCambiarBusqueda()" />
+        </label>
+
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Cantidad mínima</span>
+          <input type="number" name="cantidadMin" min="0" step="1"
+                 [(ngModel)]="cantidadMin" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Cantidad máxima</span>
+          <input type="number" name="cantidadMax" min="0" step="1"
+                 [(ngModel)]="cantidadMax" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Vence desde</span>
+          <input type="date" name="vencimientoDesde" [(ngModel)]="vencimientoDesde" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Vence hasta</span>
+          <input type="date" name="vencimientoHasta" [(ngModel)]="vencimientoHasta" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Ingresó desde</span>
+          <input type="date" name="ingresoDesde" [(ngModel)]="ingresoDesde" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Ingresó hasta</span>
+          <input type="date" name="ingresoHasta" [(ngModel)]="ingresoHasta" (ngModelChange)="aplicarFiltros()" />
+        </label>
+      </div>
+    }
+
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} existencia(s) encontrada(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
       }
+    </div>
+  </section>
 
-    </select>
-
-
-    <label>
-      <input type="checkbox" name="soloDisponibles" [(ngModel)]="soloDisponibles" (ngModelChange)="aplicarFiltros()" />
-      Solo disponibles
-    </label>
-
-  </div>
-
-
-  <!-- TABLA -->
-  @if (existenciasMostradas.length === 0) {
-
-  <div class="empty-message">
-    No hay existencias que coincidan con los filtros seleccionados.
-  </div>
-
-  } @else {
-
-  <table>
-
-    <thead>
-      <tr>
-        <th>Existencia</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Lote</th>
-        <th>Vencimiento</th>
-        <th>Fecha de ingreso</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      @for (
-      existencia of existenciasMostradas;
-      track existencia.id
-      ) {
-
-      <tr>
-
-        <td>
-          #{{ existencia.id }}
-        </td>
-
-        <td>
-          {{ existencia.nombreProducto }}
-        </td>
-
-        <td>
-          {{ existencia.cantidad }}
-        </td>
-
-        <td>
-          {{ existencia.numeroLote || '-' }}
-        </td>
-
-        <td>
-          {{
-          existencia.fechaVencimiento
-          ? (existencia.fechaVencimiento | date:'dd/MM/yyyy')
-          : '-'
-          }}
-        </td>
-
-        <td>
-          {{
-          existencia.fechaIngreso
-          | date:'dd/MM/yyyy HH:mm'
-          }}
-        </td>
-
-      </tr>
-
-      }
-
-    </tbody>
-  </table>
-
+  @if (errorListado) {
+    <div class="existencias-feedback" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="listarExistencias()">Reintentar</button>
+    </div>
   }
 
+  <!-- TABLA: lotes individuales, no stock agregado por producto.
+       El desplazamiento horizontal queda dentro de la tabla, igual que Productos. -->
+  <div class="aero-table-wrap existencias-tabla-contenedor" [attr.aria-busy]="cargando">
+    <table class="aero-table existencias-tabla">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'producto.nombre' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('producto.nombre')">
+              Producto <span aria-hidden="true">{{ ordenarPor === 'producto.nombre' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'cantidad' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('cantidad')">
+              Cantidad <span aria-hidden="true">{{ ordenarPor === 'cantidad' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'numeroLote' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('numeroLote')">
+              Lote <span aria-hidden="true">{{ ordenarPor === 'numeroLote' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaVencimiento' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaVencimiento')">
+              Vencimiento <span aria-hidden="true">{{ ordenarPor === 'fechaVencimiento' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaIngreso' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaIngreso')">
+              Fecha de ingreso <span aria-hidden="true">{{ ordenarPor === 'fechaIngreso' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'id' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('id')">
+              Existencia <span aria-hidden="true">{{ ordenarPor === 'id' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (existencia of existenciasMostradas; track existencia.id) {
+          <tr>
+            <td class="aero-record-title existencias-producto" data-label="Producto">
+              <div class="existencias-producto-valor">
+                <span>{{ existencia.nombreProducto }}</span>
+                <button type="button" class="existencias-detalles-toggle"
+                        [attr.aria-expanded]="detalleExpandido(existencia.id)"
+                        (click)="toggleDetalles(existencia.id)">
+                  {{ detalleExpandido(existencia.id) ? 'Ocultar detalles' : 'Ver detalles' }}
+                </button>
+              </div>
+            </td>
+            <td data-label="Cantidad">
+              <span class="aero-status" [class.is-active]="existencia.cantidad > 0" [class.is-inactive]="existencia.cantidad <= 0">
+                <span class="aero-dot" aria-hidden="true"></span>{{ existencia.cantidad }}
+              </span>
+            </td>
+            <td data-label="Lote">{{ existencia.numeroLote || '-' }}</td>
+            <td data-label="Vencimiento">
+              {{ existencia.fechaVencimiento ? (existencia.fechaVencimiento | date:'dd/MM/yyyy') : '-' }}
+            </td>
+            <td class="existencias-secundario" [class.show-details]="detalleExpandido(existencia.id)" data-label="Fecha de ingreso">
+              {{ existencia.fechaIngreso | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="existencias-secundario" [class.show-details]="detalleExpandido(existencia.id)" data-label="Existencia">
+              #{{ existencia.id }}
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row">
+            <td colspan="6">{{ cargando ? 'Cargando existencias...' : 'No hay existencias que coincidan con los filtros.' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINACIÓN: el total corresponde a la consulta filtrada del backend. -->
+  <nav class="aero-pagination" aria-label="Paginación de existencias">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="cargando || pagina === 0" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="cargando || pagina + 1 >= totalPaginas" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
 </div>

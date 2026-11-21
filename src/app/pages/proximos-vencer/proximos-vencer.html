@@ -1,90 +1,201 @@
-<div class="page-container proximos-vencer-container">
+<div class="page-container ds-aero aero-panel proximos-vencer-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16m-10 5 2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Productos próximos a vencer</h2>
+      <p>Alertas por lote y fecha de vencimiento. Monitorea el stock antes de que genere pérdidas.</p>
+    </div>
+  </header>
 
-  <h2>Productos próximos a vencer</h2>
+  <!-- Semáforo general: sus contadores abarcan todos los vencimientos con stock,
+       independientemente del horizonte elegido para el listado paginado. -->
+  <section class="vencer-resumen" aria-label="Resumen de alertas de vencimiento">
+    <div class="vencer-resumen-cabecera">
+      <h3>Semáforo de vencimientos</h3>
+      <span>Lotes con stock · todas las fechas</span>
+    </div>
+    <div class="vencer-indicadores">
+      @for (indicador of indicadores; track indicador.estado) {
+        <button type="button" class="vencer-indicador" [ngClass]="'vencer-estado--' + indicador.estado.toLowerCase()"
+                [class.vencer-indicador--seleccionado]="estadoSeleccionado === indicador.estado"
+                [attr.aria-pressed]="estadoSeleccionado === indicador.estado"
+                [attr.title]="'Filtrar por ' + indicador.titulo"
+                (click)="seleccionarEstado(indicador.estado)">
+          <span class="vencer-indicador-etiqueta">{{ indicador.titulo }}</span>
+          <strong class="vencer-indicador-cantidad">{{ contadorEstado(indicador.estado) ?? '—' }}</strong>
+          <span class="vencer-indicador-descripcion">{{ indicador.descripcion }}</span>
+        </button>
+      }
+    </div>
+    @if (errorResumen) { <p class="vencer-aviso vencer-aviso--error" role="alert">{{ errorResumen }}</p> }
+    @if (cargandoResumen) { <p class="vencer-resumen-nota">Actualizando indicadores...</p> }
+  </section>
 
-  <div class="filtros">
+  <!-- Las búsquedas y filtros se aplican en MySQL. No descargar y filtrar todos los lotes en Angular. -->
+  <section class="aero-data-tools" aria-label="Filtros de vencimiento">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar producto o lote</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="Nombre, código de barras o lote..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Estado de vencimiento</span>
+        <select name="estadoSeleccionado" [ngModel]="estadoSeleccionado" (ngModelChange)="seleccionarEstado($event)">
+          <option value="">Todos los estados</option>
+          <option value="VENCIDO">Vencido</option>
+          <option value="CRITICO">Crítico · 0–7 días</option>
+          <option value="PROXIMO">Próximo · 8–30 días</option>
+          <option value="SEGUIMIENTO">En seguimiento · 31–60 días</option>
+          <option value="SIN_ALERTA">Sin alerta · más de 60 días</option>
+        </select>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Horizonte futuro</span>
+        <select name="dias" [ngModel]="dias" (ngModelChange)="dias = $event; cambiarDias()">
+          <option [ngValue]="7">7 días</option>
+          <option [ngValue]="15">15 días</option>
+          <option [ngValue]="30">30 días</option>
+          <option [ngValue]="60">60 días</option>
+          <option [ngValue]="90">90 días</option>
+          <option [ngValue]="180">180 días</option>
+          <option [ngValue]="365">1 año</option>
+          <option [ngValue]="3650">Hasta 10 años</option>
+        </select>
+      </label>
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados"
+              aria-controls="vencer-filtros-avanzados"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        Más filtros @if (filtrosAvanzadosActivos > 0) { ({{ filtrosAvanzadosActivos }}) }
+        <span aria-hidden="true">{{ mostrarFiltrosAvanzados ? '▴' : '▾' }}</span>
+      </button>
+    </div>
 
-    <label for="dias">
-      Próximos días:
-    </label>
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra" id="vencer-filtros-avanzados">
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Producto específico</span>
+          <select name="idProductoSeleccionado" [(ngModel)]="idProductoSeleccionado" (ngModelChange)="cambiarProducto()">
+            <option [ngValue]="null">Todos los productos</option>
+            @for (producto of productos; track producto.id) {
+              <option [ngValue]="producto.id">{{ producto.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Vence desde</span>
+          <input type="date" name="vencimientoDesde" [(ngModel)]="vencimientoDesde" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Vence hasta</span>
+          <input type="date" name="vencimientoHasta" [(ngModel)]="vencimientoHasta" (ngModelChange)="aplicarFiltros()" />
+        </label>
+      </div>
+    }
 
-    <input
-      type="number"
-      id="dias"
-      name="dias"
-      [(ngModel)]="dias"
-      min="1"
-    />
-
-    <button
-      type="button"
-      (click)="buscar()">
-
-      Buscar
-
-    </button>
-
-  </div>
-
-
-  @if (existencias.length === 0) {
-
-    <p>
-      ✅ No hay productos próximos a vencer
-      dentro de los próximos {{ dias }} días.
-    </p>
-
-  } @else {
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Lote</th>
-          <th>Vencimiento</th>
-          <th>Días restantes</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        @for (
-          existencia of existencias;
-          track existencia.id
-        ) {
-
-          <tr>
-
-            <td>
-              {{ existencia.nombreProducto }}
-            </td>
-
-            <td>
-              {{ existencia.cantidad }}
-            </td>
-
-            <td>
-              {{ existencia.numeroLote || '-' }}
-            </td>
-
-            <td>
-              {{ existencia.fechaVencimiento | date:'dd/MM/yyyy' }}
-            </td>
-
-            <td>
-              {{ diasRestantes(existencia.fechaVencimiento) }}
-            </td>
-
-          </tr>
-
+    <div class="aero-tools-foot vencer-herramientas-pie">
+      <span>
+        @if (cargando) { Consultando alertas... }
+        @else { {{ totalElementos }} lote(s) en el listado filtrado }
+      </span>
+      <div class="vencer-filtros-acciones">
+        <span class="vencer-horizonte-ayuda">Los vencidos se incluyen aun si el horizonte es de {{ dias }} días.</span>
+        @if (hayFiltros) {
+          <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Restablecer filtros</button>
         }
+      </div>
+    </div>
+  </section>
 
-      </tbody>
-
-    </table>
-
+  @if (!rangoValido) {
+    <p class="vencer-aviso vencer-aviso--error" role="alert">La fecha inicial no puede superar la fecha final.</p>
+  }
+  @if (errorListado) {
+    <div class="vencer-aviso vencer-aviso--error" role="alert">
+      <span>{{ errorListado }}</span>
+      <button type="button" class="aero-btn aero-btn-soft" (click)="listar()">Reintentar</button>
+    </div>
   }
 
+  <div class="aero-table-wrap" [attr.aria-busy]="cargando">
+    <table class="aero-table vencer-tabla">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'producto.nombre' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('producto.nombre')">Producto <span aria-hidden="true">{{ ordenarPor === 'producto.nombre' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'cantidad' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('cantidad')">Unidades <span aria-hidden="true">{{ ordenarPor === 'cantidad' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'numeroLote' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('numeroLote')">Lote <span aria-hidden="true">{{ ordenarPor === 'numeroLote' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaVencimiento' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaVencimiento')">Vencimiento <span aria-hidden="true">{{ ordenarPor === 'fechaVencimiento' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Días restantes</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Existencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (alerta of alertas; track alerta.idExistencia) {
+          <tr>
+            <td class="aero-record-title" data-label="Producto">{{ alerta.nombreProducto }}</td>
+            <td data-label="Unidades">{{ alerta.cantidad }}</td>
+            <td data-label="Lote">{{ alerta.numeroLote || 'Sin lote' }}</td>
+            <td data-label="Vencimiento">{{ alerta.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+            <td data-label="Días restantes" class="vencer-dias" [ngClass]="'vencer-estado--' + alerta.estado.toLowerCase()">
+              {{ leyendaDias(alerta.diasRestantes) }}
+            </td>
+            <td data-label="Estado">
+              <span class="vencer-badge" [ngClass]="'vencer-estado--' + alerta.estado.toLowerCase()">
+                <span class="vencer-punto" aria-hidden="true"></span>{{ etiquetaEstado(alerta.estado) }}
+              </span>
+            </td>
+            <td data-label="Existencia">#{{ alerta.idExistencia }}</td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row">
+            <td colspan="7">
+              @if (cargando) { Cargando alertas... }
+              @else if (errorListado || !rangoValido) { No se pudieron mostrar los resultados. }
+              @else { No hay lotes que coincidan con los filtros y el horizonte seleccionado. }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="aero-pagination" aria-label="Paginación de alertas de vencimiento">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="cargando || pagina === 0" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="cargando || pagina + 1 >= totalPaginas" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
+
+  <p class="vencer-nota-pie">Alertas informativas de solo lectura. La mercancía vencida no se elimina ni se ajusta automáticamente.</p>
 </div>

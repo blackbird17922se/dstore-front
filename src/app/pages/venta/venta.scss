@@ -1,52 +1,59 @@
-.venta-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Historial de ventas Aero Modern.
+   Utiliza src/styles/aero/ para tablas, filtros, botones y paginación compartidos. */
+:host { display: block; min-width: 0; }
+.ds-aero.venta-container { min-width: 0; }
+.ds-aero .venta-tabla { min-width: 900px; }
+.ds-aero .venta-fecha { white-space: nowrap; }
+.ds-aero .venta-importe { font-weight: 750; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ds-aero .venta-estado {
+  display: inline-flex; align-items: center; border: 1px solid var(--ds-border); border-radius: 999px;
+  padding: 5px 10px; font-size: .78rem; font-weight: 700;
+  color: var(--ds-text); background: var(--ds-table-body);
 }
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+.ds-aero .venta-estado--confirmada { color: var(--ds-success, #23825d); border-color: currentColor; }
+.ds-aero .venta-estado--anulada { color: var(--ds-danger, #bc4c53); border-color: currentColor; }
+.ds-aero .venta-estado--otros { color: var(--ds-muted); }
+.ds-aero .venta-btn-anular {
+  background: var(--ds-danger, #b73543); border: 1px solid var(--ds-danger, #b73543);
+  color: #fff; border-radius: 9px; padding: 9px 13px; cursor: pointer; font-weight: 700;
 }
-
-.modal {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  width: 320px;
-  max-width: 90%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+.ds-aero .venta-btn-anular:hover:not(:disabled) { filter: brightness(.9); }
+.ds-aero .venta-btn-anular:disabled { opacity: .55; cursor: not-allowed; }
+.ds-aero .venta-acciones { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.ds-aero .venta-feedback {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  margin: 12px 0; padding: 12px 15px; border: 1px solid var(--ds-border);
+  border-radius: 10px; color: var(--ds-text); background: var(--ds-panel-solid);
 }
-
-.modal textarea {
-  width: 100%;
-  min-height: 80px;
-  margin-top: 0.5rem;
+.ds-aero .venta-feedback--error { color: var(--ds-danger, #bc4c53); }
+.ds-aero .venta-feedback--exito { color: var(--ds-success, #23825d); }
+.ds-aero .venta-tools-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ds-aero .venta-tools-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ds-aero .aero-modal.venta-anular-modal { width: min(100%, 690px); }
+.ds-aero .venta-modal-cuerpo { padding: 20px 24px; display: grid; gap: 17px; color: var(--ds-text); }
+.ds-aero .venta-advertencia {
+  margin: 0; border-left: 4px solid var(--ds-warning, #d19c35); padding: 12px 14px;
+  border-radius: 8px; background: var(--ds-table-body); line-height: 1.5; font-size: .87rem;
 }
-
-.acciones {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
+.ds-aero .venta-modal-datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ds-aero .venta-modal-datos > div { min-width: 0; display: grid; gap: 5px; padding: 12px; border: 1px solid var(--ds-border); background: var(--ds-table-body); border-radius: 10px; }
+.ds-aero .venta-modal-datos span, .ds-aero .venta-campo-motivo span, .ds-aero .venta-campo-motivo small { color: var(--ds-muted); font-size: .77rem; }
+.ds-aero .venta-modal-datos strong { overflow-wrap: anywhere; font-size: .88rem; }
+.ds-aero .venta-campo-motivo { display: grid; gap: 7px; }
+.ds-aero .venta-campo-motivo span { font-weight: 700; }
+.ds-aero .venta-campo-motivo textarea {
+  width: 100%; box-sizing: border-box; padding: 11px 13px; resize: vertical;
+  border: 1px solid var(--ds-input-border); background: var(--ds-input-bg);
+  border-radius: 10px; color: var(--ds-text); font: inherit;
+}
+.ds-aero .venta-campo-motivo :focus-visible { outline: 3px solid var(--ds-focus); outline-offset: 2px; }
+@media (max-width: 640px) {
+  .ds-aero .venta-tabla { min-width: 0; }
+  .ds-aero .venta-acciones { width: 100%; }
+  .ds-aero .venta-acciones .aero-btn { flex: 1; }
+  .ds-aero .venta-tools-actions { width: 100%; }
+  .ds-aero .venta-tools-actions .aero-btn { flex: 1; }
+  .ds-aero .venta-modal-datos { grid-template-columns: 1fr; }
+  .ds-aero .venta-modal-cuerpo { padding: 15px 18px; }
+  .ds-aero .aero-modal.venta-anular-modal { max-height: calc(100dvh - 22px); }
 }

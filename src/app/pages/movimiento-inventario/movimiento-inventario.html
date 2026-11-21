@@ -1,71 +1,226 @@
-<div class="page-container movimiento-container">
+<div class="page-container ds-aero aero-panel movimiento-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M4 12h16M4 17h16M8 4l-4 3 4 3M16 14l4 3-4 3"/>
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Movimientos de inventario</h2>
+      <p>Historial de entradas, ventas y ajustes. Selecciona un período antes de consultar.</p>
+    </div>
+  </header>
 
-  <h2>Movimientos de inventario</h2>
+  <!-- Los filtros se aplican en MySQL antes de la paginación, no sobre las filas visibles. -->
+  <!-- Se requiere un período: ningún GET se dispara al abrir la pantalla ni al escribir filtros. -->
+  <section class="aero-data-tools" aria-label="Filtros del historial de movimientos">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar movimiento</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="Producto, código, lote o #movimiento..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Tipo de movimiento</span>
+        <select name="tipoSeleccionado" [(ngModel)]="tipoSeleccionado" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="ENTRADA">Entrada</option>
+          <option value="VENTA">Venta</option>
+          <option value="AJUSTE_ENTRADA">Ajuste entrada</option>
+          <option value="AJUSTE_SALIDA">Ajuste salida</option>
+        </select>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Desde *</span>
+        <input type="date" name="fechaDesde" [(ngModel)]="fechaDesde" (ngModelChange)="aplicarFiltros()" required />
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Hasta *</span>
+        <input type="date" name="fechaHasta" [(ngModel)]="fechaHasta" (ngModelChange)="aplicarFiltros()" required />
+      </label>
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        Más filtros{{ filtrosAvanzadosActivos ? ' (' + filtrosAvanzadosActivos + ')' : '' }}
+        <span aria-hidden="true">{{ mostrarFiltrosAvanzados ? '▴' : '▾' }}</span>
+      </button>
+    </div>
 
-    <!-- FILTROS -->
-  <div class="filtros">
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra">
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Producto</span>
+          <select name="producto" [(ngModel)]="idProductoSeleccionado" (ngModelChange)="cambiarProducto()">
+            <option [ngValue]="null">Todos los productos</option>
+            @for (producto of productos; track producto.id) {
+              <option [ngValue]="producto.id">{{ producto.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Origen</span>
+          <select name="tipoOrigenSeleccionado" [(ngModel)]="tipoOrigenSeleccionado" (ngModelChange)="aplicarFiltros()">
+            <option value="">Todos los orígenes</option>
+            <option value="ENTRADA_INVENTARIO">Entrada de inventario</option>
+            <option value="VENTA">Venta</option>
+            <option value="AJUSTE_INVENTARIO">Ajuste de inventario</option>
+          </select>
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">ID existencia</span>
+          <input type="number" name="idExistenciaFiltro" min="1" step="1" placeholder="Todas"
+                 [(ngModel)]="idExistenciaFiltro" (ngModelChange)="aplicarFiltros()" />
+        </label>
+      </div>
+    }
 
-    <label for="producto">Producto:</label>
-    <select
-      id="producto" name="producto"
-      [(ngModel)]="idProductoSeleccionado"
-      (ngModelChange)="cambiarProducto()">
+    <div class="aero-tools-foot movimiento-consulta-acciones">
+      <span class="movimiento-periodo-ayuda">
+        @if (consultaRealizada) {
+          {{ totalElementos }} movimiento(s) encontrado(s)
+        } @else {
+          Consulta manual · últimos 30 días seleccionados inicialmente
+        }
+      </span>
+      <div class="movimiento-consulta-botones">
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Restablecer filtros</button>
+        <button type="button" class="aero-btn aero-btn-primary" (click)="consultarMovimientos()"
+                [disabled]="!fechasValidas || cargando">
+          {{ cargando ? 'Consultando...' : 'Consultar movimientos' }}
+        </button>
+      </div>
+    </div>
+  </section>
 
-      <option [ngValue]="null">-- Seleccione un producto --</option>
-
-      @for (producto of productos; track producto.id) {
-        <option [ngValue]="producto.id">
-          {{ producto.nombre }}
-        </option>
+  @if (mensajeFechas) {
+    <div class="movimiento-feedback movimiento-feedback--error" role="alert">{{ mensajeFechas }}</div>
+  }
+  @if (errorListado && fechasValidas) {
+    <div class="movimiento-feedback movimiento-feedback--error" role="alert">
+      <span>{{ errorListado }}</span>
+      @if (consultaRealizada) {
+        <button type="button" class="aero-btn aero-btn-soft" (click)="listar()">Reintentar</button>
       }
-    </select>
+    </div>
+  }
+
+  @if (!consultaRealizada) {
+    <section class="movimiento-inicio" aria-label="Consulta pendiente">
+      <span class="movimiento-inicio-icono" aria-hidden="true">⌕</span>
+      <h3>Selecciona las fechas y pulsa «Consultar movimientos»</h3>
+      <p>La tabla no se carga automáticamente. Puedes combinar período, tipo y producto para precisar el historial.</p>
+    </section>
+  } @else {
+  <!-- Historial inmutable: no se exponen acciones para editar o eliminar movimientos. -->
+  <div class="aero-table-wrap" [attr.aria-busy]="cargando">
+    <table class="aero-table aero-table--sticky-actions movimiento-tabla">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'id' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('id')">Movimiento <span aria-hidden="true">{{ ordenarPor === 'id' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaMovimiento' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaMovimiento')">Fecha <span aria-hidden="true">{{ ordenarPor === 'fechaMovimiento' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'existencia.producto.nombre' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('existencia.producto.nombre')">Producto <span aria-hidden="true">{{ ordenarPor === 'existencia.producto.nombre' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'tipo' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('tipo')">Tipo <span aria-hidden="true">{{ ordenarPor === 'tipo' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'cantidad' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('cantidad')">Cantidad <span aria-hidden="true">{{ ordenarPor === 'cantidad' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'existencia.id' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('existencia.id')">Existencia <span aria-hidden="true">{{ ordenarPor === 'existencia.id' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'tipoOrigen' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('tipoOrigen')">Origen <span aria-hidden="true">{{ ordenarPor === 'tipoOrigen' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Observación</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (movimiento of movimientosResponse; track movimiento.id) {
+          <tr>
+            <td data-label="Movimiento" class="aero-record-title">#{{ movimiento.id }}</td>
+            <td data-label="Fecha">{{ movimiento.fechaMovimiento | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Producto">{{ movimiento.nombreProducto }}</td>
+            <td data-label="Tipo">
+              <span class="movimiento-tipo" [ngClass]="claseTipo(movimiento.tipo)">{{ mostrarTipo(movimiento.tipo) }}</span>
+            </td>
+            <td data-label="Cantidad" class="movimiento-cantidad" [ngClass]="claseTipo(movimiento.tipo)">
+              {{ movimiento.cantidad > 0 ? '+' : '' }}{{ movimiento.cantidad }}
+            </td>
+            <td data-label="Existencia">#{{ movimiento.idExistencia }}</td>
+            <td data-label="Origen">{{ mostrarOrigen(movimiento) }}</td>
+            <td data-label="Observación" class="movimiento-observacion" [title]="movimiento.observacion || ''">{{ movimiento.observacion || '-' }}</td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft" (click)="verDetalle(movimiento)">Ver detalle</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row"><td colspan="9">{{ cargando ? 'Cargando movimientos...' : 'No hay movimientos que coincidan con los filtros.' }}</td></tr>
+        }
+      </tbody>
+    </table>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Existencia</th>
-        <th>Nombre Producto</th>
-        <th>Tipo</th>
-        <th>Cantidad movimiento</th>
-        <th>Fecha Movimiento</th>
-        <th>Tipo de Origen</th>
-        <th>Observacion</th>
-      </tr>
-    </thead>
+  <nav class="aero-pagination" aria-label="Paginación de movimientos">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="cargando || pagina === 0" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="cargando || pagina + 1 >= totalPaginas" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
+  }
 
-    <tbody>
-        @for (movimiento of movimientosResponse; track movimiento.id) {
-            <tr>
-                <td>
-                    #{{ movimiento.idExistencia }}
-                </td>
-
-                <td>
-                    {{ movimiento.nombreProducto }}
-                </td>
-
-                <td>
-                    {{ movimiento.tipo }}
-                </td>
-
-                <td>
-                    {{ movimiento.cantidad }}
-                </td>
-
-                <td>
-                    {{ movimiento.fechaMovimiento | date:'dd/MM/yyyy HH:mm' }}
-                </td>
-
-                <td>
-                    {{ mostrarOrigen(movimiento) }}
-                </td>
-
-                <td>
-                    {{ movimiento.observacion || '-' }}
-                </td>
-            </tr>
-        }
-    </tbody>
-  </table>
+  <!-- Detalle de consulta: se muestra el registro ya cargado, sin llamadas de escritura. -->
+  @if (movimientoSeleccionado) {
+    <div class="aero-modal-backdrop" (keydown.escape)="cerrarDetalle()">
+      <section class="aero-modal movimiento-consulta-modal" role="dialog" aria-modal="true" aria-labelledby="tituloDetalleMovimiento">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">TRAZABILIDAD DEL INVENTARIO</span>
+            <h3 id="tituloDetalleMovimiento">Movimiento #{{ movimientoSeleccionado.id }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar detalle" (click)="cerrarDetalle()">✕</button>
+        </header>
+        <div class="movimiento-modal-cuerpo">
+          <div class="movimiento-resumen">
+            <div><span>Fecha y hora</span><strong>{{ movimientoSeleccionado.fechaMovimiento | date:'dd/MM/yyyy HH:mm:ss' }}</strong></div>
+            <div><span>Producto</span><strong>{{ movimientoSeleccionado.nombreProducto }}</strong></div>
+            <div><span>Tipo</span><strong>{{ mostrarTipo(movimientoSeleccionado.tipo) }}</strong></div>
+            <div><span>Cantidad</span><strong>{{ movimientoSeleccionado.cantidad > 0 ? '+' : '' }}{{ movimientoSeleccionado.cantidad }}</strong></div>
+            <div><span>ID existencia</span><strong>#{{ movimientoSeleccionado.idExistencia }}</strong></div>
+            <div><span>Operación de origen</span><strong>{{ mostrarOrigen(movimientoSeleccionado) }}</strong></div>
+            <div class="movimiento-resumen--observacion"><span>Observación</span><strong>{{ movimientoSeleccionado.observacion || '-' }}</strong></div>
+          </div>
+          <p class="movimiento-historico-aviso">Registro histórico de solo lectura. La operación original no se modifica desde esta pantalla.</p>
+        </div>
+        <footer class="aero-modal-actions">
+          <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarDetalle()">Cerrar</button>
+        </footer>
+      </section>
+    </div>
+  }
 </div>

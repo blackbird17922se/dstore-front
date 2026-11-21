@@ -1,84 +1,206 @@
-<div class="page-container venta-container">
-    <h2>Venta</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Total</th>
-                <th>Vendedor</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (venta of ventasResponse; track venta.id) {
-            <tr>
-                <td>{{ venta.id }}</td>
-                <td>{{ venta.fecha | date:"dd 'de' MMMM 'de' yyyy hh:mm a":'':'es-CO' }}</td>
-                <td>{{ venta.nombreCliente }}</td>
-                <td>{{ venta.total }}</td>
-                <td>{{ venta.vendedor }}</td>
-                <td>{{ venta.estado }}</td>
-                <td>
-                    <button (click)="verDetalle(venta.id)" [disabled]="!venta.id">Detalle</button>
-
-                    @if (authService.esAdmin() && venta.estado !== 'ANULADA'
-                        ) {
-                        <button
-                            class="btn-danger"
-                            (click)="abrirModalAnular(venta.id)"
-                            [disabled]="venta.estado === 'ANULADA'">
-                            Anular
-                        </button>
-                        }
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
-
-    @if (mostrarModal) {
-
-    <div class="modal-backdrop">
-
-        <div class="modal">
-
-            <h3>Anular venta</h3>
-
-            <p>
-                ¿Está seguro de anular la venta
-                #{{ ventaSeleccionadaId }}?
-            </p>
-
-            <label for="motivo">
-                Motivo:
-            </label>
-
-            <textarea id="motivo" name="motivo" [(ngModel)]="motivo" maxlength="500" rows="3"
-                placeholder="Ingrese el motivo de la anulación">
-            </textarea>
-
-            <div class="acciones">
-
-                <button type="button" (click)="cerrarModal()">
-
-                    Cancelar
-
-                </button>
-
-                <button type="button" (click)="confirmarAnulacion()" [disabled]="!motivo.trim()">
-
-                    Confirmar anulación
-
-                </button>
-
-            </div>
-
-        </div>
-
+<div class="page-container ds-aero aero-panel venta-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>
+      </svg>
     </div>
+    <div class="aero-page-heading">
+      <h2>Historial de ventas</h2>
+      <p>Consulta ventas, sus importes y las anulaciones realizadas.</p>
+    </div>
+  </header>
+
+  <!-- Los filtros se ejecutan en el backend antes de paginar, nunca sobre las filas visibles. -->
+  <section class="aero-data-tools" aria-label="Filtros del historial de ventas">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar venta</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="#Venta, cliente o vendedor..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Estado</span>
+        <select name="estadoFiltro" [(ngModel)]="estadoFiltro" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos los estados</option>
+          <option value="CONFIRMADA">Confirmada</option>
+          <option value="ANULADA">Anulada</option>
+          <option value="BORRADOR">Borrador</option>
+        </select>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Desde</span>
+        <input type="date" name="fechaDesde" [(ngModel)]="fechaDesde" (ngModelChange)="aplicarFiltros()" />
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Hasta</span>
+        <input type="date" name="fechaHasta" [(ngModel)]="fechaHasta" (ngModelChange)="aplicarFiltros()" />
+      </label>
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        Más filtros{{ filtrosAvanzadosActivos ? ' (' + filtrosAvanzadosActivos + ')' : '' }}
+        <span aria-hidden="true">{{ mostrarFiltrosAvanzados ? '▴' : '▾' }}</span>
+      </button>
+    </div>
+
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra">
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">ID del cliente</span>
+          <input type="number" min="1" step="1" name="idClienteFiltro" placeholder="Todos"
+                 [(ngModel)]="idClienteFiltro" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">ID del vendedor</span>
+          <input type="number" min="1" step="1" name="idVendedorFiltro" placeholder="Todos"
+                 [(ngModel)]="idVendedorFiltro" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Total mínimo (COP)</span>
+          <input type="number" min="0" step="0.01" name="totalMinFiltro" placeholder="Desde $0"
+                 [(ngModel)]="totalMinFiltro" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Total máximo (COP)</span>
+          <input type="number" min="0" step="0.01" name="totalMaxFiltro" placeholder="Sin límite"
+                 [(ngModel)]="totalMaxFiltro" (ngModelChange)="aplicarFiltros()" />
+        </label>
+      </div>
     }
+
+    <div class="aero-tools-foot venta-tools-foot">
+      <span>{{ totalElementos }} venta(s) encontrada(s) · últimos 30 días inicialmente</span>
+      <div class="venta-tools-actions">
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Restablecer filtros</button>
+        <button type="button" class="aero-btn aero-btn-primary" [disabled]="cargando || !filtrosValidos"
+                (click)="listarVentas()">{{ cargando ? 'Consultando...' : 'Actualizar' }}</button>
+      </div>
+    </div>
+  </section>
+
+  @if (mensajeFiltros) {
+    <div class="venta-feedback venta-feedback--error" role="alert">{{ mensajeFiltros }}</div>
+  }
+  @if (errorListado) {
+    <div class="venta-feedback venta-feedback--error" role="alert">
+      <span>{{ errorListado }}</span>
+      <button type="button" class="aero-btn aero-btn-soft" (click)="listarVentas()">Reintentar</button>
+    </div>
+  }
+  @if (mensajeExito) {
+    <div class="venta-feedback venta-feedback--exito" role="status">{{ mensajeExito }}</div>
+  }
+
+  <div class="aero-table-wrap" [attr.aria-busy]="cargando">
+    <table class="aero-table aero-table--sticky-actions venta-tabla">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'id' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('id')">Venta <span aria-hidden="true">{{ ordenarPor === 'id' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fecha' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fecha')">Fecha <span aria-hidden="true">{{ ordenarPor === 'fecha' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Cliente</th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'total' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('total')">Total <span aria-hidden="true">{{ ordenarPor === 'total' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Vendedor</th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'estado' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('estado')">Estado <span aria-hidden="true">{{ ordenarPor === 'estado' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (venta of ventasResponse; track venta.id) {
+          <tr>
+            <td data-label="Venta" class="aero-record-title">#{{ venta.id }}</td>
+            <td data-label="Fecha" class="venta-fecha">{{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Cliente">{{ venta.nombreCliente || 'Consumidor final' }}</td>
+            <td data-label="Total" class="venta-importe">{{ venta.total | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+            <td data-label="Vendedor">{{ venta.vendedor }}</td>
+            <td data-label="Estado">
+              <span class="venta-estado" [ngClass]="claseEstado(venta.estado)">{{ etiquetaEstado(venta.estado) }}</span>
+            </td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions venta-acciones">
+                <button type="button" class="aero-btn aero-btn-soft" (click)="verDetalle(venta.id)">Ver detalle</button>
+                @if (authService.esAdmin() && venta.estado === 'CONFIRMADA') {
+                  <button type="button" class="aero-btn venta-btn-anular" (click)="abrirModalAnular(venta)">Anular</button>
+                }
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row"><td colspan="7">{{ cargando ? 'Cargando ventas...' : 'No hay ventas que coincidan con los filtros.' }}</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="aero-pagination" aria-label="Paginación del historial de ventas">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamano" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior" [disabled]="cargando || pagina === 0"
+              (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente" [disabled]="cargando || pagina + 1 >= totalPaginas"
+              (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
+
+  <!-- Las anulaciones son irreversibles desde esta pantalla; la operación real se valida de nuevo en backend. -->
+  @if (mostrarModal) {
+    <div class="aero-modal-backdrop" (keydown.escape)="cerrarModal()">
+      <section class="aero-modal venta-anular-modal" role="dialog" aria-modal="true" aria-labelledby="tituloAnularVenta">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">OPERACIÓN SENSIBLE</span>
+            <h3 id="tituloAnularVenta">Anular venta #{{ ventaSeleccionadaId }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar" (click)="cerrarModal()" [disabled]="anulando">✕</button>
+        </header>
+        <div class="venta-modal-cuerpo">
+          <p class="venta-advertencia">Se marcará la venta como anulada y se restaurará exclusivamente el stock que fue descontado. La operación dejará movimientos de anulación en el historial.</p>
+          @if (ventaSeleccionada) {
+            <div class="venta-modal-datos">
+              <div><span>Venta</span><strong>#{{ ventaSeleccionada.id }}</strong></div>
+              <div><span>Total</span><strong>{{ ventaSeleccionada.total | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></div>
+              <div><span>Cliente</span><strong>{{ ventaSeleccionada.nombreCliente || 'Consumidor final' }}</strong></div>
+              <div><span>Fecha</span><strong>{{ ventaSeleccionada.fecha | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+            </div>
+          }
+          <label class="venta-campo-motivo" for="motivoAnulacion">
+            <span>Motivo de anulación *</span>
+            <textarea id="motivoAnulacion" name="motivoAnulacion" [(ngModel)]="motivo" maxlength="500" rows="3"
+                      placeholder="Describe por qué se anula esta venta" [disabled]="anulando"></textarea>
+            <small>{{ motivo.length }}/500 caracteres</small>
+          </label>
+          @if (errorAnulacion) { <div class="venta-feedback venta-feedback--error" role="alert">{{ errorAnulacion }}</div> }
+        </div>
+        <footer class="aero-modal-actions">
+          <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarModal()" [disabled]="anulando">Cancelar</button>
+          <button type="button" class="aero-btn venta-btn-anular" (click)="confirmarAnulacion()"
+                  [disabled]="anulando || !motivo.trim() || motivo.trim().length > 500">
+            {{ anulando ? 'Anulando...' : 'Confirmar anulación' }}
+          </button>
+        </footer>
+      </section>
+    </div>
+  }
 </div>

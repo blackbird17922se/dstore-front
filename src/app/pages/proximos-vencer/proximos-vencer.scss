@@ -1,44 +1,68 @@
-.proximos-vencer-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
+/* Próximos a vencer — DStore Aero Modern.
+   Se reutilizan barra de búsqueda, tablas responsive, botones y paginación globales. */
+:host { display: block; min-width: 0; }
+.ds-aero.proximos-vencer-container { min-width: 0; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+.ds-aero .vencer-resumen { margin: 0 0 18px; }
+.ds-aero .vencer-resumen-cabecera {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
 }
+.ds-aero .vencer-resumen-cabecera h3 { margin: 0; color: var(--ds-text); font-size: 1rem; }
+.ds-aero .vencer-resumen-cabecera > span,
+.ds-aero .vencer-resumen-nota { color: var(--ds-muted); font-size: .79rem; }
+.ds-aero .vencer-indicadores {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px;
+}
+.ds-aero .vencer-indicador {
+  display: flex; flex-direction: column; align-items: flex-start;
+  min-height: 110px; gap: 7px; padding: 14px;
+  text-align: left; cursor: pointer; font: inherit;
+  border: 1px solid var(--ds-border); border-radius: 13px;
+  background: var(--ds-panel-solid); color: var(--ds-text);
+  transition: border-color .15s ease, transform .15s ease;
+}
+.ds-aero .vencer-indicador:hover { border-color: var(--vencer-color); transform: translateY(-1px); }
+.ds-aero .vencer-indicador:focus-visible { outline: 3px solid var(--ds-focus); outline-offset: 2px; }
+.ds-aero .vencer-indicador--seleccionado { border-color: var(--vencer-color); box-shadow: inset 0 0 0 1px var(--vencer-color); }
+.ds-aero .vencer-indicador-etiqueta { font-size: .83rem; font-weight: 650; }
+.ds-aero .vencer-indicador-cantidad { font-size: 1.8rem; line-height: 1; color: var(--vencer-color); font-variant-numeric: tabular-nums; }
+.ds-aero .vencer-indicador-descripcion { font-size: .75rem; color: var(--ds-muted); }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+/* Colores semánticos accesibles en tema claro y oscuro sin depender del color de fondo. */
+.ds-aero .vencer-estado--vencido { --vencer-color: var(--ds-danger, #a02b42); }
+.ds-aero .vencer-estado--critico { --vencer-color: color-mix(in srgb, var(--ds-danger, #a02b42) 63%, #ef891b 37%); }
+.ds-aero .vencer-estado--proximo { --vencer-color: color-mix(in srgb, var(--ds-text) 62%, #e2a300 38%); }
+.ds-aero .vencer-estado--seguimiento { --vencer-color: var(--ds-primary, #1266f1); }
+.ds-aero .vencer-estado--sin_alerta { --vencer-color: var(--ds-success, #126843); }
+.ds-aero .vencer-tabla { min-width: 890px; }
+.ds-aero .vencer-tabla td[data-label='Vencimiento'] { white-space: nowrap; }
+.ds-aero .vencer-dias { font-weight: 700; color: var(--vencer-color); white-space: nowrap; }
+.ds-aero .vencer-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 9px; border: 1px solid var(--vencer-color);
+  border-radius: 999px; color: var(--vencer-color);
+  background: color-mix(in srgb, var(--vencer-color) 10%, transparent);
+  font-size: .74rem; font-weight: 700; white-space: nowrap;
+}
+.ds-aero .vencer-punto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ds-aero .vencer-herramientas-pie,
+.ds-aero .vencer-filtros-acciones { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+.ds-aero .vencer-horizonte-ayuda { color: var(--ds-muted); font-size: .76rem; }
+.ds-aero .vencer-aviso {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  border: 1px solid var(--ds-border); border-radius: 10px;
+  padding: 11px 14px; margin: 12px 0; background: var(--ds-panel-solid);
+  font-size: .83rem; color: var(--ds-text);
+}
+.ds-aero .vencer-aviso--error { color: var(--ds-danger, #d95151); }
+.ds-aero .vencer-nota-pie { margin: 14px 0 0; color: var(--ds-muted); font-size: .78rem; }
+@media (max-width: 1000px) {
+  .ds-aero .vencer-indicadores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .ds-aero .vencer-indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ds-aero .vencer-indicador { min-height: 100px; padding: 11px; }
+  .ds-aero .vencer-tabla { min-width: 0; }
+  .ds-aero .vencer-badge { white-space: normal; }
 }

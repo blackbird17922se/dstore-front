@@ -1,44 +1,56 @@
-.existencias-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
+/* Existencias Aero Modern.
+   Tabla, filtros, botones, estados y paginación se reutilizan desde src/styles/aero/.
+   Aquí solo están los detalles específicos de la pantalla. */
+:host { display: block; min-width: 0; }
+.ds-aero.existencias-container { min-width: 0; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+/* En escritorio, el scroll horizontal permanece dentro de la tabla. */
+.ds-aero .existencias-tabla-contenedor { margin-top: 0; }
+.ds-aero .existencias-tabla { min-width: 1030px; }
+.ds-aero .existencias-tabla th,
+.ds-aero .existencias-tabla td { padding-inline: 14px; }
+.ds-aero .existencias-tabla .existencias-producto { min-width: 225px; }
+.ds-aero .existencias-producto-valor { display: flex; align-items: center; gap: 10px; justify-content: space-between; min-width: 0; }
+.ds-aero .existencias-producto-valor > span { overflow-wrap: break-word; word-break: normal; }
+.ds-aero .existencias-tabla td[data-label='Vencimiento'],
+.ds-aero .existencias-tabla td[data-label='Fecha de ingreso'] { white-space: nowrap; }
+.ds-aero .existencias-tabla td[data-label='Cantidad'] .aero-status { min-width: 65px; justify-content: center; }
+.ds-aero .existencias-detalles-toggle { display: none; }
 
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+.ds-aero .existencias-extra .existencias-producto-filtro { flex: 2 1 230px; }
+.ds-aero .existencias-feedback {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-danger);
 }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
+@media (max-width: 640px) {
+  /* Las tablas Aero se convierten en tarjetas; los detalles quedan plegables. */
+  .ds-aero .existencias-tabla { min-width: 0; }
+  .ds-aero .existencias-tabla td.existencias-secundario:not(.show-details) { display: none; }
+  .ds-aero .existencias-tabla td.existencias-secundario.show-details { display: flex; }
+  .ds-aero .existencias-tabla td.existencias-producto::before { display: none; }
+  .ds-aero .existencias-tabla .existencias-producto { min-width: 0; }
+  .ds-aero .existencias-producto-valor { width: 100%; }
+  .ds-aero .existencias-detalles-toggle {
+    display: inline-block;
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    border: 0;
+    background: transparent;
+    color: var(--ds-primary);
+    font: inherit;
+    font-size: 0.77rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
   }
 }

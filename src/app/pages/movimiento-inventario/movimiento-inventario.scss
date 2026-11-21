@@ -1,44 +1,88 @@
-.movimiento-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
+/* Movimientos Aero Modern.
+   Usa las clases compartidas de src/styles/aero/ para tablas, filtros, paginación y modales.
+   Los estilos de este archivo solo pertenecen al historial de inventario. */
+:host { display: block; min-width: 0; }
+.ds-aero.movimiento-container { min-width: 0; }
+.ds-aero .movimiento-tabla { min-width: 1120px; }
+.ds-aero .movimiento-tabla td[data-label='Fecha'] { white-space: nowrap; }
+.ds-aero .movimiento-observacion { max-width: 240px; overflow-wrap: anywhere; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+.ds-aero .movimiento-tipo {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  padding: 5px 9px; font-size: .77rem; font-weight: 700;
+  color: var(--ds-text); background: var(--ds-table-body);
+  border: 1px solid var(--ds-border);
+  white-space: nowrap;
+}
+.ds-aero .movimiento-tipo.movimiento-tipo--entrada {
+  color: var(--ds-success, #26835d);
+  border-color: currentColor;
+}
+.ds-aero .movimiento-tipo.movimiento-tipo--salida {
+  color: var(--ds-danger, #b64b50);
+  border-color: currentColor;
+}
+.ds-aero .movimiento-cantidad { font-variant-numeric: tabular-nums; font-weight: 700; }
+.ds-aero .movimiento-cantidad.movimiento-tipo--entrada { color: var(--ds-success, #26835d); }
+.ds-aero .movimiento-cantidad.movimiento-tipo--salida { color: var(--ds-danger, #b64b50); }
 
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
+.ds-aero .movimiento-feedback {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 12px; padding: 11px 14px;
+  border: 1px solid var(--ds-border); border-radius: 10px;
+  background: var(--ds-panel-solid); color: var(--ds-text); font-size: .86rem;
+}
+.ds-aero .movimiento-feedback--error { color: var(--ds-danger); }
+.ds-aero .aero-modal.movimiento-consulta-modal { width: min(100%, 740px); }
+.ds-aero .movimiento-modal-cuerpo { padding: 20px 24px; }
+.ds-aero .movimiento-resumen {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+}
+.ds-aero .movimiento-resumen > div {
+  min-width: 0; display: grid; gap: 5px; padding: 12px;
+  border: 1px solid var(--ds-table-border); border-radius: 10px;
+  background: var(--ds-table-body);
+}
+.ds-aero .movimiento-resumen span { color: var(--ds-muted); font-size: .74rem; }
+.ds-aero .movimiento-resumen strong {
+  color: var(--ds-text); font-size: .87rem; font-weight: 600; overflow-wrap: anywhere;
+}
+.ds-aero .movimiento-resumen--observacion { grid-column: 1 / -1; }
+.ds-aero .movimiento-historico-aviso { margin: 16px 0 0; color: var(--ds-muted); font-size: .81rem; }
 
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+@media (max-width: 640px) {
+  .ds-aero .movimiento-tabla { min-width: 0; }
+  .ds-aero .movimiento-tabla td[data-label='Acciones'] .aero-btn { width: 100%; }
+  .ds-aero .movimiento-resumen { grid-template-columns: minmax(0, 1fr); }
+  .ds-aero .movimiento-resumen--observacion { grid-column: auto; }
+  .ds-aero .movimiento-modal-cuerpo { padding: 16px 18px; }
+  .ds-aero .aero-modal.movimiento-consulta-modal { max-height: calc(100dvh - 22px); }
 }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+/* Consulta manual: área vacía antes de solicitar el historial al backend. */
+.ds-aero .movimiento-consulta-acciones {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.ds-aero .movimiento-consulta-botones {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+}
+.ds-aero .movimiento-periodo-ayuda { color: var(--ds-muted); }
+.ds-aero .movimiento-inicio {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 56px 24px; text-align: center;
+  background: var(--ds-panel-solid); color: var(--ds-text);
+  border: 1px dashed var(--ds-border); border-radius: 14px;
+}
+.ds-aero .movimiento-inicio-icono {
+  width: 52px; height: 52px; display: grid; place-items: center;
+  border-radius: 14px; background: var(--ds-table-body);
+  border: 1px solid var(--ds-border); font-size: 2.25rem; line-height: 1;
+}
+.ds-aero .movimiento-inicio h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+.ds-aero .movimiento-inicio p { margin: 0; max-width: 520px; color: var(--ds-muted); font-size: .87rem; }
+@media (max-width: 640px) {
+  .ds-aero .movimiento-consulta-botones { width: 100%; }
+  .ds-aero .movimiento-consulta-botones .aero-btn { flex: 1; }
+  .ds-aero .movimiento-inicio { padding: 38px 18px; }
 }

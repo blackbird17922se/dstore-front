@@ -1,44 +1,206 @@
-.cliente-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Clientes Aero Modern.
+   Tabla, filtros, paginación, estados, botones y modal se reutilizan de src/styles/aero/.
+   Aquí solo definimos particularidades de la pantalla, respetando los temas globales.
+*/
+:host {
+  display: block;
+  min-width: 0;
 }
 
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
+.cliente-container {
+  min-width: 0;
+}
+
+/* Como Productos: todas las columnas en escritorio y scroll DENTRO de la tabla.
+   _tables.scss gestiona los colores, alternancia de filas y columna Acciones sticky. */
+.ds-aero .cliente-tabla-contenedor { margin-top: 0; }
+.ds-aero .cliente-tabla {
+  min-width: 1580px;
+  --ds-sticky-actions-width: 245px;
+}
+.ds-aero .cliente-tabla th,
+.ds-aero .cliente-tabla td { padding-inline: 12px; }
+.ds-aero .cliente-tabla .cliente-name-cell { min-width: 195px; }
+.ds-aero .cliente-name-value { display: grid; gap: 5px; min-width: 0; }
+.ds-aero .cliente-name-value > span { overflow-wrap: anywhere; }
+.ds-aero .cliente-ficha-link {
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ds-primary);
+  font: inherit;
+  font-size: 0.77rem;
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.ds-aero .cliente-tabla .cliente-truncate {
+  display: block;
+  max-width: 190px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ds-aero .cliente-tabla td[data-label='Teléfono'],
+.ds-aero .cliente-tabla td[data-label='Registro'] { white-space: nowrap; }
+.ds-aero .cliente-tabla .aero-row-actions { flex-wrap: nowrap; }
+.ds-aero .cliente-details-toggle { display: none; }
+
+.ds-aero .cliente-feedback {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-danger);
+}
 
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
+/* Formulario adaptable: dos columnas en escritorio, una en móvil. */
+.ds-aero .cliente-modal {
+  width: min(100%, 720px);
+}
+.ds-aero .cliente-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.ds-aero .cliente-form-field {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+.ds-aero .cliente-form-wide {
+  grid-column: 1 / -1;
+}
+.ds-aero .cliente-form-field label {
+  color: var(--ds-text);
+  font-weight: 600;
+}
+.ds-aero .cliente-opcional {
+  margin-left: 4px;
+  color: var(--ds-muted);
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+.ds-aero .cliente-form-field select,
+.ds-aero .cliente-form-field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--ds-input-border);
+  border-radius: 9px;
+  outline: none;
+  background: var(--ds-input-bg);
+  color: var(--ds-text);
+  font: inherit;
+}
+.ds-aero .cliente-form-field textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+.ds-aero .cliente-form-field select:focus,
+.ds-aero .cliente-form-field textarea:focus {
+  border-color: var(--ds-primary);
+  box-shadow: 0 0 0 3px var(--ds-focus);
+}
+.ds-aero .cliente-form-alert {
+  margin: 0;
+  padding: 12px;
+  border-radius: 9px;
+  color: var(--ds-danger);
+  background: var(--ds-danger-bg);
+}
 
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
+/* Panel de detalle: etiquetas legibles y datos completos sin ampliar la tabla. */
+.ds-aero .cliente-modal-detalle {
+  width: min(100%, 540px);
+}
+.ds-aero .cliente-ficha {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.ds-aero .cliente-ficha > div {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+}
+.ds-aero .cliente-ficha span {
+  color: var(--ds-muted);
+  font-size: 0.79rem;
+}
+.ds-aero .cliente-ficha strong {
+  overflow-wrap: anywhere;
+  color: var(--ds-text);
+  font-size: 0.90rem;
+  font-weight: 600;
+}
+.ds-aero .cliente-ficha-notas {
+  grid-column: 1 / -1;
+  padding-top: 12px;
+  border-top: 1px solid var(--ds-border);
+}
+.ds-aero .cliente-ficha-notas p {
+  margin: 0;
+  color: var(--ds-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .ds-aero .cliente-tabla { min-width: 0; }
+  .ds-aero .cliente-tabla td.cliente-secondary:not(.show-details) { display: none; }
+  .ds-aero .cliente-tabla td.cliente-secondary.show-details { display: flex; }
+  .ds-aero .cliente-tabla td.cliente-name-cell::before { display: none; }
+  .ds-aero .cliente-tabla .cliente-name-cell { min-width: 0; }
+  .ds-aero .cliente-name-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
   }
+  /* Mantiene legibles los nombres largos en pantallas estrechas. */
+  .ds-aero .cliente-name-value > span {
+    flex: 1 1 160px;
+    min-width: 0;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+  .ds-aero .cliente-details-toggle {
+    display: inline-block;
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    font-size: 0.77rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    border: 0;
+    background: transparent;
+    color: var(--ds-primary);
+    cursor: pointer;
+  }
+  .ds-aero .cliente-ficha-link { display: none; }
+  .ds-aero .cliente-tabla .cliente-truncate {
+    max-width: min(210px, 62vw);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .ds-aero .cliente-tabla .aero-row-actions { flex-wrap: wrap; }
+  .ds-aero .cliente-form-grid,
+  .ds-aero .cliente-ficha { grid-template-columns: 1fr; }
+  .ds-aero .cliente-form-wide,
+  .ds-aero .cliente-ficha-notas { grid-column: auto; }
+  .ds-aero .cliente-feedback { flex-direction: column; align-items: flex-start; }
 }

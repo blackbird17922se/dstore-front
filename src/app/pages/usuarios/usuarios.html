@@ -1,320 +1,399 @@
-<div class="page-container usuarios-container">
-
-  <div class="page-header">
-
-    <div>
-
-      <h2>Usuarios</h2>
-
-      <p class="page-subtitle">
-        Administra los usuarios, roles y acceso al sistema.
-      </p>
-
+<div class="page-container ds-aero aero-panel usuarios-container">
+  <header class="aero-page-header usuarios-encabezado">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8.5" cy="8" r="3"></circle>
+        <path d="M2.5 20c0-3.2 2.4-5.5 6-5.5s6 2.3 6 5.5"></path>
+        <circle cx="17.5" cy="9" r="2.4"></circle>
+        <path d="M16.5 14.5c3.2 0 5 1.8 5 5.5"></path>
+      </svg>
     </div>
-
-    <button
-      type="button"
-      class="btn-primary"
-      (click)="openModal()">
-
-      ➕ Crear usuario
-
+    <div class="aero-page-heading usuarios-encabezado-texto">
+      <h2>Usuarios del sistema</h2>
+      <p>Selecciona una cuenta y administra sus datos, rol o estado.</p>
+    </div>
+    <button type="button" class="aero-btn aero-btn-primary usuarios-crear-boton" (click)="openModal()">
+      <span aria-hidden="true">＋</span> Crear usuario
     </button>
-
-  </div>
-
-
-  @if (usuarioResponse.length === 0) {
-
-    <div class="empty-message">
-      No hay usuarios registrados.
-    </div>
-
-  } @else {
-
-    <table>
-
-      <thead>
-
-        <tr>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Usuario</th>
-          <th>Rol</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-
-      </thead>
-
-
-      <tbody>
-
-        @for (
-          usuario of usuarioResponse;
-          track usuario.id
-        ) {
-
-          <tr>
-
-            <td>
-              {{ usuario.nombre }}
-            </td>
-
-            <td>
-              {{ usuario.apellido }}
-            </td>
-
-            <td>
-              <strong>
-                {{ usuario.nombreUsuario }}
-              </strong>
-            </td>
-
-            <td>
-              {{ usuario.nombreRol }}
-            </td>
-
-
-            <td>
-
-              @if (usuario.activo) {
-
-                <span class="estado-activo">
-                  Activo
-                </span>
-
-              } @else {
-
-                <span class="estado-inactivo">
-                  Inactivo
-                </span>
-
-              }
-
-            </td>
-
-
-            <td>
-
-              <button
-                type="button"
-                class="btn-secondary"
-                (click)="actualizarUsuario(usuario)">
-
-                ✏️ Editar
-
-              </button>
-
-
-              <button
-                type="button"
-                [class.btn-danger]="usuario.activo"
-                [class.btn-primary]="!usuario.activo"
-                (click)="cambiarEstadoUsuario(usuario)">
-
-                {{
-                  usuario.activo
-                    ? 'Desactivar'
-                    : 'Activar'
-                }}
-
-              </button>
-
-            </td>
-
-          </tr>
-
-        }
-
-      </tbody>
-
-    </table>
-
-  }
-
-
-  <!-- ===================================== -->
-  <!-- MODAL -->
-  <!-- ===================================== -->
-
-  @if (modalAbierto) {
-
-    <div class="modal">
-
-      <div class="modal-content">
-
-        <h3>
-          {{
-            editando
-              ? 'Editar usuario'
-              : 'Crear usuario'
-          }}
-        </h3>
-
-
-        <form
-          #usuarioForm="ngForm"
-          (ngSubmit)="guardarUsuario()">
-
-
-          <!-- NOMBRE -->
-
-          <div class="form-group">
-
-            <label for="nombre">
-              Nombre
-            </label>
-
-            <input
-              id="nombre"
-              type="text"
-              name="nombre"
-              [(ngModel)]="usuarioActual.nombre"
-              required
-              #nombre="ngModel"
-            />
-
-            @if (
-              nombre.invalid &&
-              nombre.touched
-            ) {
-
-              <div class="error">
-                El nombre es obligatorio.
-              </div>
-
-            }
-
-          </div>
-
-
-          <!-- APELLIDO -->
-
-          <div class="form-group">
-
-            <label for="apellido">
-              Apellido
-            </label>
-
-            <input
-              id="apellido"
-              type="text"
-              name="apellido"
-              [(ngModel)]="usuarioActual.apellido"
-              required
-            />
-
-          </div>
-
-
-          <!-- USUARIO -->
-
-          <div class="form-group">
-
-            <label for="nombreUsuario">
-              Nombre de usuario
-            </label>
-
-            <input
-              id="nombreUsuario"
-              type="text"
-              name="nombreUsuario"
-              [(ngModel)]="usuarioActual.nombreUsuario"
-              required
-            />
-
-          </div>
-
-
-          <!-- CONTRASEÑA SOLAMENTE AL CREAR -->
-
-          @if (!editando) {
-
-            <div class="form-group">
-
-              <label for="contrasena">
-                Contraseña inicial
-              </label>
-
-              <input
-                id="contrasena"
-                type="password"
-                name="contrasena"
-                [(ngModel)]="usuarioActual.contrasena"
-                required
-                minlength="6"
-              />
-
-            </div>
-
-          }
-
-
-          <!-- ROL -->
-
-          <div class="form-group">
-
-            <label for="idRol">
-              Rol
-            </label>
-
-            <select
-              id="idRol"
-              name="idRol"
-              [(ngModel)]="usuarioActual.idRol"
-              required>
-
-              <option [ngValue]="null">
-                -- Selecciona un rol --
-              </option>
-
-              @for (rol of roles; track rol.id) {
-
-                <option [ngValue]="rol.id">
-                  {{ rol.nombre }}
-                </option>
-
-              }
-
-            </select>
-
-          </div>
-
-
-          <div class="buttons">
-
-            <button
-              type="submit"
-              class="btn-primary"
-              [disabled]="usuarioForm.invalid">
-
-              {{
-                editando
-                  ? 'Guardar cambios'
-                  : 'Crear usuario'
-              }}
-
-            </button>
-
-
-            <button
-              type="button"
-              class="btn-secondary"
-              (click)="closeModal()">
-
-              Cancelar
-
-            </button>
-
-          </div>
-
-        </form>
-
+  </header>
+
+  @if (vistaActual === 'listado') {
+    <section class="usuarios-resumen" aria-label="Resumen de cuentas">
+      <div class="usuarios-indicador">
+        <span class="usuarios-indicador-etiqueta">Cuentas registradas</span>
+        <strong>{{ usuarioResponse.length }}</strong>
+      </div>
+      <div class="usuarios-indicador">
+        <span class="usuarios-indicador-etiqueta">Activas</span>
+        <strong class="usuarios-numero-activo">{{ usuariosActivos }}</strong>
+      </div>
+      <div class="usuarios-indicador">
+        <span class="usuarios-indicador-etiqueta">Inactivas</span>
+        <strong class="usuarios-numero-inactivo">{{ usuariosInactivos }}</strong>
+      </div>
+    </section>
+
+    <section class="usuarios-listado-seccion" aria-labelledby="usuarios-listado-titulo">
+      <div class="usuarios-seccion-encabezado">
+        <h3 id="usuarios-listado-titulo">Seleccionar una cuenta</h3>
+        <p></p>
       </div>
 
-    </div>
+      <div class="usuarios-filtros">
+        <div class="usuarios-campo-filtro usuarios-busqueda">
+          <label for="usuarios-busqueda">Buscar usuario</label>
+          <input id="usuarios-busqueda" type="search" name="busqueda"
+                 placeholder="Nombre, usuario o rol"
+                 [(ngModel)]="busqueda" (ngModelChange)="cambiarFiltros()" />
+        </div>
+        <div class="usuarios-campo-filtro">
+          <label for="usuarios-estado">Estado</label>
+          <select id="usuarios-estado" name="filtroEstado"
+                  [(ngModel)]="filtroEstado" (ngModelChange)="cambiarFiltros()">
+            <option value="todos">Todos</option>
+            <option value="activos">Activos</option>
+            <option value="inactivos">Inactivos</option>
+          </select>
+        </div>
+        <div class="usuarios-campo-filtro">
+          <label for="usuarios-rol">Rol</label>
+          <select id="usuarios-rol" name="filtroRol"
+                  [(ngModel)]="filtroRol" (ngModelChange)="cambiarFiltros()">
+            <option value="todos">Todos los roles</option>
+            @for (rol of roles; track rol.id) {
+              <option [value]="rol.nombre">{{ rol.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
 
+      @if (mensaje) {
+        <p class="usuarios-mensaje" [class.is-error]="tipoMensaje === 'error'"
+           [class.is-success]="tipoMensaje === 'exito'" role="status">{{ mensaje }}</p>
+      }
+      @if (cargando) {
+        <div class="usuarios-vacio" role="status">Cargando cuentas de usuario...</div>
+      } @else if (errorCarga) {
+        <div class="usuarios-vacio usuarios-vacio-error" role="alert">
+          <p>{{ errorCarga }}</p>
+          <button type="button" class="aero-btn aero-btn-soft" (click)="listarUsuarios()">Reintentar</button>
+        </div>
+      } @else if (usuariosFiltrados.length === 0) {
+        <div class="usuarios-vacio">
+          <strong>No se encontraron usuarios.</strong>
+          <p>Prueba con otros criterios de búsqueda o registra una cuenta nueva.</p>
+        </div>
+      } @else {
+        <div class="usuarios-cuentas-grid">
+          @for (usuario of usuariosPagina; track usuario.id) {
+            <button type="button" class="usuarios-cuenta" (click)="seleccionarUsuario(usuario)"
+                    [attr.aria-label]="'Administrar cuenta ' + usuario.nombreUsuario">
+              <span class="usuarios-avatar" aria-hidden="true">{{ iniciales(usuario) }}</span>
+              <span class="usuarios-cuenta-contenido">
+                <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
+                <span class="usuarios-username">&#64;{{ usuario.nombreUsuario }}</span>
+                <span class="usuarios-cuenta-etiquetas">
+                  <span class="usuarios-rol-chip">{{ usuario.nombreRol }}</span>
+                  <span class="aero-status" [class.is-active]="usuario.activo"
+                        [class.is-inactive]="!usuario.activo">
+                    <span class="aero-dot" aria-hidden="true"></span>
+                    {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </span>
+              </span>
+              <span class="usuarios-chevron" aria-hidden="true">›</span>
+            </button>
+          }
+        </div>
+        <div class="usuarios-paginacion">
+          <span>{{ usuariosFiltrados.length }} cuenta(s) encontradas</span>
+          @if (totalPaginas > 1) {
+            <div class="usuarios-controles-pagina">
+              <button type="button" class="aero-btn aero-btn-soft" [disabled]="pagina === 1"
+                      (click)="irPagina(pagina - 1)" aria-label="Página anterior">‹</button>
+              <span>Página {{ pagina }} de {{ totalPaginas }}</span>
+              <button type="button" class="aero-btn aero-btn-soft" [disabled]="pagina === totalPaginas"
+                      (click)="irPagina(pagina + 1)" aria-label="Página siguiente">›</button>
+            </div>
+          }
+        </div>
+      }
+    </section>
   }
 
+  @if (vistaActual === 'detalle' && cuentaSeleccionada) {
+    <section class="usuarios-vista-cuenta" aria-label="Administrar usuario seleccionado">
+      <div class="usuarios-navegacion">
+        <button type="button" class="aero-btn aero-btn-soft" [disabled]="guardando" (click)="volverListado()">
+          <span aria-hidden="true">←</span> Volver a las cuentas
+        </button>
+      </div>
+      <div class="usuarios-identidad">
+        <span class="usuarios-avatar usuarios-avatar-grande" aria-hidden="true">{{ iniciales(cuentaSeleccionada) }}</span>
+        <div class="usuarios-identidad-texto">
+          <span class="usuarios-eyebrow">CUENTA DE DSTORE</span>
+          <h3>{{ cuentaSeleccionada.nombre }} {{ cuentaSeleccionada.apellido }}</h3>
+          <p>&#64;{{ cuentaSeleccionada.nombreUsuario }}</p>
+        </div>
+        <div class="usuarios-identidad-etiquetas">
+          <span class="usuarios-rol-chip">{{ cuentaSeleccionada.nombreRol }}</span>
+          <span class="aero-status" [class.is-active]="cuentaSeleccionada.activo"
+                [class.is-inactive]="!cuentaSeleccionada.activo">
+            <span class="aero-dot" aria-hidden="true"></span>
+            {{ cuentaSeleccionada.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="usuarios-seccion-encabezado">
+        <h3>Administrar esta cuenta</h3>
+        <p>Selecciona la acción que deseas realizar.</p>
+      </div>
+      <div class="usuarios-acciones-grid">
+        <button type="button" class="usuarios-accion" [class.is-selected]="seccionActiva === 'datos'"
+                [attr.aria-pressed]="seccionActiva === 'datos'" (click)="abrirSeccion('datos')">
+          <span class="usuarios-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="8" r="4"></circle><path d="M3 21c0-4.2 3.6-7 8-7s8 2.8 8 7"></path><path d="m18 5 2 2 3-3"></path>
+            </svg>
+          </span>
+          <span class="usuarios-accion-texto"><strong>Información personal</strong><small>Editar nombre y apellido</small></span>
+          <span class="usuarios-chevron" aria-hidden="true">›</span>
+        </button>
+        <button type="button" class="usuarios-accion" [class.is-selected]="seccionActiva === 'rol'"
+                [attr.aria-pressed]="seccionActiva === 'rol'" (click)="abrirSeccion('rol')">
+          <span class="usuarios-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 20 6v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10V6l8-4Z"></path><path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span class="usuarios-accion-texto"><strong>Rol y acceso</strong><small>Administrar el rol asignado</small></span>
+          <span class="usuarios-chevron" aria-hidden="true">›</span>
+        </button>
+        <button type="button" class="usuarios-accion" [class.is-selected]="seccionActiva === 'estado'"
+                [attr.aria-pressed]="seccionActiva === 'estado'" (click)="abrirSeccion('estado')">
+          <span class="usuarios-accion-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="4" width="14" height="16" rx="2"></rect><path d="M9 9h6M9 13h6"></path><circle cx="12" cy="17" r=".5"></circle>
+            </svg>
+          </span>
+          <span class="usuarios-accion-texto"><strong>Estado de la cuenta</strong><small>Activar o desactivar el acceso</small></span>
+          <span class="usuarios-chevron" aria-hidden="true">›</span>
+        </button>
+      </div>
+
+      @if (mensaje) {
+        <p class="usuarios-mensaje" [class.is-error]="tipoMensaje === 'error'"
+           [class.is-success]="tipoMensaje === 'exito'" role="status">{{ mensaje }}</p>
+      }
+
+      @if (seccionActiva !== 'resumen') {
+        <section class="usuarios-detalle" aria-live="polite">
+          <button type="button" class="aero-btn aero-btn-soft usuarios-volver" [disabled]="guardando"
+                  (click)="abrirSeccion('resumen')">← Volver a la cuenta</button>
+
+          @switch (seccionActiva) {
+            @case ('datos') {
+              <!-- ===================================== -->
+              <!-- NOMBRE Y APELLIDO -->
+              <!-- ===================================== -->
+              <div class="usuarios-detalle-encabezado">
+                <h3>Información personal</h3>
+                <p>Actualiza los datos visibles de esta cuenta.</p>
+              </div>
+              <div class="usuarios-detalle-grid">
+                <form #datosForm="ngForm" (ngSubmit)="guardarCambios('datos', datosForm)" class="usuarios-form">
+                  <!-- NOMBRE -->
+                  <div class="usuarios-form-group">
+                    <label for="editar-nombre">Nombre</label>
+                    <input id="editar-nombre" name="nombre" type="text" [(ngModel)]="usuarioActual.nombre"
+                           required maxlength="100" #nombre="ngModel" />
+                    @if (nombre.invalid && nombre.touched) { <small class="aero-field-error">El nombre es obligatorio.</small> }
+                  </div>
+                  <!-- APELLIDO -->
+                  <div class="usuarios-form-group">
+                    <label for="editar-apellido">Apellido</label>
+                    <input id="editar-apellido" name="apellido" type="text" [(ngModel)]="usuarioActual.apellido"
+                           required maxlength="100" #apellido="ngModel" />
+                    @if (apellido.invalid && apellido.touched) { <small class="aero-field-error">El apellido es obligatorio.</small> }
+                  </div>
+                  <button type="submit" class="aero-btn aero-btn-primary"
+                          [disabled]="datosForm.invalid || !usuarioActual.nombre.trim() || !usuarioActual.apellido.trim() || !hayCambiosDatos || guardando">
+                    {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+                  </button>
+                </form>
+                <aside class="usuarios-nota">
+                  <h4>Datos de la cuenta</h4>
+                  <span>Nombre de usuario</span>
+                  <strong>&#64;{{ cuentaSeleccionada.nombreUsuario }}</strong>
+                  <p>El nombre de usuario no puede modificarse desde esta versión.</p>
+                </aside>
+              </div>
+            }
+            @case ('rol') {
+              <!-- ===================================== -->
+              <!-- ROL -->
+              <!-- ===================================== -->
+              <div class="usuarios-detalle-encabezado">
+                <h3>Rol y acceso</h3>
+                <p>Define qué rol tendrá esta cuenta.</p>
+              </div>
+              <div class="usuarios-detalle-grid">
+                <form #rolForm="ngForm" (ngSubmit)="guardarCambios('rol', rolForm)" class="usuarios-form">
+                  <div class="usuarios-form-group">
+                    <label for="editar-rol">Rol asignado</label>
+                    <select id="editar-rol" name="idRol" [(ngModel)]="usuarioActual.idRol" required
+                            [disabled]="!puedeModificarRol || cargandoRoles || guardando">
+                      @for (rol of roles; track rol.id) {
+                        <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+                      }
+                    </select>
+                  </div>
+                  @if (errorRoles) { <small class="aero-field-error">{{ errorRoles }}</small> }
+                  @if (esCuentaPropia) {
+                    <p class="usuarios-ayuda">Por seguridad, el rol de tu propia sesión no puede modificarse aquí.</p>
+                  } @else if (esUltimoAdminActivo) {
+                    <p class="usuarios-ayuda">No se puede cambiar el rol del último administrador activo.</p>
+                  } @else if (!puedeModificarRol) {
+                    <p class="usuarios-ayuda">No fue posible verificar la sesión para cambiar permisos.</p>
+                  }
+                  <button type="submit" class="aero-btn aero-btn-primary"
+                          [disabled]="rolForm.invalid || !hayCambiosRol || !puedeModificarRol || guardando || !!errorRoles">
+                    {{ guardando ? 'Guardando...' : 'Guardar rol' }}
+                  </button>
+                </form>
+                <aside class="usuarios-nota">
+                  <h4>Permisos de usuario</h4>
+                  <p>En V1 los permisos dependen de los roles ADMIN y VENDEDOR definidos en Spring Security.</p>
+                  <p>La configuración personalizada de permisos por menú quedará para una versión futura.</p>
+                </aside>
+              </div>
+            }
+            @case ('estado') {
+              <!-- ===================================== -->
+              <!-- ESTADO DE LA CUENTA -->
+              <!-- ===================================== -->
+              <div class="usuarios-detalle-encabezado">
+                <h3>Estado de la cuenta</h3>
+                <p>Controla si este usuario puede acceder al sistema.</p>
+              </div>
+              <div class="usuarios-detalle-grid">
+                <div class="usuarios-estado-panel">
+                  <span class="aero-status" [class.is-active]="cuentaSeleccionada.activo"
+                        [class.is-inactive]="!cuentaSeleccionada.activo">
+                    <span class="aero-dot" aria-hidden="true"></span>
+                    {{ cuentaSeleccionada.activo ? 'Cuenta activa' : 'Cuenta inactiva' }}
+                  </span>
+                  <p>{{ cuentaSeleccionada.activo
+                    ? 'Al desactivar, el usuario no podrá iniciar nuevas sesiones.'
+                    : 'Al activar, el usuario podrá volver a iniciar sesión.' }}</p>
+                  @if (esCuentaPropia) {
+                    <p class="usuarios-ayuda">No puedes desactivar tu propia cuenta desde Administración.</p>
+                  } @else if (esUltimoAdminActivo) {
+                    <p class="usuarios-ayuda">No es posible desactivar el último administrador activo.</p>
+                  } @else if (!puedeCambiarEstado) {
+                    <p class="usuarios-ayuda">Es necesario validar tu sesión para cambiar el estado.</p>
+                  }
+                  <button type="button" class="aero-btn" [class.aero-btn-soft]="cuentaSeleccionada.activo"
+                          [class.aero-btn-primary]="!cuentaSeleccionada.activo"
+                          [disabled]="!puedeCambiarEstado || guardando" (click)="cambiarEstadoUsuario()">
+                    {{ guardando ? 'Procesando...' : (cuentaSeleccionada.activo ? 'Desactivar cuenta' : 'Activar cuenta') }}
+                  </button>
+                </div>
+                <aside class="usuarios-nota">
+                  <h4>Antes de continuar</h4>
+                  <p>La cuenta no se elimina: se conserva su historial y se cambia únicamente su estado.</p>
+                  <p>El cambio requiere confirmación y debe estar respaldado por validaciones del servidor.</p>
+                </aside>
+              </div>
+            }
+          }
+        </section>
+      }
+    </section>
+  }
+
+  @if (vistaActual === 'nuevo') {
+    <section class="usuarios-vista-cuenta" aria-labelledby="usuarios-crear-titulo">
+      <div class="usuarios-navegacion">
+        <button type="button" class="aero-btn aero-btn-soft" [disabled]="guardando" (click)="volverListado()">
+          ← Volver a las cuentas
+        </button>
+      </div>
+      <div class="usuarios-detalle-encabezado">
+        <h3 id="usuarios-crear-titulo">Crear nueva cuenta</h3>
+        <p>Registra un usuario y asigna su rol inicial de acceso.</p>
+      </div>
+      @if (mensaje) {
+        <p class="usuarios-mensaje" [class.is-error]="tipoMensaje === 'error'" role="alert">{{ mensaje }}</p>
+      }
+
+      <!-- ===================================== -->
+      <!-- FORMULARIO DE CREACIÓN (antes MODAL) -->
+      <!-- ===================================== -->
+      <div class="usuarios-detalle-grid usuarios-nuevo-grid">
+        <form #usuarioForm="ngForm" (ngSubmit)="guardarUsuario(usuarioForm)" class="usuarios-form">
+          <!-- NOMBRE -->
+          <div class="usuarios-form-group">
+            <label for="nuevo-nombre">Nombre</label>
+            <input id="nuevo-nombre" type="text" name="nombre" [(ngModel)]="usuarioActual.nombre"
+                   required maxlength="100" #nombre="ngModel" />
+            @if (nombre.invalid && nombre.touched) { <small class="aero-field-error">El nombre es obligatorio.</small> }
+          </div>
+
+          <!-- APELLIDO -->
+          <div class="usuarios-form-group">
+            <label for="nuevo-apellido">Apellido</label>
+            <input id="nuevo-apellido" type="text" name="apellido" [(ngModel)]="usuarioActual.apellido"
+                   required maxlength="100" #apellido="ngModel" />
+            @if (apellido.invalid && apellido.touched) { <small class="aero-field-error">El apellido es obligatorio.</small> }
+          </div>
+
+          <!-- USUARIO -->
+          <div class="usuarios-form-group">
+            <label for="nuevo-usuario">Nombre de usuario</label>
+            <input id="nuevo-usuario" type="text" name="nombreUsuario" [(ngModel)]="usuarioActual.nombreUsuario"
+                   required maxlength="80" autocomplete="off" #nombreUsuario="ngModel" />
+            @if (nombreUsuario.invalid && nombreUsuario.touched) { <small class="aero-field-error">El nombre de usuario es obligatorio.</small> }
+          </div>
+
+          <!-- CONTRASEÑA SOLAMENTE AL CREAR -->
+          <div class="usuarios-form-group">
+            <label for="nuevo-password">Contraseña inicial</label>
+            <input id="nuevo-password" type="password" name="contrasena" [(ngModel)]="usuarioActual.contrasena"
+                   autocomplete="new-password" required minlength="6" #contrasena="ngModel" />
+            @if (contrasena.invalid && contrasena.touched) {
+              <small class="aero-field-error">La contraseña debe tener al menos 6 caracteres.</small>
+            }
+          </div>
+
+          <!-- ROL -->
+          <div class="usuarios-form-group">
+            <label for="nuevo-rol">Rol inicial</label>
+            <select id="nuevo-rol" name="idRol" [(ngModel)]="usuarioActual.idRol" required [disabled]="cargandoRoles">
+              <option [ngValue]="null">-- Selecciona un rol --</option>
+              @for (rol of roles; track rol.id) { <option [ngValue]="rol.id">{{ rol.nombre }}</option> }
+            </select>
+            @if (errorRoles) { <small class="aero-field-error">{{ errorRoles }}</small> }
+          </div>
+
+          <div class="usuarios-form-acciones">
+            <button type="button" class="aero-btn aero-btn-soft" (click)="volverListado()" [disabled]="guardando">Cancelar</button>
+            <button type="submit" class="aero-btn aero-btn-primary"
+                    [disabled]="usuarioForm.invalid || !usuarioActual.nombre.trim() || !usuarioActual.apellido.trim() ||
+                                !usuarioActual.nombreUsuario.trim() || usuarioActual.idRol === null ||
+                                guardando || cargandoRoles || !!errorRoles">
+              {{ guardando ? 'Creando cuenta...' : 'Crear usuario' }}
+            </button>
+          </div>
+        </form>
+        <aside class="usuarios-nota">
+          <h4>Acerca de esta cuenta</h4>
+          <p>El usuario podrá iniciar sesión con su nombre de usuario y contraseña inicial.</p>
+          <!-- <p>El rol determina sus permisos según la configuración actual del backend.</p> -->
+          <p>Después de crear la cuenta, el propio usuario puede cambiar su contraseña desde Mi cuenta.</p>
+        </aside>
+      </div>
+    </section>
+  }
 </div>

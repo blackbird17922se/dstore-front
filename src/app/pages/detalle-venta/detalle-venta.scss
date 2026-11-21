@@ -1,44 +1,56 @@
-.detalle-venta-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Detalle de venta Aero Modern; no se alteran ventas ni inventario desde esta vista. */
+:host { display: block; min-width: 0; }
+.ds-aero.detalle-venta-container { min-width: 0; }
+.ds-aero .detalle-volver { margin-left: auto; white-space: nowrap; }
+.ds-aero .detalle-cabecera { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 18px; margin-bottom: 18px; }
+.ds-aero .detalle-cabecera-principal, .ds-aero .detalle-total {
+  min-width: 0; padding: 20px; background: var(--ds-panel-solid); border: 1px solid var(--ds-border); border-radius: 14px;
 }
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+.ds-aero .detalle-titulo-estado { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.ds-aero .detalle-titulo-estado h3 { margin: 0; color: var(--ds-text); font-size: 1.25rem; }
+.ds-aero .detalle-estado { display: inline-flex; border-radius: 999px; padding: 6px 10px; border: 1px solid var(--ds-border); font-weight: 700; font-size: .8rem; }
+.ds-aero .detalle-estado--confirmada { color: var(--ds-success, #23825d); border-color: currentColor; }
+.ds-aero .detalle-estado--anulada { color: var(--ds-danger, #bb4e52); border-color: currentColor; }
+.ds-aero .detalle-datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ds-aero .detalle-datos > div { min-width: 0; display: grid; gap: 5px; }
+.ds-aero .detalle-datos span, .ds-aero .detalle-total > span { font-size: .78rem; color: var(--ds-muted); }
+.ds-aero .detalle-datos strong { color: var(--ds-text); overflow-wrap: anywhere; font-size: .91rem; }
+.ds-aero .detalle-total { display: flex; flex-direction: column; justify-content: center; background: var(--ds-table-body); gap: 12px; }
+.ds-aero .detalle-total strong { font-size: 2rem; color: var(--ds-text); font-variant-numeric: tabular-nums; }
+.ds-aero .detalle-total small { font-size: .78rem; color: var(--ds-muted); }
+.ds-aero .detalle-anulacion { display: grid; gap: 6px; padding: 16px 20px; margin-bottom: 18px; border: 1px solid var(--ds-danger, #bb4e52); border-radius: 12px; color: var(--ds-text); background: var(--ds-table-body); }
+.ds-aero .detalle-anulacion > strong { color: var(--ds-danger, #bb4e52); }
+.ds-aero .detalle-anulacion span { color: var(--ds-muted); }
+.ds-aero .detalle-seccion { margin-bottom: 18px; }
+.ds-aero .detalle-seccion-titulo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
+.ds-aero .detalle-seccion-titulo h3 { margin: 0; color: var(--ds-text); font-size: 1.12rem; }
+.ds-aero .detalle-seccion-titulo span { color: var(--ds-muted); font-size: .8rem; }
+.ds-aero .detalle-tabla { min-width: 1060px; }
+.ds-aero .detalle-tabla td { font-variant-numeric: tabular-nums; }
+.ds-aero .detalle-importe { font-weight: 750; }
+.ds-aero .detalle-codigo { display: block; margin-top: 5px; font-size: .74rem; color: var(--ds-muted); }
+.ds-aero .detalle-no-registrado { color: var(--ds-muted); font-size: .79rem; }
+.ds-aero .detalle-faltante { display: inline-block; border: 1px solid currentColor; border-radius: 999px; padding: 4px 8px; font-weight: 700; font-size: .78rem; color: var(--ds-danger, #bb4e52); }
+.ds-aero .detalle-sin-faltante { color: var(--ds-success, #23825d); }
+.ds-aero .detalle-resumen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.ds-aero .detalle-resumen-card { display: grid; min-width: 0; gap: 10px; padding: 17px 14px; background: var(--ds-table-body); border: 1px solid var(--ds-border); border-radius: 12px; }
+.ds-aero .detalle-resumen-card > span { color: var(--ds-muted); font-size: .78rem; }
+.ds-aero .detalle-resumen-card strong { font-size: 1.2rem; color: var(--ds-text); font-variant-numeric: tabular-nums; }
+.ds-aero .detalle-resumen-card small { font-size: .74rem; color: var(--ds-muted); }
+.ds-aero .detalle-resumen-card--total { border-color: var(--ds-focus); }
+.ds-aero .detalle-resumen-card--alerta strong { color: var(--ds-danger, #bb4e52); }
+.ds-aero .detalle-nota { color: var(--ds-muted); font-size: .82rem; margin: 10px 0; }
+.ds-aero .detalle-mensaje { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid var(--ds-border); border-radius: 12px; padding: 20px; background: var(--ds-panel-solid); color: var(--ds-text); }
+.ds-aero .detalle-mensaje--error { color: var(--ds-danger, #bb4e52); }
+@media (max-width: 900px) {
+  .ds-aero .detalle-cabecera { grid-template-columns: 1fr; }
+  .ds-aero .detalle-resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .ds-aero .aero-page-header { flex-wrap: wrap; }
+  .ds-aero .detalle-volver { margin-left: 0; }
+  .ds-aero .detalle-tabla { min-width: 0; }
+  .ds-aero .detalle-datos { grid-template-columns: 1fr; }
+  .ds-aero .detalle-resumen { grid-template-columns: 1fr; }
+  .ds-aero .detalle-total strong { font-size: 1.5rem; }
 }

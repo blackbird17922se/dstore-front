@@ -1,256 +1,331 @@
-<div class="page-container cliente-container">
+<div class="page-container ds-aero aero-panel cliente-container">
 
-  <h2>Clientes</h2>
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 19v-2a6 6 0 0 1 12 0v2H3ZM17 7a3 3 0 0 1 0 6M19 16c1.2.6 2 1.6 2 3" />
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Clientes</h2>
+      <p>Consulta y administra los clientes de DStore.</p>
+    </div>
+  </header>
 
-  <button (click)="abrirModal()">
-    ➕ Crear Cliente
-  </button>
+  <div class="aero-page-actions">
+    <button type="button" class="aero-btn aero-btn-primary" (click)="abrirModal()">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Crear cliente
+    </button>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Documento</th>
-        <th>Teléfono</th>
-        <th>Correo</th>
-        <th>Observaciones</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
+  <!-- Barra de herramientas compartida (SCSS: _data-tools.scss).
+       Seguimos el patrón de Productos: búsqueda, estado y filtros avanzados. -->
+  <section class="aero-data-tools" aria-label="Buscar y filtrar clientes">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar cliente</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" />
+          </svg>
+          <input type="search" name="nombreBusqueda" placeholder="Nombre del cliente..."
+                 [(ngModel)]="nombreBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
 
-    <tbody>
+      <label class="aero-filter-field aero-state-field">
+        <span class="aero-filter-label">Estado</span>
+        <select name="estadoSeleccionado" [(ngModel)]="estadoSeleccionado" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="true">Activos</option>
+          <option value="false">Inactivos</option>
+        </select>
+      </label>
 
-      @for (cliente of clientes; track cliente.id) {
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados" aria-controls="filtros-avanzados-clientes"
+              (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M7 12h10M10 17h4" />
+        </svg>
+        Más filtros @if (filtrosAvanzadosActivos > 0) { ({{ filtrosAvanzadosActivos }}) }
+      </button>
+    </div>
 
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra" id="filtros-avanzados-clientes">
+        <label class="aero-filter-field cliente-documento-filtro">
+          <span class="aero-filter-label">Número de documento</span>
+          <input type="search" name="documentoBusqueda" placeholder="Buscar documento..."
+                 [(ngModel)]="documentoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </label>
+      </div>
+    }
+
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} cliente(s) encontrado(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
+      }
+    </div>
+  </section>
+
+  @if (errorListado) {
+    <div class="cliente-feedback" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="listarClientes()">Reintentar</button>
+    </div>
+  }
+  @if (errorEstado) {
+    <div class="cliente-feedback" role="alert">{{ errorEstado }}</div>
+  }
+
+  <!-- En escritorio se muestran todas las columnas y se desplaza solo la tabla.
+       En móviles, las columnas secundarias se expanden por cliente. -->
+  <div class="aero-table-wrap cliente-tabla-contenedor" [attr.aria-busy]="cargando">
+    <table class="aero-table cliente-tabla aero-table--sticky-actions">
+      <thead>
         <tr>
-
-          <td>{{ cliente.nombresApellidos }}</td>
-
-          <td>
-            @if (cliente.numeroDocumento) {
-              {{ cliente.tipoDocumento }} {{ cliente.numeroDocumento }}
-            } @else {-}
-          </td>
-
-          <td>
-            {{ cliente.telefono || '-' }}
-          </td>
-
-          <td>
-            {{ cliente.correo || '-' }}
-          </td>
-
-          <td>
-            {{ cliente.observacion || '-' }}
-          </td>
-
-          <td>
-            @if (cliente.activo) {
-              <span class="estado-activo">🟢 Activo</span>
-            } @else {
-              <span class="estado-inactivo">🔴 Inactivo</span>
-            }
-          </td>
-
-          <td>
-            <button (click)="actualizarCliente(cliente)">✏️ Editar</button>
-
-            <button
-              (click)="cambiarEstadoCliente(cliente)">
-              {{
-                cliente.activo
-                  ? '🔴 Desactivar'
-                  : '🟢 Activar'
-              }}
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'nombresApellidos' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('nombresApellidos')">
+              Nombre <span aria-hidden="true">{{ ordenarPor === 'nombresApellidos' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
             </button>
-          </td>
-
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'numeroDocumento' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('numeroDocumento')">
+              Documento <span aria-hidden="true">{{ ordenarPor === 'numeroDocumento' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col">Teléfono</th>
+          <th scope="col">Correo</th>
+          <th scope="col">Dirección</th>
+          <th scope="col">Observaciones</th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaRegistro' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaRegistro')">
+              Registro <span aria-hidden="true">{{ ordenarPor === 'fechaRegistro' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span>
+            </button>
+          </th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones</th>
         </tr>
-     } <!-- fin del @for  -->
+      </thead>
+      <tbody>
+        @for (cliente of clientes; track cliente.id) {
+          <tr>
+            <td class="aero-record-title cliente-name-cell" data-label="Cliente">
+              <div class="cliente-name-value">
+                <span>{{ cliente.nombresApellidos }}</span>
+                <button type="button" class="cliente-details-toggle"
+                        [attr.aria-expanded]="detalleExpandido(cliente.id)"
+                        (click)="toggleDetalles(cliente.id)">
+                  {{ detalleExpandido(cliente.id) ? 'Ocultar detalles' : 'Ver detalles' }}
+                </button>
+                <!-- Conserva la ficha detallada existente, útil para leer textos largos. -->
+                <button type="button" class="cliente-ficha-link"
+                        [attr.aria-label]="'Ver ficha de ' + cliente.nombresApellidos"
+                        (click)="verDetalle(cliente)">Ver ficha</button>
+              </div>
+            </td>
+            <td class="cliente-secondary" [class.show-details]="detalleExpandido(cliente.id)" data-label="Documento">
+              {{ cliente.numeroDocumento ? ((cliente.tipoDocumento ? cliente.tipoDocumento + ' · ' : '') + cliente.numeroDocumento) : '-' }}
+            </td>
+            <td data-label="Teléfono">{{ cliente.telefono || '-' }}</td>
+            <td class="cliente-secondary" [class.show-details]="detalleExpandido(cliente.id)" data-label="Correo">
+              <span class="cliente-truncate" [title]="cliente.correo || ''">{{ cliente.correo || '-' }}</span>
+            </td>
+            <td class="cliente-secondary" [class.show-details]="detalleExpandido(cliente.id)" data-label="Dirección">
+              <span class="cliente-truncate" [title]="cliente.direccion || ''">{{ cliente.direccion || '-' }}</span>
+            </td>
+            <td class="cliente-secondary" [class.show-details]="detalleExpandido(cliente.id)" data-label="Observaciones">
+              <span class="cliente-truncate" [title]="cliente.observacion || ''">{{ cliente.observacion || '-' }}</span>
+            </td>
+            <td class="cliente-secondary" [class.show-details]="detalleExpandido(cliente.id)" data-label="Registro">{{ cliente.fechaRegistro || '-' }}</td>
+            <td data-label="Estado">
+              <span class="aero-status" [class.is-active]="cliente.activo" [class.is-inactive]="!cliente.activo">
+                <span class="aero-dot" aria-hidden="true"></span>{{ cliente.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-edit"
+                        [attr.aria-label]="'Editar ' + cliente.nombresApellidos"
+                        (click)="actualizarCliente(cliente)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m16 5 3 3M4 20l4.5-.9L19.1 8.5a2.12 2.12 0 0 0-3-3L5.5 16.1 4 20Z" />
+                  </svg> Editar
+                </button>
+                <button type="button" class="aero-btn aero-btn-soft aero-btn-state"
+                        [disabled]="procesandoEstadoId !== null"
+                        [attr.aria-label]="(cliente.activo ? 'Desactivar ' : 'Activar ') + cliente.nombresApellidos"
+                        (click)="cambiarEstadoCliente(cliente)">
+                  <span class="aero-action-dot" [class.aero-action-dot-on]="!cliente.activo" aria-hidden="true"></span>
+                  {{ cliente.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row">
+            <td colspan="9">
+              {{ cargando ? 'Cargando clientes...' : (hayFiltros ? 'No se encontraron clientes con estos filtros.' : 'No hay clientes registrados.') }}
+            </td>
+          </tr>
+        } <!-- fin del @for -->
+      </tbody>
+    </table>
+  </div>
 
-    </tbody>
+  <nav class="aero-pagination" aria-label="Paginación de clientes">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)"
+              [disabled]="cargando" aria-label="Registros por página">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="pagina === 0 || cargando" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="pagina >= totalPaginas - 1 || cargando" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
 
-  </table>
-
-
-  <!-- MODAL -->
+  <!-- MODAL DE CREACIÓN / EDICIÓN: conserva los comentarios de los campos originales. -->
   @if (modalAbierto) {
-    <div class="modal">
-
-        <div class="modal-content">
-
-        <h3>{{ editando ? 'Editar Cliente' : 'Crear Cliente' }}</h3>
+    <div class="aero-modal-backdrop" (click)="cerrarModal()">
+      <section class="aero-modal cliente-modal" role="dialog" aria-modal="true" aria-labelledby="cliente-modal-titulo"
+               (click)="$event.stopPropagation()">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">DSTORE · CLIENTES</span>
+            <h3 id="cliente-modal-titulo">{{ editando ? 'Editar cliente' : 'Crear cliente' }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar formulario"
+                  [disabled]="guardando" (click)="cerrarModal()">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </header>
 
         <form #formCliente="ngForm" (ngSubmit)="guardarCliente()">
+          <div class="aero-modal-body cliente-form-grid">
 
             <!-- NOMBRES Y APELLIDOS -->
-
-            <label for="nombresApellidos">
-            Nombres y apellidos:
-            </label>
-
-            <input
-            type="text"
-            id="nombresApellidos"
-            name="nombresApellidos"
-            placeholder="Nombres y apellidos"
-            [(ngModel)]="clienteActual.nombresApellidos"
-            required
-            maxlength="200"
-            #nombresApellidos="ngModel"
-            />
-
-            @if (nombresApellidos.invalid && nombresApellidos.touched){
-                <div class="error">
-                    ⚠️ Los nombres y apellidos son obligatorios.
-                </div>
-            }
-
-
-            <!-- TIPO DOCUMENTO -->
-
-            <label for="tipoDocumento">
-            Tipo de documento:
-            </label>
-
-            <select id="tipoDocumento"  name="tipoDocumento" 
-            [(ngModel)]="clienteActual.tipoDocumento">
-
-                <option [ngValue]="null">
-                    -- Selecciona un tipo --
-                </option>
-
-                <option value="CC">
-                    Cédula de ciudadanía
-                </option>
-
-                <option value="CE">
-                    Cédula de extranjería
-                </option>
-
-                <option value="NIT">
-                    NIT
-                </option>
-
-                <option value="PASAPORTE">
-                    Pasaporte
-                </option>
-
-                <option value="OTRO">
-                    Otro
-                </option>
-
-            </select>
-
-
-            <!-- NÚMERO DOCUMENTO -->
-
-            <label for="numeroDocumento">
-            Número de documento:
-            </label>
-
-            <input
-            type="text"
-            id="numeroDocumento"
-            name="numeroDocumento"
-            placeholder="Número de documento"
-            [(ngModel)]="clienteActual.numeroDocumento"
-            maxlength="30"
-            />
-
-
-            <!-- TELÉFONO -->
-
-            <label for="telefono">
-            Teléfono:
-            </label>
-
-            <input
-            type="text"
-            id="telefono"
-            name="telefono"
-            placeholder="Teléfono"
-            [(ngModel)]="clienteActual.telefono"
-            maxlength="30"
-            />
-
-
-            <!-- CORREO -->
-
-            <label for="correo">
-            Correo:
-            </label>
-
-            <input
-            type="email"
-            id="correo"
-            name="correo"
-            placeholder="correo@ejemplo.com"
-            [(ngModel)]="clienteActual.correo"
-            email
-            maxlength="150"
-            #correo="ngModel"
-            />
-
-            @if (correo.invalid && correo.touched) {
-                <div class="error">
-                    ⚠️ Ingresa un correo válido.
-                </div>
-            }
-
-
-            <!-- DIRECCIÓN -->
-
-            <label for="direccion">
-            Dirección:
-            </label>
-
-            <input
-            type="text"
-            id="direccion"
-            name="direccion"
-            placeholder="Dirección"
-            [(ngModel)]="clienteActual.direccion"
-            maxlength="250"
-            />
-
-
-            <!-- OBSERVACIÓN -->
-
-            <label for="observacion">
-            Observación:
-            </label>
-
-            <textarea
-            id="observacion"
-            name="observacion"
-            placeholder="Observaciones del cliente"
-            [(ngModel)]="clienteActual.observacion"
-            maxlength="500"
-            rows="3">
-            </textarea>
-
-
-            <!-- BOTONES -->
-
-            <div class="buttons">
-
-            <button type="submit" [disabled]="formCliente.invalid">
-                {{ editando ? 'Guardar cambios' : 'Crear' }}
-            </button>
-
-            <button type="button" (click)="cerrarModal()">
-                Cancelar
-            </button>
-
+            <div class="cliente-form-field cliente-form-wide">
+              <label for="nombresApellidos">Nombre del cliente <span aria-hidden="true">*</span></label>
+              <input type="text" id="nombresApellidos" name="nombresApellidos"
+                     placeholder="Nombres y apellidos o razón social"
+                     [(ngModel)]="clienteActual.nombresApellidos" required maxlength="100"
+                     #nombresApellidos="ngModel" />
+              @if ((nombresApellidos.invalid || !clienteActual.nombresApellidos.trim()) && nombresApellidos.touched) {
+                <p class="aero-field-error">El nombre del cliente es obligatorio (máximo 100 caracteres).</p>
+              }
             </div>
 
+            <!-- TIPO DOCUMENTO -->
+            <div class="cliente-form-field">
+              <label for="tipoDocumento">Tipo de documento <span class="cliente-opcional">Opcional</span></label>
+              <select id="tipoDocumento" name="tipoDocumento" [(ngModel)]="clienteActual.tipoDocumento">
+                <option [ngValue]="null">No especificado</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="NIT">NIT</option>
+                <option value="PASAPORTE">Pasaporte</option>
+                <option value="OTRO">Otro</option>
+              </select>
+            </div>
+
+            <!-- NÚMERO DOCUMENTO -->
+            <div class="cliente-form-field">
+              <label for="numeroDocumento">Número de documento <span class="cliente-opcional">Opcional</span></label>
+              <input type="text" id="numeroDocumento" name="numeroDocumento"
+                     placeholder="Número de documento" [(ngModel)]="clienteActual.numeroDocumento" maxlength="30" />
+            </div>
+
+            <!-- TELÉFONO -->
+            <div class="cliente-form-field">
+              <label for="telefono">Teléfono <span class="cliente-opcional">Opcional</span></label>
+              <input type="tel" id="telefono" name="telefono" placeholder="Teléfono"
+                     [(ngModel)]="clienteActual.telefono" maxlength="30" />
+            </div>
+
+            <!-- CORREO -->
+            <div class="cliente-form-field">
+              <label for="correo">Correo <span class="cliente-opcional">Opcional</span></label>
+              <input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com"
+                     [(ngModel)]="clienteActual.correo" email maxlength="150" #correo="ngModel" />
+              @if (correo.invalid && correo.touched) {
+                <p class="aero-field-error">Ingresa un correo válido o deja este campo vacío.</p>
+              }
+            </div>
+
+            <!-- DIRECCIÓN -->
+            <div class="cliente-form-field cliente-form-wide">
+              <label for="direccion">Dirección <span class="cliente-opcional">Opcional</span></label>
+              <input type="text" id="direccion" name="direccion" placeholder="Dirección del cliente"
+                     [(ngModel)]="clienteActual.direccion" maxlength="250" />
+            </div>
+
+            <!-- OBSERVACIÓN -->
+            <div class="cliente-form-field cliente-form-wide">
+              <label for="observacion">Observaciones <span class="cliente-opcional">Opcional</span></label>
+              <textarea id="observacion" name="observacion" placeholder="Información adicional del cliente"
+                        [(ngModel)]="clienteActual.observacion" maxlength="500" rows="3"></textarea>
+            </div>
+
+            @if (errorModal) {
+              <p class="aero-form-alert cliente-form-alert cliente-form-wide" role="alert">{{ errorModal }}</p>
+            }
+          </div>
+
+          <!-- BOTONES -->
+          <footer class="aero-modal-actions">
+            <button type="button" class="aero-btn aero-btn-soft" [disabled]="guardando" (click)="cerrarModal()">Cancelar</button>
+            <button type="submit" class="aero-btn aero-btn-primary"
+                    [disabled]="formCliente.invalid || !clienteActual.nombresApellidos.trim() || guardando">
+              {{ guardando ? 'Guardando...' : (editando ? 'Guardar cambios' : 'Crear cliente') }}
+            </button>
+          </footer>
         </form>
-
-        </div>
-
+      </section>
     </div>
   }
 
+  <!-- Detalle de solo lectura: evita que dirección y observaciones ensanchen la tabla. -->
+  @if (clienteDetalle) {
+    <div class="aero-modal-backdrop" (click)="cerrarDetalle()">
+      <section class="aero-modal cliente-modal-detalle" role="dialog" aria-modal="true" aria-labelledby="cliente-detalle-titulo"
+               (click)="$event.stopPropagation()">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">FICHA DEL CLIENTE</span>
+            <h3 id="cliente-detalle-titulo">{{ clienteDetalle.nombresApellidos }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar detalles" (click)="cerrarDetalle()">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </header>
+        <div class="aero-modal-body cliente-ficha">
+          <div><span>Documento</span><strong>{{ clienteDetalle.numeroDocumento ? ((clienteDetalle.tipoDocumento || '') + ' ' + clienteDetalle.numeroDocumento) : 'No registrado' }}</strong></div>
+          <div><span>Teléfono</span><strong>{{ clienteDetalle.telefono || 'No registrado' }}</strong></div>
+          <div><span>Correo</span><strong>{{ clienteDetalle.correo || 'No registrado' }}</strong></div>
+          <div><span>Dirección</span><strong>{{ clienteDetalle.direccion || 'No registrada' }}</strong></div>
+          <div><span>Fecha de registro</span><strong>{{ clienteDetalle.fechaRegistro || 'No disponible' }}</strong></div>
+          <div><span>Estado</span><strong>{{ clienteDetalle.activo ? 'Activo' : 'Inactivo' }}</strong></div>
+          <div class="cliente-ficha-notas"><span>Observaciones</span><p>{{ clienteDetalle.observacion || 'Sin observaciones' }}</p></div>
+        </div>
+        <footer class="aero-modal-actions">
+          <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarDetalle()">Cerrar</button>
+        </footer>
+      </section>
+    </div>
+  }
 </div>

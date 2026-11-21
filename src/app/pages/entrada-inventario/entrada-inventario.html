@@ -1,358 +1,306 @@
-<div class="page-container entrada-inventario-container">
+<div class="page-container ds-aero aero-panel entrada-inventario-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5ZM3 8.5V18l9 4 9-4V8.5M12 13v9"/>
+        <path d="M12 1v6m-3-3h6"/>
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Entradas de inventario</h2>
+      <p>Registra mercancía y consulta los productos recibidos en cada entrada.</p>
+    </div>
+  </header>
 
-  <h2>Entradas de inventario</h2>
+  <div class="aero-page-actions">
+    <button type="button" class="aero-btn aero-btn-primary" (click)="abrirModal()">＋ Registrar entrada</button>
+  </div>
 
-  <button (click)="abrirModal()">
-    ➕ Registrar entrada
-  </button>
+  <!-- FILTROS Y PAGINACIÓN: la búsqueda se aplica en el backend antes de mostrar las filas. -->
+  <section class="aero-data-tools" aria-label="Filtros de entradas de inventario">
+    <div class="aero-tools-main">
+      <label class="aero-filter-field aero-search-field">
+        <span class="aero-filter-label">Buscar entrada</span>
+        <span class="aero-search-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>
+          </svg>
+          <input type="search" name="textoBusqueda" placeholder="Número de entrada, documento u observación..."
+                 [(ngModel)]="textoBusqueda" (ngModelChange)="alCambiarBusqueda()" />
+        </span>
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Entrada desde</span>
+        <input type="date" name="fechaEntradaDesde" [(ngModel)]="fechaEntradaDesde" (ngModelChange)="aplicarFiltros()" />
+      </label>
+      <label class="aero-filter-field">
+        <span class="aero-filter-label">Entrada hasta</span>
+        <input type="date" name="fechaEntradaHasta" [(ngModel)]="fechaEntradaHasta" (ngModelChange)="aplicarFiltros()" />
+      </label>
+      <button type="button" class="aero-btn aero-btn-soft aero-advanced-toggle"
+              [attr.aria-expanded]="mostrarFiltrosAvanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        Más filtros{{ filtrosAvanzadosActivos ? ' (' + filtrosAvanzadosActivos + ')' : '' }}
+        <span aria-hidden="true">{{ mostrarFiltrosAvanzados ? '▴' : '▾' }}</span>
+      </button>
+    </div>
 
+    @if (mostrarFiltrosAvanzados) {
+      <div class="aero-tools-extra">
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Documento</span>
+          <input type="search" name="numeroDocumentoFiltro" placeholder="Factura o remisión..."
+                 [(ngModel)]="numeroDocumentoFiltro" (ngModelChange)="alCambiarBusqueda()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Registrado desde</span>
+          <input type="date" name="fechaRegistroDesde" [(ngModel)]="fechaRegistroDesde" (ngModelChange)="aplicarFiltros()" />
+        </label>
+        <label class="aero-filter-field">
+          <span class="aero-filter-label">Registrado hasta</span>
+          <input type="date" name="fechaRegistroHasta" [(ngModel)]="fechaRegistroHasta" (ngModelChange)="aplicarFiltros()" />
+        </label>
+      </div>
+    }
 
-  <!-- LISTADO DE ENTRADAS -->
-
-  <table>
-    <thead>
-      <tr>
-        <th>Entrada</th>
-        <th>Fecha entrada</th>
-        <th>Fecha registro</th>
-        <th>Documento</th>
-        <th>Observación</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      @for (entrada of entradaInventarioResponse; track entrada.id) {
-
-        <tr>
-
-          <td>
-            #{{ entrada.id }}
-          </td>
-
-          <td>
-            {{ entrada.fechaEntrada }}
-          </td>
-
-          <td>
-            {{ entrada.fechaRegistro }}
-          </td>
-
-          <td>
-            {{ entrada.numeroDocumento || '-' }}
-          </td>
-
-          <td>
-            {{ entrada.observacion || '-' }}
-          </td>
-
-          <td>
-            <button (click)="verDetalle(entrada)">
-              👁️ Ver detalle
-            </button>
-          </td>
-
-        </tr>
-
+    <div class="aero-tools-foot">
+      <span>{{ totalElementos }} entrada(s) encontrada(s)</span>
+      @if (hayFiltros) {
+        <button type="button" class="aero-clear-filters" (click)="limpiarFiltros()">Limpiar filtros</button>
       }
+    </div>
+  </section>
 
-    </tbody>
-  </table>
+  @if (mensajeExito) {
+    <div class="entrada-feedback entrada-feedback--exito" role="status">{{ mensajeExito }}</div>
+  }
+  @if (errorListado) {
+    <div class="entrada-feedback entrada-feedback--error" role="alert">
+      {{ errorListado }}
+      <button type="button" class="aero-btn aero-btn-soft" (click)="listar()">Reintentar</button>
+    </div>
+  }
 
+  <!-- TABLA: cabeceras de entradas. Los detalles se consultan al hacer clic. -->
+  <div class="aero-table-wrap entrada-tabla-contenedor" [attr.aria-busy]="cargando">
+    <table class="aero-table entrada-tabla">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'id' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('id')">Entrada <span aria-hidden="true">{{ ordenarPor === 'id' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaEntrada' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaEntrada')">Fecha entrada <span aria-hidden="true">{{ ordenarPor === 'fechaEntrada' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'fechaRegistro' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('fechaRegistro')">Fecha registro <span aria-hidden="true">{{ ordenarPor === 'fechaRegistro' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'numeroDocumento' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('numeroDocumento')">Documento <span aria-hidden="true">{{ ordenarPor === 'numeroDocumento' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ordenarPor === 'observacion' ? (direccion === 'asc' ? 'ascending' : 'descending') : null">
+            <button type="button" class="aero-sort-button" (click)="ordenar('observacion')">Observación <span aria-hidden="true">{{ ordenarPor === 'observacion' ? (direccion === 'asc' ? '↑' : '↓') : '↕' }}</span></button>
+          </th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entrada of entradas; track entrada.id) {
+          <tr>
+            <td class="aero-record-title" data-label="Entrada">#{{ entrada.id }}</td>
+            <td data-label="Fecha entrada">{{ entrada.fechaEntrada | date:'dd/MM/yyyy' }}</td>
+            <td data-label="Fecha registro">{{ entrada.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Documento">{{ entrada.numeroDocumento || '-' }}</td>
+            <td class="entrada-observacion" data-label="Observación" [title]="entrada.observacion || ''">{{ entrada.observacion || '-' }}</td>
+            <td data-label="Acciones">
+              <div class="aero-row-actions">
+                <button type="button" class="aero-btn aero-btn-soft" (click)="verDetalle(entrada)">Ver detalle</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="aero-empty-row">
+            <td colspan="6">{{ cargando ? 'Cargando entradas...' : 'No hay entradas que coincidan con los filtros.' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-  <!-- MODAL -->
+  <nav class="aero-pagination" aria-label="Paginación de entradas">
+    <label class="aero-page-size">
+      <span>Filas por página:</span>
+      <select name="tamanoPagina" [ngModel]="tamano" (ngModelChange)="cambiarTamano($event)" [disabled]="cargando">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <div class="aero-page-nav">
+      <span class="aero-page-count">{{ registroDesde }}–{{ registroHasta }} de {{ totalElementos }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página anterior"
+              [disabled]="cargando || pagina === 0" (click)="irPagina(pagina - 1)">‹</button>
+      <span class="aero-page-current">{{ paginaVisible }} / {{ totalPaginas }}</span>
+      <button type="button" class="aero-page-button" aria-label="Página siguiente"
+              [disabled]="cargando || pagina + 1 >= totalPaginas" (click)="irPagina(pagina + 1)">›</button>
+    </div>
+  </nav>
 
+  <!-- MODAL: mantiene el registro de MÚLTIPLES productos en una sola entrada. -->
   @if (modalAbierto) {
+    <div class="aero-modal-backdrop" (keydown.escape)="cerrarModal()">
+      <section class="aero-modal entrada-form-modal" role="dialog" aria-modal="true" aria-labelledby="tituloRegistrarEntrada">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">OPERACIÓN DE INVENTARIO</span>
+            <h3 id="tituloRegistrarEntrada">Registrar entrada</h3>
+            <p class="entrada-modal-subtitulo">Puedes recibir uno o varios productos en la misma entrada.</p>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar formulario"
+                  [disabled]="registrando" (click)="cerrarModal()">✕</button>
+        </header>
 
-    <div class="modal">
-
-      <div class="modal-content">
-
-        <h3>Registrar entrada de inventario</h3>
-
-        <form
-          #formEntrada="ngForm"
-          (ngSubmit)="registrarEntrada()">
-
-
-          <!-- FECHA ENTRADA -->
-
-          <label for="fechaEntrada">
-            Fecha de entrada:
-          </label>
-
-          <input
-            type="date"
-            id="fechaEntrada"
-            name="fechaEntrada"
-            [(ngModel)]="entradaInventarioRequest.fechaEntrada"
-            required
-          />
-
-
-          <!-- DOCUMENTO -->
-
-          <label for="numeroDocumento">
-            Número de documento:
-          </label>
-
-          <input
-            type="text"
-            id="numeroDocumento"
-            name="numeroDocumento"
-            placeholder="Factura, remisión, etc."
-            [(ngModel)]="entradaInventarioRequest.numeroDocumento"
-            maxlength="100"
-          />
-
-
-          <!-- OBSERVACIÓN -->
-
-          <label for="observacion">
-            Observación:
-          </label>
-
-          <textarea
-            id="observacion"
-            name="observacion"
-            [(ngModel)]="entradaInventarioRequest.observacion"
-            maxlength="500"
-            rows="3"
-            placeholder="Observaciones de la entrada">
-          </textarea>
-
-
-          <hr>
-
-
-          <h4>Productos recibidos</h4>
-
-
-          <!-- DETALLES DINÁMICOS -->
-
-          @for (
-            detalle of entradaInventarioRequest.detalles;
-            track $index;
-            let i = $index
-          ) {
-
-            <div class="detalle-entrada">
-
-              <h5>
-                Producto {{ i + 1 }}
-              </h5>
-
-
-              <!-- PRODUCTO -->
-
-              <label>
-                Producto:
+        <form #formEntrada="ngForm" (ngSubmit)="registrarEntrada(formEntrada)" class="entrada-formulario">
+          <div class="entrada-modal-cuerpo">
+            <!-- CABECERA: fecha física, documento y observación general de la recepción. -->
+            <div class="entrada-seccion-titulo">
+              <h4>Datos de la entrada</h4>
+              <span>Información general</span>
+            </div>
+            <div class="entrada-cabecera-campos">
+              <label class="entrada-campo">
+                <span>Fecha de entrada <span aria-hidden="true">*</span></span>
+                <input type="date" name="fechaEntrada" [(ngModel)]="entradaInventarioRequest.fechaEntrada"
+                       [max]="fechaHoy" required [disabled]="registrando" />
               </label>
-
-              <select
-                [name]="'producto-' + i"
-                [(ngModel)]="detalle.idProducto"
-                required>
-
-                <option [ngValue]="0">
-                  -- Selecciona un producto --
-                </option>
-
-                @for (producto of productos; track producto.id) {
-
-                  <option [ngValue]="producto.id">
-                    {{ producto.nombre }}
-                  </option>
-
-                }
-
-              </select>
-
-
-              <!-- CANTIDAD -->
-
-              <label>
-                Cantidad:
+              <label class="entrada-campo">
+                <span>Número de documento</span>
+                <input type="text" name="numeroDocumento" [(ngModel)]="entradaInventarioRequest.numeroDocumento"
+                       maxlength="100" placeholder="Factura, remisión, etc." [disabled]="registrando" />
               </label>
-
-              <input
-                type="number"
-                [name]="'cantidad-' + i"
-                [(ngModel)]="detalle.cantidad"
-                min="1"
-                required
-              />
-
-
-              <!-- LOTE -->
-
-              <label>
-                Número de lote:
+              <label class="entrada-campo entrada-campo--observacion">
+                <span>Observación</span>
+                <textarea name="observacion" [(ngModel)]="entradaInventarioRequest.observacion" maxlength="500"
+                          rows="2" placeholder="Observaciones de la entrada" [disabled]="registrando"></textarea>
               </label>
-
-              <input
-                type="text"
-                [name]="'numeroLote-' + i"
-                [(ngModel)]="detalle.numeroLote"
-                maxlength="100"
-                placeholder="Opcional"
-              />
-
-
-              <!-- VENCIMIENTO -->
-
-              <label>
-                Fecha de vencimiento:
-              </label>
-
-              <input
-                type="date"
-                [name]="'fechaVencimiento-' + i"
-                [(ngModel)]="detalle.fechaVencimiento"
-                [required]="productoControlaVencimiento(detalle.idProducto)"
-              />
-
-
-              @if (productoControlaVencimiento(detalle.idProducto)) {
-
-                <small>
-                  ⚠️ Este producto requiere fecha de vencimiento.
-                </small>
-
-              }
-
-
-              <!-- QUITAR DETALLE -->
-
-              <button
-                type="button"
-                (click)="eliminarDetalle(i)">
-
-                ❌ Quitar
-
-              </button>
-
             </div>
 
-            <hr>
+            <div class="entrada-seccion-titulo entrada-seccion-productos">
+              <h4>Productos recibidos</h4>
+              <span>{{ entradaInventarioRequest.detalles.length }} renglón(es)</span>
+            </div>
 
-          }
-
-
-          <!-- AGREGAR OTRO PRODUCTO -->
-
-          <button
-            type="button"
-            (click)="agregarDetalle()">
-
-            ➕ Agregar otro producto
-
-          </button>
-
-
-          <!-- ACCIONES -->
-
-          <div class="buttons">
-
-            <button
-              type="submit"
-              [disabled]="
-                formEntrada.invalid ||
-                entradaInventarioRequest.detalles.length === 0
-              ">
-
-              Registrar entrada
-
-            </button>
-
-            <button
-              type="button"
-              (click)="cerrarModal()">
-
-              Cancelar
-
-            </button>
-
-          </div>
-
-        </form>
-
-      </div>
-
-    </div>
-
-  }
-
-
-  @if (modalDetalleAbierto && entradaSeleccionada) {
-
-    <div class="modal">
-
-      <div class="modal-content">
-
-        <h3>
-          Entrada #{{ entradaSeleccionada.id }}
-        </h3>
-
-        <p>
-          <strong>Fecha:</strong>
-          {{ entradaSeleccionada.fechaEntrada }}
-        </p>
-
-        <p>
-          <strong>Documento:</strong>
-          {{ entradaSeleccionada.numeroDocumento || '-' }}
-        </p>
-
-        <p>
-          <strong>Observación:</strong>
-          {{ entradaSeleccionada.observacion || '-' }}
-        </p>
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Lote</th>
-              <th>Vencimiento</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            @for (
-              detalle of entradaSeleccionada.detalles;
-              track detalle.id
-            ) {
-
-              <tr>
-                <td>{{ detalle.nombreProducto }}</td>
-                <td>{{ detalle.cantidad }}</td>
-                <td>{{ detalle.numeroLote || '-' }}</td>
-                <td>{{ detalle.fechaVencimiento || '-' }}</td>
-              </tr>
-
+            <!-- DETALLES DINÁMICOS: cada renglón genera detalle, existencia y movimiento. -->
+            @for (detalle of entradaInventarioRequest.detalles; track detalle; let i = $index) {
+              <div class="entrada-detalle-card">
+                <div class="entrada-detalle-cabecera">
+                  <strong>Producto {{ i + 1 }}</strong>
+                  <button type="button" class="aero-btn aero-btn-soft entrada-quitar-btn" (click)="eliminarDetalle(i)"
+                          [disabled]="registrando">✕ Quitar</button>
+                </div>
+                <div class="entrada-detalle-campos">
+                  <label class="entrada-campo entrada-campo--producto">
+                    <span>Producto <span aria-hidden="true">*</span></span>
+                    <select [name]="'producto-' + i" [(ngModel)]="detalle.idProducto" required [disabled]="registrando">
+                      <option [ngValue]="0">-- Selecciona un producto --</option>
+                      @for (producto of productos; track producto.id) {
+                        <option [ngValue]="producto.id">{{ producto.nombre }}</option>
+                      }
+                    </select>
+                  </label>
+                  <label class="entrada-campo entrada-campo--cantidad">
+                    <span>Cantidad <span aria-hidden="true">*</span></span>
+                    <input type="number" [name]="'cantidad-' + i" [(ngModel)]="detalle.cantidad" min="1" step="1"
+                           required [disabled]="registrando" />
+                  </label>
+                  <label class="entrada-campo">
+                    <span>Número de lote</span>
+                    <input type="text" [name]="'numeroLote-' + i" [(ngModel)]="detalle.numeroLote" maxlength="100"
+                           placeholder="Opcional" [disabled]="registrando" />
+                  </label>
+                  <label class="entrada-campo">
+                    <span>Fecha de vencimiento {{ productoControlaVencimiento(detalle.idProducto) ? '*' : '' }}</span>
+                    <input type="date" [name]="'fechaVencimiento-' + i" [(ngModel)]="detalle.fechaVencimiento"
+                           [min]="fechaHoy" [required]="productoControlaVencimiento(detalle.idProducto)"
+                           [disabled]="registrando" />
+                  </label>
+                </div>
+                @if (productoControlaVencimiento(detalle.idProducto)) {
+                  <small class="entrada-aviso-vencimiento">Este producto requiere fecha de vencimiento.</small>
+                }
+              </div>
             }
 
-          </tbody>
+            <button type="button" class="aero-btn aero-btn-soft entrada-agregar-btn" (click)="agregarDetalle()" [disabled]="registrando">
+              ＋ Agregar otro producto
+            </button>
 
-        </table>
+            @if (errorRegistro) {
+              <div class="entrada-feedback entrada-feedback--error" role="alert">{{ errorRegistro }}</div>
+            }
+          </div>
 
-        <button
-          type="button"
-          (click)="cerrarDetalle()">
-
-          Cerrar
-
-        </button>
-
-      </div>
-
+          <footer class="aero-modal-actions">
+            <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarModal()" [disabled]="registrando">Cancelar</button>
+            <button type="submit" class="aero-btn aero-btn-primary"
+                    [disabled]="registrando || formEntrada.invalid || !formularioValido">
+              {{ registrando ? 'Registrando...' : 'Registrar entrada' }}
+            </button>
+          </footer>
+        </form>
+      </section>
     </div>
-
   }
 
+  <!-- CONSULTA DE SOLO LECTURA: GET /{id} carga el detalle completo. -->
+  @if (modalDetalleAbierto) {
+    <div class="aero-modal-backdrop" (keydown.escape)="cerrarDetalle()">
+      <section class="aero-modal entrada-consulta-modal" role="dialog" aria-modal="true" aria-labelledby="tituloDetalleEntrada">
+        <header class="aero-modal-header">
+          <div>
+            <span class="aero-modal-eyebrow">DETALLE DE RECEPCIÓN</span>
+            <h3 id="tituloDetalleEntrada">{{ entradaSeleccionada ? 'Entrada #' + entradaSeleccionada.id : 'Detalle de entrada' }}</h3>
+          </div>
+          <button type="button" class="aero-modal-close" aria-label="Cerrar detalle" (click)="cerrarDetalle()">✕</button>
+        </header>
+        <div class="entrada-modal-cuerpo">
+          @if (detalleCargando) {
+            <p class="entrada-cargando">Consultando productos de la entrada...</p>
+          } @else if (errorDetalle) {
+            <div class="entrada-feedback entrada-feedback--error" role="alert">{{ errorDetalle }}</div>
+          } @else if (entradaSeleccionada) {
+            <div class="entrada-resumen">
+              <div><span>Fecha de entrada</span><strong>{{ entradaSeleccionada.fechaEntrada | date:'dd/MM/yyyy' }}</strong></div>
+              <div><span>Fecha registro</span><strong>{{ entradaSeleccionada.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+              <div><span>Documento</span><strong>{{ entradaSeleccionada.numeroDocumento || '-' }}</strong></div>
+              <div class="entrada-resumen-observacion"><span>Observación</span><strong>{{ entradaSeleccionada.observacion || '-' }}</strong></div>
+            </div>
+            <div class="entrada-seccion-titulo entrada-seccion-productos">
+              <h4>Productos recibidos</h4>
+              <span>{{ entradaSeleccionada.detalles.length }} renglón(es) · {{ totalUnidadesDetalle }} unidad(es)</span>
+            </div>
+            <div class="aero-table-wrap">
+              <table class="aero-table entrada-detalles-tabla">
+                <thead><tr><th>Producto</th><th>Cantidad</th><th>Lote</th><th>Vencimiento</th></tr></thead>
+                <tbody>
+                  @for (detalle of entradaSeleccionada.detalles; track detalle.id) {
+                    <tr>
+                      <td class="aero-record-title" data-label="Producto">{{ detalle.nombreProducto }}</td>
+                      <td data-label="Cantidad">{{ detalle.cantidad }}</td>
+                      <td data-label="Lote">{{ detalle.numeroLote || '-' }}</td>
+                      <td data-label="Vencimiento">{{ detalle.fechaVencimiento ? (detalle.fechaVencimiento | date:'dd/MM/yyyy') : '-' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr class="aero-empty-row"><td colspan="4">Esta entrada no tiene productos asociados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+        <footer class="aero-modal-actions">
+          <button type="button" class="aero-btn aero-btn-soft" (click)="cerrarDetalle()">Cerrar</button>
+        </footer>
+      </section>
+    </div>
+  }
 </div>

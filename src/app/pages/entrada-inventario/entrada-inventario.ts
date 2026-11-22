@@ -24,6 +24,12 @@ export class EntradaInventario implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly recarga$ = new Subject<void>();
   private readonly busqueda$ = new Subject<string>();
+  private readonly formatoFechaColombia = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
 
   productos: ProductoModel[] = [];
   entradas: EntradaInventarioListado[] = [];
@@ -278,11 +284,11 @@ export class EntradaInventario implements OnInit {
     return { fechaEntrada: this.fechaActual(), numeroDocumento: '', observacion: '', detalles: [] };
   }
   private fechaActual(): string {
-    const hoy = new Date();
-    const year = hoy.getFullYear();
-    const month = String(hoy.getMonth() + 1).padStart(2, '0');
-    const day = String(hoy.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // La fecha operativa de DStore es la de Colombia, independientemente
+    // de la zona horaria configurada en el dispositivo del usuario.
+    const partes = this.formatoFechaColombia.formatToParts(new Date());
+    const obtener = (tipo: string): string => partes.find(parte => parte.type === tipo)?.value ?? '';
+    return `${obtener('year')}-${obtener('month')}-${obtener('day')}`;
   }
   private respuestaVacia(): PageResponse<EntradaInventarioListado> {
     return { content: [], totalElements: 0, totalPages: 0, page: this.pagina, size: this.tamano };

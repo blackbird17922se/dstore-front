@@ -222,6 +222,13 @@
                     <input type="date" [name]="'fechaVencimiento-' + i" [(ngModel)]="detalle.fechaVencimiento"
                            [min]="fechaHoy" [required]="productoControlaVencimiento(detalle.idProducto)"
                            [disabled]="registrando" />
+                    @if (detalle.fechaVencimiento && detalle.fechaVencimiento < fechaHoy) {
+                      <small class="entrada-aviso-vencimiento entrada-aviso-vencimiento--error" role="alert">
+                        Producto {{ i + 1 }}: La fecha de vencimiento no puede ser anterior a hoy (hora de Colombia).
+                      </small>
+                    } @else {
+                      <small class="entrada-aviso-vencimiento">Se permite hoy o una fecha posterior (hora de Colombia).</small>
+                    }
                   </label>
                 </div>
                 @if (productoControlaVencimiento(detalle.idProducto)) {

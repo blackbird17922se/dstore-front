@@ -11,6 +11,7 @@ import { Venta } from './pages/venta/venta';
 import { DetalleVenta } from './pages/detalle-venta/detalle-venta';
 import { Login } from './pages/login/login';
 import { authGuard } from './guards/auth-guard';
+import { guestGuard } from './guards/guest.guard';
 import { Cliente } from './pages/cliente/cliente';
 import { EntradaInventario } from './pages/entrada-inventario/entrada-inventario';
 import { Existencias } from './pages/existencias/existencias';
@@ -24,7 +25,7 @@ import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: Login },
+  { path: 'login', component: Login, canActivate: [guestGuard] },
 
   {
     path: '',

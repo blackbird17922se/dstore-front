@@ -1,7 +1,6 @@
-import { DetalleVentaItemResponse } from "./detalle-venta-item-response.model";
+import { DetalleVentaItemResponse } from './detalle-venta-item-response.model';
 
 export interface VentaDetalleResponse {
-
   id: number;
   fecha: string;
   cliente: string | null;
@@ -10,6 +9,5 @@ export interface VentaDetalleResponse {
   estado: string;
   fechaAnulacion: string | null;
   motivoAnulacion: string | null;
-
   items: DetalleVentaItemResponse[];
 }

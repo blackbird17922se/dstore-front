@@ -1,44 +1,84 @@
-.entrada-inventario-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
+/* Entradas Aero Modern.
+   Reutiliza layout, botones, tablas, filtros, paginación y modales desde src/styles/aero/.
+   Este archivo solo contiene los ajustes propios de Entradas. */
+:host { display: block; min-width: 0; }
+.ds-aero.entrada-inventario-container { min-width: 0; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+.ds-aero .entrada-tabla { min-width: 980px; }
+.ds-aero .entrada-tabla .entrada-observacion { max-width: 270px; overflow-wrap: anywhere; }
+.ds-aero .entrada-tabla td[data-label='Fecha entrada'],
+.ds-aero .entrada-tabla td[data-label='Fecha registro'] { white-space: nowrap; }
 
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
+.ds-aero .entrada-feedback {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: var(--ds-panel-solid);
+  color: var(--ds-text);
+  font-size: .86rem;
+}
+.ds-aero .entrada-feedback--error { color: var(--ds-danger); }
+.ds-aero .entrada-feedback--exito { color: var(--ds-primary); }
 
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
+/* Sobrescribe el modal global de 480px solo en esta pantalla. */
+.ds-aero .aero-modal.entrada-form-modal { width: min(100%, 960px); }
+.ds-aero .aero-modal.entrada-consulta-modal { width: min(100%, 780px); }
+.ds-aero .entrada-modal-cuerpo { padding: 20px 24px; }
+.ds-aero .entrada-modal-subtitulo { margin: 8px 0 0; color: var(--ds-muted); font-size: .84rem; }
+.ds-aero .entrada-seccion-titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 2px 0 14px; }
+.ds-aero .entrada-seccion-titulo h4 { margin: 0; font-size: 1rem; color: var(--ds-text); }
+.ds-aero .entrada-seccion-titulo > span { font-size: .78rem; color: var(--ds-muted); }
+.ds-aero .entrada-seccion-productos { margin-top: 24px; }
+.ds-aero .entrada-cabecera-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ds-aero .entrada-campo { display: grid; gap: 6px; min-width: 0; }
+.ds-aero .entrada-campo > span { color: var(--ds-muted); font-size: .79rem; font-weight: 700; }
+.ds-aero .entrada-campo input,
+.ds-aero .entrada-campo select,
+.ds-aero .entrada-campo textarea {
+  width: 100%; min-width: 0; min-height: 40px; box-sizing: border-box;
+  border: 1px solid var(--ds-input-border); border-radius: 9px;
+  background: var(--ds-input-bg); color: var(--ds-text);
+  padding: 9px 10px; font: inherit; font-size: .86rem;
+}
+.ds-aero .entrada-campo textarea { resize: vertical; min-height: 72px; }
+.ds-aero .entrada-campo input:focus-visible,
+.ds-aero .entrada-campo select:focus-visible,
+.ds-aero .entrada-campo textarea:focus-visible { outline: 3px solid var(--ds-focus); outline-offset: 1px; }
+.ds-aero .entrada-campo--observacion { grid-column: 1 / -1; }
+.ds-aero .entrada-detalle-card { padding: 16px; margin-bottom: 12px; border: 1px solid var(--ds-table-border); border-radius: 12px; background: var(--ds-table-body); }
+.ds-aero .entrada-detalle-cabecera { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--ds-text); }
+.ds-aero .entrada-detalle-campos { display: grid; grid-template-columns: minmax(190px, 2fr) minmax(90px, .7fr) minmax(120px, 1fr) minmax(150px, 1.15fr); gap: 12px; align-items: start; }
+.ds-aero .entrada-aviso-vencimiento { display: block; margin-top: 9px; color: var(--ds-muted); font-size: .77rem; }
+.ds-aero .entrada-quitar-btn { padding: 6px 10px; min-height: 32px; }
+.ds-aero .entrada-agregar-btn { width: 100%; border-style: dashed; margin-top: 2px; }
+.ds-aero .entrada-formulario .aero-modal-actions { border-top: 1px solid var(--ds-border); }
 
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+.ds-aero .entrada-resumen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ds-aero .entrada-resumen > div { min-width: 0; display: grid; gap: 5px; padding: 12px; border: 1px solid var(--ds-table-border); border-radius: 10px; background: var(--ds-table-body); }
+.ds-aero .entrada-resumen span { font-size: .74rem; color: var(--ds-muted); }
+.ds-aero .entrada-resumen strong { font-size: .86rem; font-weight: 600; color: var(--ds-text); overflow-wrap: anywhere; }
+.ds-aero .entrada-resumen-observacion { grid-column: 1 / -1; }
+.ds-aero .entrada-cargando { margin: 0; color: var(--ds-muted); }
+.ds-aero .entrada-detalles-tabla { min-width: 580px; }
+
+@media (max-width: 900px) {
+  .ds-aero .entrada-detalle-campos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .ds-aero .entrada-tabla { min-width: 0; }
+  .ds-aero .entrada-tabla td[data-label='Acciones'] .aero-btn { width: 100%; }
+  .ds-aero .entrada-cabecera-campos,
+  .ds-aero .entrada-detalle-campos { grid-template-columns: minmax(0, 1fr); }
+  .ds-aero .entrada-campo--observacion { grid-column: auto; }
+  .ds-aero .entrada-modal-cuerpo { padding: 16px 18px; }
+  .ds-aero .entrada-resumen { grid-template-columns: minmax(0, 1fr); }
+  .ds-aero .entrada-resumen-observacion { grid-column: auto; }
+  .ds-aero .entrada-detalles-tabla { min-width: 0; }
+  .ds-aero .aero-modal.entrada-form-modal,
+  .ds-aero .aero-modal.entrada-consulta-modal { max-height: calc(100dvh - 22px); }
 }

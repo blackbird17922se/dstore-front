@@ -1,44 +1,57 @@
-.ajuste-inventario-container {
-  padding: 1rem;
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    button {
-      margin-right: 0.5rem;
-    }
-  }
+/* Ajustes Aero Modern: usa src/styles/aero/ para layout, tabla, filtros y modales.
+   Aquí solamente se definen los ajustes particulares de la pantalla. */
+:host { display: block; min-width: 0; }
+.ds-aero.ajuste-container { min-width: 0; }
+.ds-aero .ajuste-tabla { min-width: 1120px; }
+.ds-aero .ajuste-tabla td[data-label='Fecha'] { white-space: nowrap; }
+.ds-aero .ajuste-motivo { max-width: 260px; overflow-wrap: anywhere; }
+.ds-aero .ajuste-tipo { display: inline-flex; padding: 5px 9px; border: 1px solid var(--ds-border); border-radius: 999px; font-size: .77rem; font-weight: 700; }
+.ds-aero .ajuste-tipo--entrada, .ds-aero .ajuste-cantidad--entrada { color: var(--ds-success, #208563); border-color: currentColor; }
+.ds-aero .ajuste-tipo--salida, .ds-aero .ajuste-cantidad--salida { color: var(--ds-danger, #ba525a); border-color: currentColor; }
+.ds-aero .ajuste-cantidad { font-weight: 700; font-variant-numeric: tabular-nums; }
+.ds-aero .ajuste-feedback { margin: 12px 0; padding: 11px 14px; border: 1px solid var(--ds-border); border-radius: 10px; background: var(--ds-panel-solid); color: var(--ds-text); }
+.ds-aero .ajuste-feedback--error, .ds-aero .ajuste-error { color: var(--ds-danger, #c75b62); }
+.ds-aero .ajuste-feedback--exito { color: var(--ds-success, #2a986f); }
+.ds-aero .ajuste-aviso-historico, .ds-aero .ajuste-descripcion { font-size: .82rem; color: var(--ds-muted); }
+.ds-aero .ajuste-advertencia { border-left: 3px solid var(--ds-warning, #c99c36); padding: 10px 12px; background: var(--ds-table-body); color: var(--ds-text); border-radius: 8px; font-size: .86rem; }
+.ds-aero .aero-modal.ajuste-form-modal { width: min(100%, 850px); }
+.ds-aero .aero-modal.ajuste-detalle-modal { width: min(100%, 720px); }
+.ds-aero .ajuste-modal-cuerpo { padding: 20px 24px; }
+.ds-aero .ajuste-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ds-aero .ajuste-campo { display: grid; gap: 6px; min-width: 0; }
+.ds-aero .ajuste-campo--completa { grid-column: 1 / -1; }
+.ds-aero .ajuste-campo > span { color: var(--ds-muted); font-size: .79rem; font-weight: 700; }
+.ds-aero .ajuste-campo input, .ds-aero .ajuste-campo select, .ds-aero .ajuste-campo textarea {
+  width: 100%; min-width: 0; min-height: 40px; box-sizing: border-box;
+  border: 1px solid var(--ds-input-border); border-radius: 9px;
+  background: var(--ds-input-bg); color: var(--ds-text); padding: 9px 10px; font: inherit; font-size: .86rem;
 }
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .modal-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-  }
+.ds-aero .ajuste-campo select option { color: var(--ds-text); background: var(--ds-input-bg); }
+.ds-aero .ajuste-campo small { font-size: .75rem; color: var(--ds-muted); }
+.ds-aero .ajuste-campo textarea { min-height: 78px; resize: vertical; }
+.ds-aero .ajuste-campo :focus-visible { outline: 3px solid var(--ds-focus); outline-offset: 1px; }
+.ds-aero .ajuste-lote-seleccionado, .ds-aero .ajuste-confirmacion-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ds-aero .ajuste-lote-seleccionado { grid-column: 1 / -1; }
+.ds-aero .ajuste-lote-seleccionado > div, .ds-aero .ajuste-confirmacion-info > div {
+  display: grid; gap: 5px; padding: 11px 12px; min-width: 0;
+  border: 1px solid var(--ds-table-border); border-radius: 10px; background: var(--ds-table-body);
+}
+.ds-aero .ajuste-lote-seleccionado span, .ds-aero .ajuste-confirmacion-info span { font-size: .74rem; color: var(--ds-muted); }
+.ds-aero .ajuste-lote-seleccionado strong, .ds-aero .ajuste-confirmacion-info strong { font-size: .87rem; color: var(--ds-text); overflow-wrap: anywhere; }
+.ds-aero .ajuste-confirmacion-info--completa { grid-column: 1 / -1; }
+.ds-aero .ajuste-stock-resumen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.ds-aero .ajuste-stock-resumen > div { display: grid; gap: 5px; text-align: center; padding: 16px 10px; border: 1px solid var(--ds-border); border-radius: 12px; background: var(--ds-table-body); }
+.ds-aero .ajuste-stock-resumen span { color: var(--ds-muted); font-size: .74rem; }
+.ds-aero .ajuste-stock-resumen strong { font-size: 1.65rem; color: var(--ds-text); }
+.ds-aero .ajuste-stock-resumen strong.ajuste-cantidad--entrada { color: var(--ds-success, #208563); }
+.ds-aero .ajuste-stock-resumen strong.ajuste-cantidad--salida { color: var(--ds-danger, #ba525a); }
+@media (max-width: 680px) {
+  .ds-aero .ajuste-tabla { min-width: 0; }
+  .ds-aero .ajuste-tabla td[data-label='Acciones'] .aero-btn { width: 100%; }
+  .ds-aero .aero-modal.ajuste-form-modal, .ds-aero .aero-modal.ajuste-detalle-modal { max-height: calc(100dvh - 22px); }
+  .ds-aero .ajuste-modal-cuerpo { padding: 16px 18px; }
+  .ds-aero .ajuste-campos, .ds-aero .ajuste-lote-seleccionado, .ds-aero .ajuste-confirmacion-info { grid-template-columns: 1fr; }
+  .ds-aero .ajuste-campo--completa, .ds-aero .ajuste-lote-seleccionado, .ds-aero .ajuste-confirmacion-info--completa { grid-column: auto; }
+  .ds-aero .ajuste-stock-resumen { gap: 7px; }
+  .ds-aero .ajuste-stock-resumen strong { font-size: 1.2rem; }
 }

@@ -1,103 +1,131 @@
-<div class="page-container detalle-venta-container">
+<div class="page-container ds-aero aero-panel detalle-venta-container">
+  <header class="aero-page-header">
+    <div class="aero-page-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>
+      </svg>
+    </div>
+    <div class="aero-page-heading">
+      <h2>Detalle de venta{{ venta ? ' #' + venta.id : '' }}</h2>
+      <p>Resumen comercial y cobertura de inventario por producto.</p>
+    </div>
+    <button type="button" class="aero-btn aero-btn-soft detalle-volver" (click)="volver()">← Volver</button>
+  </header>
 
-    @if (venta) {
-
-    <h2>Detalle Venta #{{ venta.id }}</h2>
-
-    <p>
-        <b>Fecha:</b>
-        {{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}
-    </p>
-
-    <p>
-        <b>Cliente:</b>
-        {{ venta.cliente || 'Consumidor final' }}
-    </p>
-
-    <p>
-        <b>Vendedor:</b>
-        {{ venta.vendedor }}
-    </p>
-
-    <p>
-        <b>Estado:</b>
-        {{ venta.estado }}
-    </p>
-
+  @if (cargando) {
+    <section class="detalle-mensaje" role="status">Cargando detalle de venta...</section>
+  } @else if (errorDetalle) {
+    <section class="detalle-mensaje detalle-mensaje--error" role="alert">
+      <span>{{ errorDetalle }}</span>
+      <button type="button" class="aero-btn aero-btn-soft" (click)="cargarDetalle()">Reintentar</button>
+    </section>
+  } @else if (venta) {
+    <section class="detalle-cabecera" aria-label="Datos generales de la venta">
+      <div class="detalle-cabecera-principal">
+        <div class="detalle-titulo-estado">
+          <h3>Venta #{{ venta.id }}</h3>
+          <span class="detalle-estado" [class.detalle-estado--confirmada]="venta.estado === 'CONFIRMADA'"
+                [class.detalle-estado--anulada]="venta.estado === 'ANULADA'">{{ etiquetaEstado(venta.estado) }}</span>
+        </div>
+        <div class="detalle-datos">
+          <div><span>Fecha</span><strong>{{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+          <div><span>Cliente</span><strong>{{ venta.cliente || 'Consumidor final' }}</strong></div>
+          <div><span>Vendedor</span><strong>{{ venta.vendedor }}</strong></div>
+          <div><span>Productos distintos</span><strong>{{ venta.items.length }}</strong></div>
+        </div>
+      </div>
+      <div class="detalle-total">
+        <span>Total de la venta</span>
+        <strong>{{ venta.total | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+        <small>{{ unidadesVendidas }} unidad(es) vendida(s)</small>
+      </div>
+    </section>
 
     @if (venta.estado === 'ANULADA') {
-
-    <div>
-
-        <p>
-            <b>Fecha anulación:</b>
-            {{ venta.fechaAnulacion | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-
-        <p>
-            <b>Motivo:</b>
-            {{ venta.motivoAnulacion }}
-        </p>
-
-    </div>
+      <section class="detalle-anulacion" aria-label="Anulación de la venta">
+        <strong>Venta anulada</strong>
+        <div><span>Fecha de anulación:</span> {{ venta.fechaAnulacion | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div><span>Motivo:</span> {{ venta.motivoAnulacion || 'No especificado' }}</div>
+      </section>
     }
 
-
-    <h3>Productos</h3>
-
-    <table>
-
-        <thead>
+    <section class="detalle-seccion" aria-label="Productos vendidos">
+      <header class="detalle-seccion-titulo">
+        <h3>Productos vendidos</h3>
+        <span>Base e IVA desglosados por línea</span>
+      </header>
+      <div class="aero-table-wrap">
+        <table class="aero-table detalle-tabla">
+          <thead>
             <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio unitario</th>
-                <th>Subtotal</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio unitario (IVA incluido)</th>
+              <th scope="col">Base sin IVA</th>
+              <th scope="col">IVA</th>
+              <th scope="col">Total línea</th>
+              <th scope="col">Descontado</th>
+              <th scope="col">Sin stock</th>
             </tr>
-        </thead>
-
-        <tbody>
-
+          </thead>
+          <tbody>
             @for (item of venta.items; track item.id) {
-
-            <tr>
-
-                <td>
-                    {{ item.producto }}
+              <tr>
+                <td data-label="Producto" class="aero-record-title">
+                  {{ item.producto }}
+                  <small class="detalle-codigo">Código interno #{{ item.idProducto }}</small>
                 </td>
-
-                <td>
-                    {{ item.cantidad }}
+                <td data-label="Cantidad">{{ item.cantidad }}</td>
+                <td data-label="Precio unitario">{{ item.precioUnitario | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                <td data-label="Base sin IVA">{{ item.subtotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                <td data-label="IVA">
+                  {{ item.valorIva | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  <small class="detalle-codigo">{{ item.porcentajeIva }}% · {{ item.tipoIva }}</small>
                 </td>
-
-                <td>
-                    {{ item.precioUnitario
-                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                <td data-label="Total línea" class="detalle-importe">{{ item.total | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                <td data-label="Descontado">
+                  @if (item.cantidadDescontada == null) { <span class="detalle-no-registrado">No registrado</span> }
+                  @else { {{ item.cantidadDescontada }} }
                 </td>
-
-                <td>
-                    {{ item.subtotal
-                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                <td data-label="Sin stock">
+                  @if (item.cantidadSinStock == null) { <span class="detalle-no-registrado">No registrado</span> }
+                  @else if (item.cantidadSinStock > 0) {
+                    <span class="detalle-faltante">{{ item.cantidadSinStock }} sin cobertura</span>
+                  } @else { <span class="detalle-sin-faltante">0</span> }
                 </td>
-
-            </tr>
+              </tr>
+            } @empty {
+              <tr class="aero-empty-row"><td colspan="8">Esta venta no tiene productos registrados.</td></tr>
             }
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-        </tbody>
-
-    </table>
-
-
-    <h3>
-        Total:
-        {{ venta.total
-        | currency:'COP':'symbol-narrow':'1.0-0' }}
-    </h3>
-
-    } @else {
-
-    <p>Cargando detalle de venta...</p>
-
+    <section class="detalle-resumen" aria-label="Resumen de importes e inventario">
+      <div class="detalle-resumen-card">
+        <span>Base antes de IVA</span>
+        <strong>{{ baseSinIva | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+      </div>
+      <div class="detalle-resumen-card">
+        <span>IVA total</span>
+        <strong>{{ ivaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+      </div>
+      <div class="detalle-resumen-card detalle-resumen-card--total">
+        <span>Total de la venta</span>
+        <strong>{{ venta.total | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+      </div>
+      <div class="detalle-resumen-card" [class.detalle-resumen-card--alerta]="unidadesSinStock > 0">
+        <span>Unidades sin cobertura de stock</span>
+        <strong>{{ unidadesSinStock }}</strong>
+        @if (hayCoberturaHistoricaDesconocida) {
+          <small>Parcial: algunas ventas antiguas no registraban este dato.</small>
+        }
+      </div>
+    </section>
+    @if (hayCoberturaHistoricaDesconocida) {
+      <p class="detalle-nota">«No registrado» significa que el dato de cobertura no se almacenaba para esa venta; no equivale a cero.</p>
     }
-
+    <p class="detalle-nota">Las unidades sin cobertura de inventario no implican automáticamente una entrega pendiente.</p>
+  }
 </div>

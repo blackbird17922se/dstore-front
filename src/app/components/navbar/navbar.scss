@@ -1,148 +1,236 @@
+/* ==============================================================
+   DSTORE AERO MODERN — Menú lateral
+   Solo apariencia. Conserva rutas, permisos, eventos y responsive.
+   El tema del sidebar permanece oscuro para contrastar en ambos temas.
+   ============================================================== */
+
 :host {
   display: block;
   flex-shrink: 0;
+  height: 100%;
+}
+
+.nav-svg-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .sidebar {
-  width: 100%;
-  height: 100%;
+  --nav-border: rgba(158, 192, 255, 0.15);
+  --nav-text: #d9e5fc;
+  --nav-muted: #8ea6ca;
+
   position: relative;
-
-  // top: 0;
-
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-
-  background: #111827;
-  color: #ffffff;
-
-  overflow-y: auto;
-}
-
-.sidebar-header {
-  padding: 24px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.version {
-  display: block;
-  margin-top: 4px;
-
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-.menu {
-  flex: 1;
-  padding: 18px 12px;
-}
-
-.menu-section {
-  margin-bottom: 24px;
-}
-
-.menu-title {
-  display: block;
-
-  padding: 0 12px;
-  margin-bottom: 8px;
-
-  font-size: 0.7rem;
-  font-weight: 600;
-
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-
-  color: #6b7280;
-}
-
-.menu a {
-  display: flex;
-  align-items: center;
-
-  padding: 10px 12px;
-  margin-bottom: 4px;
-
-  color: #d1d5db;
-  text-decoration: none;
-
-  border-radius: 8px;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.menu a:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-}
-
-.menu a.active {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.logout-button {
   width: 100%;
-
-  padding: 10px 12px;
-
-  border: 1px solid #374151;
-  border-radius: 8px;
-
-  background: transparent;
-  color: #d1d5db;
-
-  cursor: pointer;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--nav-text);
+  background:
+    radial-gradient(ellipse 200px 190px at 16% -8%, rgba(67, 119, 239, 0.27), transparent 80%),
+    linear-gradient(174deg, #142542 0%, #111e36 45%, #0c1629 100%);
+  border-right: 1px solid var(--nav-border);
 }
 
-.logout-button:hover {
-  background: #374151;
-  color: #ffffff;
-}
-
-/* ICONOS Y ETIQUETAS */
-
-.menu a {
-  gap: 12px;
-}
-
-.menu-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 24px;
-  font-size: 1.1rem;
-}
-
-.menu-label {
-  white-space: nowrap;
-}
-
+/* La marca queda fija; únicamente el listado de enlaces se desplaza. */
 .sidebar-header {
+  position: relative;
+  z-index: 1;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-height: 94px;
+  padding: 18px 15px;
+  border-bottom: 1px solid var(--nav-border);
+  background: linear-gradient(110deg, rgba(63, 113, 211, 0.09), rgba(17, 30, 54, 0.01));
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
   min-width: 0;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  padding: 5px;
+  border: 1px solid rgba(178, 205, 255, 0.35);
+  border-radius: 13px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(221, 233, 254, 0.89));
+  box-shadow: inset 0 1px 0 #fff, 0 7px 21px rgba(0, 0, 0, 0.17);
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.logo {
+  color: #fff;
+  font-size: 1.23rem;
+  font-weight: 760;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+}
+
+.version {
+  margin-top: 3px;
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: #a9c4ed;
+  white-space: nowrap;
 }
 
 .sidebar-close {
   display: none;
+}
+
+.menu {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 10px 22px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(152, 180, 229, 0.38) transparent;
+}
+
+.menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: rgba(152, 180, 229, 0.38);
+}
+
+.menu-section {
+  margin-bottom: 19px;
+}
+
+.menu-title {
+  display: block;
+  margin: 0 0 7px;
+  padding: 0 12px;
+  color: var(--nav-muted);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.115em;
+  text-transform: uppercase;
+}
+
+.menu a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  margin-bottom: 3px;
+  padding: 5px 10px;
+  color: var(--nav-text);
+  text-decoration: none;
+  font-size: 0.845rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: background-color 0.16s ease, color 0.16s ease,
+    border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.menu a:hover {
+  color: #fff;
+  background: rgba(122, 169, 255, 0.11);
+  border-color: rgba(158, 194, 255, 0.12);
+}
+
+.menu a.active {
+  color: #fff;
+  background: linear-gradient(100deg, #2566f1, #1d4fd8 90%);
+  border-color: rgba(169, 208, 255, 0.25);
+  box-shadow: 0 4px 13px rgba(11, 65, 177, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  font-weight: 650;
+}
+
+.menu a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #bfe0ff;
+}
+
+.menu a:focus-visible,
+.sidebar-close:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.menu-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 31px;
+  color: #99c1fb;
+  border-radius: 9px;
+  background: rgba(108, 161, 249, 0.095);
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.menu-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu a:hover .menu-icon {
+  color: #d5e8ff;
+  background: rgba(120, 175, 255, 0.17);
+}
+
+.menu a.active .menu-icon {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.menu-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Se mantienen disponibles los estilos del pie original (actualmente comentado). */
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--nav-border);
 }
 
 .logout-button {
@@ -150,21 +238,31 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--nav-text);
+  background: transparent;
+  border: 1px solid var(--nav-border);
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-/* SIDEBAR COMPACTO */
+.logout-button:hover {
+  color: #fff;
+  background: rgba(122, 169, 255, 0.11);
+}
 
+/* SIDEBAR COMPACTO: mantiene el mismo Input collapsed que usa app.ts. */
 .sidebar.compact .sidebar-header {
   justify-content: center;
-  padding: 24px 8px;
+  padding: 18px 6px;
 }
 
-.sidebar.compact .logo {
-  font-size: 1.2rem;
-  text-align: center;
+.sidebar.compact .brand {
+  gap: 0;
 }
 
-.sidebar.compact .version,
+.sidebar.compact .brand-info,
 .sidebar.compact .menu-title,
 .sidebar.compact .menu-label,
 .sidebar.compact .logout-label {
@@ -172,20 +270,25 @@
 }
 
 .sidebar.compact .menu {
-  padding: 16px 8px;
+  padding: 14px 8px 20px;
 }
 
 .sidebar.compact .menu-section {
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 11px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--nav-border);
 }
 
 .sidebar.compact .menu a {
   justify-content: center;
-  padding: 12px 4px;
+  padding: 5px 3px;
   gap: 0;
+}
+
+.sidebar.compact .menu-icon {
+  flex-basis: 36px;
+  width: 36px;
+  height: 36px;
 }
 
 .sidebar.compact .sidebar-footer {
@@ -193,15 +296,12 @@
 }
 
 .sidebar.compact .logout-button {
-  justify-content: center;
-  padding: 12px 4px;
   gap: 0;
+  padding: 10px 4px;
 }
 
-/* COMPORTAMIENTO MÓVIL */
-
+/* COMPORTAMIENTO MÓVIL: mismo evento closeRequested, sin tocar la navegación. */
 @media (max-width: 768px) {
-
   .sidebar {
     height: 100dvh;
   }
@@ -210,21 +310,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    width: 32px;
-    height: 32px;
-
-    border: none;
-    border-radius: 6px;
-
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-
-    font-size: 1.1rem;
+    flex: 0 0 33px;
+    width: 33px;
+    height: 33px;
+    color: #e5efff;
+    background: rgba(158, 193, 248, 0.11);
+    border: 1px solid rgba(158, 193, 248, 0.25);
+    border-radius: 10px;
+    font-size: 1rem;
     cursor: pointer;
   }
 
   .sidebar-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(158, 193, 248, 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu a,
+  .menu-icon {
+    transition: none;
   }
 }

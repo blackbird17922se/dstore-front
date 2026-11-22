@@ -93,8 +93,25 @@ export class AccountMenu implements OnInit {
 
   cerrarSesion(): void {
     this.cerrarMenu();
-    this.authService.logout();
-    void this.router.navigate(['/login']);
+
+    this.authService.cerrarSesionServidor().subscribe({
+      next: () => {
+        void this.router.navigate(['/login'], {
+          replaceUrl: true
+        });
+      },
+      error: (error) => {
+        console.error(
+          'No se pudo confirmar el cierre de sesión:',
+          error
+        );
+
+        // La sesión local ya se limpia desde AuthService.
+        void this.router.navigate(['/login'], {
+          replaceUrl: true
+        });
+      }
+    });
   }
 
   @HostListener('document:click', ['$event'])

@@ -1,16 +1,13 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
-
-  const authServicio = inject(AuthService);
-  const enrutador = inject(Router);
-
-  if(authServicio.isLoggedIn()){
-    return true;
-  }
-
-  enrutador.navigate(['/login']);
-  return false;
+/** Antes de abrir una ruta privada, renovar el JWT si está próximo a vencer. */
+export const authGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.obtenerTokenValido().pipe(
+    map(token => token ? true : router.createUrlTree(['/login']))
+  );
 };

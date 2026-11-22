@@ -18,7 +18,7 @@
             <div class="hero-text">
 
                 <span class="hero-badge">
-                    Milestone One
+                    DStore · Panel operativo
                 </span>
 
                 <h1>
@@ -57,6 +57,120 @@
 
     </section>
 
+
+
+    <!-- ========================================= -->
+    <!-- DASHBOARD / INDICADORES REALES (v0.5) -->
+    <!-- ========================================= -->
+
+    <section class="inicio-section inicio-dashboard" aria-labelledby="titulo-dashboard">
+        <div class="section-heading inicio-dashboard-heading">
+            <div>
+                <h2 id="titulo-dashboard">Resumen del negocio</h2>
+                <p>Indicadores reales y alertas para tomar decisiones.</p>
+            </div>
+            <button type="button" class="inicio-refresh" (click)="actualizarResumen()"
+                    [disabled]="cargandoResumen">
+                {{ cargandoResumen ? 'Actualizando…' : 'Actualizar' }}
+            </button>
+        </div>
+
+        @if (errorResumen) {
+            <div class="inicio-dashboard-error" role="alert">
+                {{ errorResumen }}
+            </div>
+        }
+
+        @if (cargandoResumen && !resumen) {
+            <div class="inicio-dashboard-loading" role="status">
+                Consultando los indicadores del negocio…
+            </div>
+        }
+
+        @if (resumen) {
+            <p class="inicio-dashboard-periodo">
+                Ventas correspondientes al {{ resumen.fechaReferencia | date:'dd/MM/yyyy' }}.
+                Las cifras monetarias consideran únicamente ventas confirmadas.
+            </p>
+
+            <div class="inicio-kpis">
+                <article class="inicio-kpi">
+                    <span class="inicio-kpi-label">Ventas de hoy</span>
+                    <strong class="inicio-kpi-value">{{ resumen.ventasHoy | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+                    <span class="inicio-kpi-note">Total confirmado, sin ventas anuladas</span>
+                </article>
+
+                <article class="inicio-kpi">
+                    <span class="inicio-kpi-label">Ventas realizadas hoy</span>
+                    <strong class="inicio-kpi-value">{{ resumen.cantidadVentasHoy }}</strong>
+                    <span class="inicio-kpi-note">Número de ventas confirmadas</span>
+                </article>
+
+                <article class="inicio-kpi inicio-kpi--attention">
+                    <span class="inicio-kpi-label">Ventas sin cobertura</span>
+                    <strong class="inicio-kpi-value">{{ resumen.ventasSinCobertura }}</strong>
+                    <span class="inicio-kpi-note">
+                        {{ resumen.unidadesSinCobertura }} unidades sin cobertura en ventas confirmadas
+                    </span>
+                </article>
+
+                @if (resumen.productosStockBajo !== null) {
+                    <article class="inicio-kpi">
+                        <span class="inicio-kpi-label">Productos con stock bajo</span>
+                        <strong class="inicio-kpi-value">{{ resumen.productosStockBajo }}</strong>
+                        <span class="inicio-kpi-note">Stock vendible ≤ {{ resumen.umbralStockBajo }} unidades</span>
+                        <a routerLink="/existencias" class="inicio-kpi-link">Ver existencias</a>
+                    </article>
+                }
+
+                @if (resumen.lotesProximosVencer !== null) {
+                    <article class="inicio-kpi inicio-kpi--warning">
+                        <span class="inicio-kpi-label">Lotes próximos a vencer</span>
+                        <strong class="inicio-kpi-value">{{ resumen.lotesProximosVencer }}</strong>
+                        <span class="inicio-kpi-note">Próximos 30 días, con stock</span>
+                        <a routerLink="/proximos-vencer" class="inicio-kpi-link">Revisar alertas</a>
+                    </article>
+                }
+
+                @if (resumen.lotesVencidos !== null) {
+                    <article class="inicio-kpi inicio-kpi--danger">
+                        <span class="inicio-kpi-label">Lotes vencidos</span>
+                        <strong class="inicio-kpi-value">{{ resumen.lotesVencidos }}</strong>
+                        <span class="inicio-kpi-note">Con stock físico registrado</span>
+                        <a routerLink="/proximos-vencer" class="inicio-kpi-link">Ver vencimientos</a>
+                    </article>
+                }
+            </div>
+
+            <div class="inicio-recent-panel">
+                <div class="section-heading">
+                    <div>
+                        <h3>Últimas ventas</h3>
+                        <p>Las cinco operaciones más recientes, incluidas anulaciones.</p>
+                    </div>
+                    <a routerLink="/venta" class="inicio-kpi-link">Ir al historial</a>
+                </div>
+
+                @if (resumen.ultimasVentas.length === 0) {
+                    <p class="inicio-recent-empty">Todavía no hay ventas registradas.</p>
+                } @else {
+                    <div class="inicio-recent-list">
+                        @for (venta of resumen.ultimasVentas; track venta.id) {
+                            <a class="inicio-recent-item" [routerLink]="['/detalle-venta', venta.id]">
+                                <span class="inicio-recent-id">#{{ venta.id }}</span>
+                                <span class="inicio-recent-client">{{ venta.cliente }}</span>
+                                <span class="inicio-recent-date">{{ venta.fecha | date:'dd/MM HH:mm' }}</span>
+                                <strong class="inicio-recent-total">{{ venta.total | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+                                <span class="inicio-recent-state" [class.inicio-recent-state--anulada]="venta.estado === 'ANULADA'">
+                                    {{ venta.estado === 'ANULADA' ? 'Anulada' : 'Confirmada' }}
+                                </span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </section>
 
     <!-- ========================================= -->
     <!-- ACCESOS RÁPIDOS -->
